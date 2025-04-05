@@ -1,8 +1,17 @@
 
-import Dashboard from "./Dashboard";
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import MainLayout from "@/components/layout/MainLayout";
 
 const Index = () => {
-  return <Dashboard />;
+  const navigate = useNavigate();
+  
+  // Redirect to the dashboard on component mount
+  React.useEffect(() => {
+    navigate("/journal/recharge-boutique");
+  }, [navigate]);
+
+  return <MainLayout>Redirection...</MainLayout>;
 };
 
 export default Index;
