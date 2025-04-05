@@ -107,12 +107,14 @@ const DiaspoTransfer: React.FC = () => {
             showActions={true}
             actionItems={[
               {
-                icon: row => row.status === "validated" ? (
-                  <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-                ) : (
-                  <Button className="bg-teal-600 hover:bg-teal-700 text-white">
-                    Valider
-                  </Button>
+                icon: row => (
+                  row.status === "validated" ? (
+                    <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                  ) : (
+                    <Button className="bg-teal-600 hover:bg-teal-700 text-white">
+                      Valider
+                    </Button>
+                  )
                 ),
                 onClick: (row) => console.log("Validate", row)
               }

@@ -23,7 +23,7 @@ interface DataTableProps {
   onRowClick?: (row: any) => void;
   showActions?: boolean;
   actionItems?: {
-    icon: React.ReactNode;
+    icon: React.ReactNode | ((row: any) => React.ReactNode);
     onClick: (row: any) => void;
   }[];
 }
@@ -81,7 +81,7 @@ const DataTable: React.FC<DataTableProps> = ({
                                   i === 1 ? "p-2 rounded-md" : 
                                   "p-2 bg-yellow-500 rounded-md"}
                       >
-                        {item.icon}
+                        {typeof item.icon === "function" ? item.icon(row) : item.icon}
                       </button>
                     ))}
                   </TableCell>
