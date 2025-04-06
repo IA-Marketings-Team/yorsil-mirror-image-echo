@@ -36,6 +36,7 @@ import AuthLayout from "./components/layout/AuthLayout";
 import AdminLayout from "./components/layout/AdminLayout";
 import OfficeLayout from "./components/layout/OfficeLayout";
 import { useAuth } from "./hooks/useAuth";
+import NotFound from "./pages/NotFound";
 
 // Auth provider
 import { AuthProvider } from "./contexts/AuthContext";
@@ -101,7 +102,7 @@ function App() {
             <Route path="/" element={<DefaultRedirect />} />
             
             {/* Catch-all route */}
-            <Route path="*" element={<Navigate to="/" replace />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </Router>
         <Toaster position="top-right" richColors />
@@ -114,6 +115,7 @@ function App() {
 const DefaultRedirect = () => {
   const { authState } = useAuth();
   const { user, loading } = authState;
+  console.log("DefaultRedirect check:", { user, loading });
   
   // Show loading state while checking authentication
   if (loading) {
@@ -134,7 +136,14 @@ const DefaultRedirect = () => {
     return <Navigate to={ROUTES.OFFICE.ROOT} replace />;
   }
   
-  // Fallback - go to login page
+  // For ROLE_USER, redirect to a dedicated page (or login until we have a user dashboard)
+  if (user.roles.includes("ROLE_USER")) {
+    // You can create a user dashboard later and redirect there
+    // For now, just go to login to avoid infinite loops
+    return <Navigate to={ROUTES.AUTH.LOGIN} replace />;
+  }
+  
+  // Fallback - go to login page if no recognized roles
   return <Navigate to={ROUTES.AUTH.LOGIN} replace />;
 };
 

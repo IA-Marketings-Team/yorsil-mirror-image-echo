@@ -35,8 +35,8 @@ const PrivateRoute = ({ children, requiredRole }: PrivateRouteProps) => {
     if (user.roles.includes("ROLE_BOUT")) {
       return <Navigate to={ROUTES.OFFICE.ROOT} replace />;
     }
-    // Default fallback
-    return <Navigate to="/" replace />;
+    // For users with only ROLE_USER, redirect to login for now
+    return <Navigate to={ROUTES.AUTH.LOGIN} replace />;
   }
 
   // Show protected content if everything is okay

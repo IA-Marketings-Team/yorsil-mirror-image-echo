@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
@@ -36,10 +37,13 @@ const Login = () => {
         } else if (user.roles.includes("ROLE_BOUT")) {
           console.log("Redirecting to office dashboard");
           navigate(ROUTES.OFFICE.ROOT, { replace: true });
-        } else {
-          const from = location.state?.from?.pathname || ROUTES.ROOT;
-          console.log("Redirecting to:", from);
+        } else if (user.roles.includes("ROLE_USER")) {
+          console.log("Redirecting standard user to login (temporary)");
+          // Later you can create a user dashboard and redirect there
+          const from = location.state?.from?.pathname || ROUTES.AUTH.LOGIN;
           navigate(from, { replace: true });
+        } else {
+          console.log("No specific role found, staying on login");
         }
       }, 100);
     }
