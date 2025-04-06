@@ -38,7 +38,7 @@ const AdminBoutiques = () => {
       roles: boutique.user.roles as any,
       picture: boutique.user.picture || undefined,
       sessionToken: boutique.user.session_token || undefined
-    } as User : null, // Add fallback to null if no user
+    } : null,
     solde: 0 // Default value as it might not be in Supabase
   })) : [];
 
@@ -76,4 +76,3 @@ const AdminBoutiques = () => {
 };
 
 export default AdminBoutiques;
-
