@@ -13,4 +13,5 @@ export interface TableDisplayProps<T = any> {
   searchTerm?: string;
   onSearchChange?: (value: string) => void;
   searchPlaceholder?: string;
+  searchable?: boolean; // Ajout de cette propriété manquante
 }
