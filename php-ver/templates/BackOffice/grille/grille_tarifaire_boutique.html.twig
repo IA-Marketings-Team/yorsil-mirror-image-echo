@@ -1,0 +1,207 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}Liste des grilles tarifaires privilégiés par boutique{% endblock %}
+
+{% set menu_grille_tarifaire = true %}
+{% set menu_priv = true %}
+
+{% block body %}
+
+    <div class="card bg-light-info shadow-none position-relative overflow-hidden">
+        <div class="card-body px-4 py-3">
+            <div class="row align-items-center">
+                <div class="col-9">
+                    <h4 class="fw-semibold mb-8">Liste des grilles tarifaires</h4>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                          <li class="breadcrumb-item"><a class="text-muted" href="javascript:void(0)">Grilles tarifaires</a></li>
+                          <li class="breadcrumb-item active" aria-current="page">Liste</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row mb-2">
+                            <div class="col-sm-4">
+                                <a id="ajout_admin" data-bs-toggle="modal" data-bs-target="#id-grille-modal" href="#" class="btn btn-primary mb-2" style="margin-left: 20px;">
+                                    <i class="ti ti-plus fs-4"></i> Ajouter une grille tarifaire
+                                </a>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table"  id="id-table">
+                                <thead>
+                                    <tr>
+                                        <td>Produit</td>
+                                        <td class="text-center">Famille</td>
+                                       {#  <td class="text-center">Ref</td>  #}
+                                        <td class="text-center">GenCode</td>
+                                        <td class="text-center">TVA</td>
+                                        <td class="text-center">PA</td>
+                                        <td class="text-center">Prix Yorsil</td>
+                                        <td class="text-center">Remise</td>
+                                        <td class="text-center">PV TTC</td>
+                                        <td class="text-center">Distrib</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for grilletarif in grilles_tarifaire_boutiques %}
+                                        <tr>
+                                            <td>{{grilletarif.grilleTarifaire.produit}}</td>
+                                            <td class="text-center">{{grilletarif.grilleTarifaire.famille}}</td>
+                                            <td class="text-center">{{grilletarif.grilleTarifaire.gencode}}</td>
+                                            <td class="text-center"><strong>{{grilletarif.grilleTarifaire.tva}}%</strong></td>
+                                            <td class="text-center"><strong>{{grilletarif.grilleTarifaire.prixPdv}} &euro;</strong></td>
+                                            <td class="text-center"><strong>{{grilletarif.grilleTarifaire.prixYorsil}} &euro;</strong></td>
+                                            <td class="text-center"><strong>{{grilletarif.commYorsil}}%</strong></td>
+                                            <td class="text-center"><strong>{{grilletarif.grilleTarifaire.prixPublicTtc}} &euro;</strong></td>
+                                            <td class="text-center"><strong>{{grilletarif.commDistrib}}%</strong></td>
+                                        </tr>
+                                    {% endfor %}
+                                    {# {% for produit in produits %}
+                                        <tr>
+                                            <td>{{produit.nom}}</td>
+                                            <td>{{produit.operateur.nom}}</td>
+                                                {% set type = '' %}
+                                                {% if(produit.categorie) %}
+                                                    {% set type = produit.categorie.nom %}
+                                                {% else %}
+                                                    {% set type = (produit.type == '2') ? 'Jeux' : 'Carte Recharges Mobiles' %}
+                                                    {% set type = (produit.type == '3') ? 'Paiement' : 'Carte Recharges Mobiles' %}
+                                                    {% set type = (produit.type == '4') ? 'Carte Cadeaux' : 'Carte Recharges Mobiles' %}
+                                                {% endif %}
+                                            <td>{{type}}</td> 
+                                            <td class="text-center"><strong>{{produit.prixAchat}} &euro;</strong></td>
+                                            <td class="text-center"><strong>{{produit.prixVente}} &euro;</strong></td>
+                                            <td class="text-center"><strong>{{soldeParProduitPhysique(produit.id)}} &euro;</strong></td>
+                                            <td class="text-center">
+                                                  <i class = "ti ti-eye fs-5 {{ (produit.isVisible == true) ? 'text-gray' : 'text-success'}}" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{{ (produit.isVisible == true) ? 'Caché' : 'Visible'}}"></i>
+                                            </td>
+                                            <td>{{produit.gencode}}</td>
+                                            <td class="text-center">
+                                                <div class="btn-group">
+                                                    <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                        Action
+                                                    </button>
+                                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                                        <li>
+                                                            <a class="dropdown-item" href="{{path('edit_produit_physique',{id:produit.id})}}">
+                                                                <i class="ti ti-edit"></i>
+                                                                Mettre à jour
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="dropdown-item" href="{{path('liste_code',{id:produit.id})}}">
+                                                                <i class="ti ti-cards"></i>
+                                                                Code PIN
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %} #}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="id-grille-modal" tabindex="-1" aria-labelledby="id-grille-modalLabel">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="id-grille-modalLabel">Ajouter ou modifier une commission par produit</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                </button>
+              </div>
+              <div class="modal-body">
+                <form method="POST" action="{{ path('ajout_grille_tarifaire_boutique') }}">
+
+                    <div class="mb-2">
+                        <label for="designation">Boutique</label>
+                        <select name="boutique" id="id-boutique" class="form-control select2-types" data-placeholder="Veuillez sélectionner une boutique" tabindex="2" style="width: 100%; height: 36px" required>
+                                <option></option>
+                            {% for boutique in boutiques %}
+                                <option value="{{boutique.id}}">{{boutique.nom}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-2">
+                        <label for="designation">Produit</label>
+                        <select name="produit" id="id-prod" class="form-control select2-type" data-placeholder="Veuillez séléctionner un produit" tabindex="2" style="width: 100%; height: 36px" required="">
+                                <option></option>
+                            {% for grille in grilles %}
+                                <option data-max="{{grille.remisePdv}}" value="{{grille.id}}">{{grille.produit}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-2 mt-2">
+                        <label for="codes">Commission</label>
+                        <input type="hidden" name="commission_yorsil" id="id-comm-yorsil">
+                        <input type="number" name="commission_distrib" class="form-control input-form-amount" id="amount" min="1.00" step="0.01" required>
+                        <small class="form-text text-danger kl-texte"></small>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Annuler</button>
+                        <button type="submit" class="btn btn-primary">Enregistrer</button>
+                    </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+    </section>
+
+{% endblock %}
+{% block javascripts %}
+	{{ parent() }}
+    <script>
+        $('.select2-types, .select2-type').select2({
+            dropdownParent: $("#id-grille-modal"),
+            placeholder: function () {
+                return $(this).data('placeholder');
+            },
+        });
+
+        $('#id-prod').on('change', function () {
+            const selectedProduit = $(this).val();
+            const dataMax = $(this).find(':selected').data('max');
+            const $inputAmount = $('#amount');
+            const $inputComm = $('#id-comm-yorsil');
+            if (dataMax) {
+                $inputAmount.attr('max', dataMax);
+                $inputComm.val(dataMax);
+                // Mettre à jour le texte avec la commission maximum
+                $('.kl-texte').html("La commission ne doit pas dépasser les " + dataMax + "%");
+
+            } else {
+                $inputAmount.removeAttr('max');
+                // Réinitialiser le texte si aucune option n'est sélectionnée
+                $('.kl-texte').html("");
+            }
+            // if (selectedProduit) {
+            //     $('.kl-texte').html("La commission ne doit pas dépasser les "+selectedProduit+"%");
+            // }
+        });
+
+    </script>
+    <script>
+        $('#id-table').DataTable({
+            language: { "url": global_utils.urls.datatable_fr },
+            "order": [[0, "asc"]],
+        });
+    </script>
+{% endblock %}

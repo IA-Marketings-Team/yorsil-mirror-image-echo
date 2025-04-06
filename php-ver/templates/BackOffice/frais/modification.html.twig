@@ -1,0 +1,56 @@
+{% set type = '' %}
+  {% if(frais_service.type == '1') %} {% set type = 'FlixBus' %} {% endif %}
+  {% if(frais_service.type == '2') %} {% set type = 'Ding' %} {% endif %}
+  {% if(frais_service.type == '3') %} {% set type = 'Reloadly' %} {% endif %}
+  {% if(frais_service.type == '4') %} {% set type = 'Aleda' %} {% endif %}  
+  {% if(frais_service.type == '5') %} {% set type = 'DiaspoTransfert' %} {% endif %}
+  {% if(frais_service.type == '6') %} {% set type = 'Produit Virtuel' %} {% endif %}
+
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}Modification du frais de service {{ type }} {% endblock %}
+
+{% set menu_frais = true %}
+
+{% block body %}
+
+    <div class="card bg-light-info shadow-none position-relative overflow-hidden">
+        <div class="card-body px-4 py-3">
+          <div class="row align-items-center">
+            <div class="col-9">
+              <h4 class="fw-semibold mb-8">Frais de service {{ type }}</h4>
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a class="text-muted" href="javascript:void(0)">Frais de service</a></li>
+                  <li class="breadcrumb-item"><a class="text-muted" href="{{ path('frais_services')}}">Liste</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Modification</li>
+                </ol>
+              </nav>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    {{ form_start(form) }}
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body p-4">
+                        <div class="row mb-4">
+                            <div class="col md-3">{{ form_row(form.pourcentage) }}</div>
+                            <div class="col md-3">{{ form_row(form.pourcentage_boutique) }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="d-flex align-items-center justify-content-end gap-3">
+                    <button class="btn btn-primary">Modifier</button>
+                    <a href="{{ path('frais_services')}}" class="btn btn-danger">Annuler</a>
+                </div>
+            </div>
+        </div>
+    {{ form_end(form) }}
+                   
+
+{% endblock %}

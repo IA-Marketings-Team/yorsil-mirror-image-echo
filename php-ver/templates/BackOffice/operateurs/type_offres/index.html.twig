@@ -1,0 +1,83 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}Type d'offres{% endblock %}
+
+{% set menu_type_offres = true %}
+
+{% block body %}
+<div class="card bg-light-info shadow-none position-relative overflow-hidden">
+        <div class="card-body px-4 py-3">
+            <div class="row align-items-center">
+                <div class="col-9">
+                    <h4 class="fw-semibold mb-8">Type d'offres</h4>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                          <li class="breadcrumb-item"><a class="text-muted" href="javascript:void(0)">Type d'offres</a></li>
+                          <li class="breadcrumb-item active" aria-current="page">Liste</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+<section>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="mb-2">
+                            <a id="ajout_admin" href="{{ path('new_type_offres') }}" class="btn btn-primary mb-2">
+                                <i class="ti ti-plus fs-4"></i> Nouvelle type d'offre
+                            </a>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table" id="id-type-offres-liste">
+                                <thead>
+                                    <tr>
+                                        <td>Type d'offres</td>
+                                        <td>Opérateur</td>
+                                        <td></td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for type_offres in type_offres %}
+                                        <tr>
+                                            <td>{{type_offres.nom}}</td>
+                                            <td>{{ (type_offres.operateur) ? type_offres.operateur.nom : '--'}}</td>
+                                            <td class="text-center">
+                                                <div class="btn-group">
+                                                    <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                        Action
+                                                    </button>
+                                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                                        <li>
+                                                            <a class="dropdown-item" href="{{ path('edite_type_offres', {id: type_offres.id}) }}">
+                                                                <i class="ti ti-edit"></i>
+                                                                Mettre à jour
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="dropdown-item" href="#">
+                                                                <i class="ti ti-trash"></i>
+                                                                Supprimer
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('backoffice/operateur/type.offres.liste.js') }}"></script>
+{% endblock %}

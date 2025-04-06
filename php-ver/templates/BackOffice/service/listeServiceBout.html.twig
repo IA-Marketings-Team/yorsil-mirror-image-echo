@@ -1,0 +1,184 @@
+{% extends 'base_admin.html.twig' %}
+
+{% set menu_services = true %}
+
+{% block title %}Liste des services boutique{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        #modal-body-service {
+            pointer-events: none;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="card bg-light-info shadow-none position-relative overflow-hidden">
+        <div class="card-body px-4 py-3">
+          <div class="row align-items-center">
+            <div class="col-9">
+              <h4 class="fw-semibold mb-8">Liste des services par boutique</h4>
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a class="text-muted" href="javascript:void(0)">Service boutique</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Liste</li>
+                </ol>
+              </nav>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <section>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center justify-content-end flex-wrap gap-3 mb-3">
+                            <a id="ajout_admin" href="{{path('add_services_bout')}}" class="btn btn-sm btn-primary">
+                                <i class="ti ti-plus"></i> Ajouter un service boutique
+                            </a>
+                        </div>
+                        
+                        <div class="table-responsive">
+                            <table id="id-service-liste" class="table">
+                                <thead>
+                                    <tr>
+										<th>Boutique</th>
+										<th class="text-center">Liste des services</th>
+										<th></th>
+				                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for service in services %}
+                                        <tr>
+                                            <td>{{service.boutique.nom}}</td>
+                                            <td class="text-center">
+                                                <button type="button" data-service="{{ service.service|json_encode }}" class="btn btn-sm btn-outline-primary btn-service-modal" data-bs-toggle="modal" data-bs-target="#liste-service-modal">
+                                                    Service <i class="ti ti-icons"></i>
+                                                </button>
+                                            </td>
+                                            <td class="text-end">
+                                                <div class="btn-group mb-2">
+                                                    <button type="button" class="btn btn-sm btn-light-info text-info dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                        <i class="ti ti-menu-2"></i>
+                                                    </button>
+                                                    <ul class="dropdown-menu animated flipInY">
+                                                        <li class="d-flex justify-content-center align-items-center gap-1">
+                                                            <a class="btn mb-1 btn-sm font-medium d-flex gap-3 align-items-center btn-primary text-white waves-effect waves-light" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Modifier" href="{{path('edite_services_bout', {id: service.id})}}">
+                                                                <i class="ti ti-edit"></i>
+                                                            </a>
+                                                            <button class="btn mb-1 delete-service btn-sm font-medium d-flex gap-3 align-items-center btn-danger text-white waves-effect waves-light" data-id="{{service.id}}" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Supprimer">
+                                                                <i class="ti ti-trash"></i>
+                                                            </button>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="modal fade" id="liste-service-modal" tabindex="-1" aria-labelledby="liste-service-modalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="liste-service-modalLabel">Liste des services</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="modal-body-service">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-dark" data-bs-dismiss="modal">Fermer</button>
+            </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        var service = $('#id-service-liste').DataTable({
+            "aaSorting": [],
+            "bProcessing": true,
+            "bFilter": true,
+            "iDisplayLength": 10,
+            language: {"url": global_utils.urls.datatable_fr}        
+        });
+
+        $(document).on('click', '.delete-service', function (e) {
+            const idService = $(e.currentTarget).data('id')
+            
+            swal({
+                title: "Suppression",
+                text: "Vous voulez vraiment supprimer cette service ?",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Oui",
+                cancelButtonText: "Non",
+                closeOnConfirm: false,
+                closeOnCancel: true },
+            function (isConfirm) {
+                if (isConfirm) {
+                    swal("Suppression", "Traitement en cours", "warning");
+                    window.location.pathname = `/supprimer-service-bout/${idService}`;
+                }
+            });
+        })
+
+        $(document).on('click', '.btn-service-modal', function (e) {
+            const services = $(e.currentTarget).data('service')
+            const modalContent = $('#modal-body-service')
+            modalContent.html('...')
+            let serviceListe = ""
+            
+            $.each(services, function (index, service) {
+                let serviceModules = ""
+                $.each(service.modules, function (idM, module) {
+                    serviceModules += `
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input success" type="checkbox" id="flexSwitchCheckDisabled-${idM}" ${module.status ? 'checked' : ''}>
+                                    <label class="form-check-label text-success" for="flexSwitchCheckDisabled-${idM}">${module.nom}</label>
+                                </div>
+                            </div>
+                            <div class="col-6 text-${module.status ? 'success' : 'danger'}">${module.status ? 'Activé' : 'Désactivé'}</div>
+                        </div>
+                    `
+                });
+
+                serviceListe += `
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="flexSwitchCheckDisabled" ${service.status ? 'checked' : ''}>
+                                <label class="form-check-label text-primary" for="flexSwitchCheckDisabled">${service.nom}</label>
+                            </div>
+                        </div>
+                        <div class="col-6 text-${service.status ? 'success' : 'danger'}">${service.status ? 'Activé' : 'Désactivé'}</div>
+                        
+                        ${serviceModules.length ? `
+                            <div class="col-12 p-2 px-4 ${service.status ? '' : 'd-none'}">
+                                ${serviceModules}
+                            </div>
+                        ` : ''}
+                    </div>
+                `
+            });
+
+            modalContent.html(serviceListe)
+        })
+	</script>
+{% endblock %}

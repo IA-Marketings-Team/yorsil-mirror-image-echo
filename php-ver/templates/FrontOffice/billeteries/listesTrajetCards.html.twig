@@ -1,0 +1,128 @@
+{% if trajets.trips|length > 0 %}
+    {% if suggest.next %}
+        <div class="card text-center empty-voyage mb-3">
+            <img src="{{asset('modernize/images/billeterie/emptyVoyage.svg')}}" alt="">
+            <h2 class="fw-bolder">Aucun trajet le {{suggest.emptyDate}}</h2>
+        </div>
+
+        <div class="card text-center empty-voyage mb-3">
+            <h5 class="fw-bolder">Prochaine date disponible : {{formatDate(suggest.date)}}</h5>
+        </div>
+    {% endif %}
+
+    {% for voyages in trajets.trips %}
+        {% for voyage in voyages.items %}
+            {% if voyage.status == "available" %}
+                <div class="card-trx-list">
+                    <div class="row">
+                        <div class="col-md-9">
+                            <div class="card-trx-info">
+                                <div class="operated_by mb-2">
+                                    {% for operated in voyage.operated_by %}
+                                        <span>{{operated.label}}</span>
+                                    {% endfor %}
+                                </div>
+                                <div class="row trx-heur">
+                                    <div class="col-8 heur-combin">
+                                        <h2 class="heur-depart">{{ voyage.departure.timestamp | date("H:i", voyage.departure.tz) }}</h2>
+                                        {% set durationHour = voyage.duration.hour|format('%02d') %}
+                                        {% set durationMinutes = voyage.duration.minutes|format('%02d') %}
+                                        <h2 class="heur-itineraire"><span>{{durationHour}}:{{durationMinutes}} h</span></h2>
+                                    </div>
+                                    <div class="col-4">
+                                        <h2 class="heur-arrive">{{ voyage.arrival.timestamp | date("H:i", voyage.arrival.tz) }}<!--<sup>+1 jour</sup>--></h2>
+                                    </div>
+                                </div>
+                                <div class="row trx-lieux">
+                                    <div class="col-8">
+                                        <h2 class="lieux-depart">{{voyages.from.name}}</h2>
+                                    </div>
+                                    <div class="col-4">
+                                        <h2 class="lieux-arrive">{{voyages.to.name}}</h2>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3 tarif-trx">
+                            {% set amount = voyage.total_with_platform_fee %}
+                            {% set amount = amount|format('%.2f') %}  {# Formatage avec deux décimales #}
+                            {% set amount = amount|split('.') %}  {# Séparer la partie entière et décimale #}
+
+                            {{ amount[0] }}<sup>,{{ amount[1] }}</sup> €
+                        </div>
+
+                        <div class="col-md-12 sieges-disponibles">
+                            {% if voyage.available.seats < 5  %}
+                                <span class="text-danger">{{voyage.available.seats}} sièges disponibles à ce tarif</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-12 mt-3">
+                            <div class="trx-infos">
+                                <div class="pill">
+                                    <span><i class="ti ti-bus"></i></span>
+                                    <i class="ti ti-chevron-right"></i>
+                                    <span><i class="ti ti-bus"></i></span>
+                                    <!--<span class="corresp">1 Correspondance <i class="ti ti-chevron-down"></i></span>-->
+                                    <span class="corresp">{{voyage.type}} <i class="ti ti-chevron-down"></i></span>
+                                </div>
+                                <div class="Services">
+                                    {% for amenitie in voyage.amenities[0] %}
+                                        {% if amenitie == "WIFI" %}
+                                            <span><i class="ti ti-wifi"></i></span>
+                                        {% elseif amenitie == "POWER_SOCKETS" %}
+                                            <span><i class="ti ti-plug"></i></span>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                                {% if retour is defined %}
+                                    <a data-uid="{{voyage.uid}}" class="continuer continue-retour-checkout btn btn-success btn-sm">Continuer <i class="ti ti-chevron-right"></i></a>
+                                {% else %}
+                                    <a data-uid="{{voyage.uid}}" class="continuer continue-to-checkout btn btn-success btn-sm">Continuer <i class="ti ti-chevron-right"></i></a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="card-trx-list">
+                    <div class="row">
+                        <div class="col-md-9">
+                            <div class="card-trx-info">
+                                <div class="row trx-heur">
+                                    <div class="col-8 heur-combin">
+                                        <h2 class="heur-depart">{{ voyage.departure.timestamp | date("H:i", voyage.departure.tz) }}</h2>
+                                        {% set durationHour = voyage.duration.hour|format('%02d') %}
+                                        {% set durationMinutes = voyage.duration.minutes|format('%02d') %}
+                                        <h2 class="heur-itineraire"><span>{{durationHour}}:{{durationMinutes}} h</span></h2>
+                                    </div>
+                                    <div class="col-4">
+                                        <h2 class="heur-arrive">{{ voyage.arrival.timestamp | date("H:i", voyage.arrival.tz) }}<!--<sup>+1 jour</sup>--></h2>
+                                    </div>
+                                </div>
+                                <div class="row trx-lieux">
+                                    <div class="col-8">
+                                        <h2 class="lieux-depart">{{voyages.from.name}}</h2>
+                                    </div>
+                                    <div class="col-4">
+                                        <h2 class="lieux-arrive">{{voyages.to.name}}</h2>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3 sieges-disponibles">
+                            <span class="text-danger">complet</span>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+{% else %}
+    <div class="card text-center empty-voyage">
+        <img src="{{asset('modernize/images/billeterie/emptyVoyage.svg')}}" alt="">
+        <h2 class="fw-bolder">Aucun trajet le {{dataTrajet.date.aller}}</h2>
+    </div>
+{% endif %}

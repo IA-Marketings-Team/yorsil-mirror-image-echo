@@ -1,0 +1,130 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}Ajout de nouvelle service{% endblock %}
+
+{% set menu_services = true %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        div#liste-sous-module {
+            padding: 10px;
+            max-height: 170px;
+            overflow-y: auto;
+        }
+        input.is-invalid::placeholder {
+            color: #b03200;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="card bg-light-info shadow-none position-relative overflow-hidden">
+        <div class="card-body px-4 py-3">
+          <div class="row align-items-center">
+            <div class="col-9">
+              <h4 class="fw-semibold mb-8">Services</h4>
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a class="text-muted" href="{{ path('liste_services')}}">Liste</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Ajout</li>
+                </ol>
+              </nav>
+            </div>
+          </div>
+        </div>
+    </div>
+    
+{{ form_start(form)}}
+    <div class="row justify-content-center">
+        <div class="col-6">
+            <div class="card">
+                <div class="card-body p-4">
+                    <div class="row">
+                        <div class="col-md-12 mb-3">{{ form_row(form.nom) }}</div>
+                        <div class="col-md-12 mb-3">{{ form_row(form.description) }}</div>
+                        <div class="col-md-12 mb-3">
+                            <div class="d-flex gap-2 align-items-center mb-3">
+                                <button class="btn btn-primary" id="add-new-module" type="button">Ajouter un Sous-service</button>
+                            </div>
+                            <div id="liste-sous-module"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-muted">
+                    <div class="d-flex align-items-center justify-content-end gap-3">
+                        <button class="btn btn-primary">Ajouter</button>
+                        <a href="{{ path('liste_services')}}" class="btn btn-light-danger text-danger">Annuler</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{{ form_end(form) }}
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(document).ready(function () {
+            $(document).on('click', '#add-new-module', function() {
+                let moduleService = $('#liste-sous-module').find('.module').first()
+                if (moduleService.length > 0) {
+                    if(verifChampModul()) {
+                        let lastModul = moduleService.data('id');
+                        let IdNewModule = lastModul + 1
+                        $('#liste-sous-module').prepend(`
+                            <div class="module d-flex align-items-center gap-2 mb-3" data-id="${IdNewModule}">
+                                <input type="text" required class="form-control" placeholder="Nom du service" name="module-${IdNewModule}" id="module-${IdNewModule}">
+                                <i class="ti ti-trash text-danger remove-module"></i>
+                            </div>
+                        `)
+                    }
+                } else {
+                    $('#liste-sous-module').prepend(`
+                        <div class="module d-flex align-items-center gap-2 mb-3" data-id="1" >
+                            <input type="text" required class="form-control" placeholder="Nom du service" name="module-1" id="module-1">
+                            <i class="ti ti-trash text-danger remove-module"></i>
+                        </div>
+                    `)
+                }
+            })
+
+            $(document).on('click', '.remove-module', function() {
+                $(this).closest('.module').fadeOut(300, function() {
+                    $(this).remove();
+                });
+            })
+
+            function verifChampModul(){
+                isValid = true;
+
+                $('#liste-sous-module .module input').each(function() {
+                    const $input = $(this)
+                    let value = $input.val().trim();
+
+                    if ($input.hasClass('is-invalid')) {
+                        $input.removeClass('is-invalid');
+                        $('#mon-input').attr('placeholder', 'Nom du service');
+
+                    }
+
+                    if (value === '') {
+                        $input.addClass('is-invalid');
+                        $input.attr('placeholder', 'Ce champ est obligatoire.');
+                        setTimeout(function() {
+                            if ($input.hasClass('is-invalid')) {
+                                $input.removeClass('is-invalid');
+                                $input.attr('placeholder', 'Nom du service');
+                            }
+                        }, 3000);
+                        isValid = false;
+                    }
+                });
+
+                return isValid
+            }
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,507 @@
+    <!DOCTYPE html>
+    <html lang="fr">
+        <head>
+            <meta charset="UTF-8">
+            <title>Yorsil.com | politique de confidentialité</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+            <meta content="width=device-width, initial-scale=1.0" name="viewport">
+            <link type="text/css" rel="stylesheet" rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
+            <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+            <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
+            <meta content="" name="author" />
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta content="" name="description">
+            <meta content="" name="keywords">
+            <link rel="shortcut icon" href="{{ asset('modernize/images/logos/favicon.svg') }}">
+            <link rel="stylesheet" href="{{ asset('modernize/css/animate.css') }}">
+            <link rel="stylesheet" href="{{ asset('modernize/libs/sweetalert/sweetalert.css') }}">
+            <link rel="stylesheet" href="{{ asset('modernize/css/style.min.css') }}" />
+            <style>
+                .header{
+                    width: 100%;
+                    padding: 1rem;
+                    background: #3e7a9e;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    text-align: center;
+                }
+                .header h1{
+                    color: #fff;
+                    font-family: sans-serif;
+                }
+                #politiqueCondition {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    flex-direction: column;
+                    --backgroung: #fff;
+                    background: var(--backgroung);
+                }
+                #politiqueCondition .main{
+                    width: 100%;
+                    position: relative;
+                    padding: 1rem;
+                }
+                article .title {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin: 2rem 1rem;
+                }
+                article .title h2 {
+                    position: relative;
+                    text-align: center;
+                    text-transform: uppercase;
+                    color: #3e7a9e;
+                    font-weight: 700;
+                }
+                article .title h2:before,
+                article .title h2:after {
+                    content: "";
+                    position: absolute;
+                    background-color: #3e7a9e;
+                }
+                article .title h2:before {
+                    left: 0;
+                    bottom: -5px;
+                    width: 100%;
+                    height: 1px;
+                }
+                article .title h2:after {
+                    bottom: -7px;
+                    width: 100px;
+                    height: 5px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                }
+                #politiqueCondition .main article .content {
+                    display: flex;
+                    align-items: center;
+                    gap: 1rem;
+                    justify-content: space-around;
+                    flex-wrap: wrap;
+                }
+                #politiqueCondition .main article .content.reverse {
+                    flex-wrap: wrap-reverse;
+                    margin-bottom: 2rem;
+                }
+                #politiqueCondition .main article .content .info-group .sous-titre {
+                    position: relative;
+                    --color: #3e7a9e;
+                    color: #3e7a9e;
+                    color: var(--color);
+                    margin-bottom: 1rem;
+                }
+                #politiqueCondition .main article .content .info-group .sous-titre::before {
+                    content: "";
+                    position: absolute;
+                    width: 100px;
+                    height: 3px;
+                    background: #3e7a9e;
+                    background: var(--color);
+                    left: 0;
+                    bottom: -5px;
+                }
+                #politiqueCondition .main article .content .logo{
+                    flex: 0 1 369.75px;
+                }
+                #politiqueCondition .main article .content .logo img{
+                    width: 100%;
+                    object-fit: contain;
+                    box-shadow: 1px 1px 5px #ccc;
+                    border-radius: 5px;
+                }
+                .info-group{
+                    margin-bottom: 1rem;
+                }
+                .info-group .info{
+                    display: flex;
+                    align-items: center;
+                    gap: 1rem;
+                    padding: 5px 1rem;
+                }
+                .info-group .info .label{
+                    font-weight: 700;
+                }
+                .info-group .info .descritpion{
+                }
+                #donnee-perso .cards {
+                    display: flex;
+                    justify-content: center;
+                    flex-wrap: wrap;
+                    grid-template-columns: 1rem;
+                }
+                #donnee-perso .cards .card-content{
+                    flex: 0 0 33.33333333%;
+                    padding: 0.5rem;
+                }
+                #donnee-perso .cards .card{
+                    overflow: hidden;
+                    min-width: 335px;
+                    height: 100%;
+                    margin-bottom: 0px;
+                }
+                #donnee-perso .cards .card .title{
+                    font-size: 15px;
+                    margin: 1rem;
+                    font-weight: bold;
+                    text-align: center;
+                }
+                #donnee-perso .cards .card .image{
+                    width: 100%;
+                    height: 200px;
+                    overflow: hidden;
+                    display: flex;
+                }
+                #donnee-perso .cards .card .image img{
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                }
+                #donnee-perso .cards .card .infos{
+                    padding: 1rem;
+                }
+                #donnee-perso .cards .card .infos h3{
+                    font-size: 13px;
+                }
+                #donnee-perso .cards .card .infos h3{
+                    font-size: 13px;
+                }
+                #donnee-perso .cards .card .infos ul{
+                    margin: 0;
+                    padding: 0px 2rem;
+                }
+                #donnee-perso .cards .card .infos ul li{
+                    list-style-type: circle;
+                }
+                #donnee-perso .link{
+                    padding: 1rem;
+                    text-align: center;
+                    position: relative;
+                }
+                #donnee-perso .link a{
+                    background: #3e7a9e;
+                    color: #fff;
+                    position: relative;
+                    padding: 5px;
+                    display: inline-block;
+                    border-radius: 5px;
+                }
+                #donnee-perso .link::before{
+                    content: "";
+                    position: absolute;
+                    width: 100%;
+                    height: 2px;
+                    background: #3e7a9e;
+                    left: 0;
+                    top: 50%;
+                    transform: translateY(-50%);
+                }
+                section#cgu {
+                    margin-bottom: 4rem;
+                }
+                #cgu .main{
+                    padding: 1rem;
+                }
+                #cgu .card-list{
+                    display: flex;
+                    justify-content: center;
+                    flex-wrap: wrap;
+                }
+                #cgu .card-list .card-item{
+                    flex: 1 0 50%;
+                    padding: 0 2rem;
+                    display: flex;
+                    align-items: flex-start;
+                    justify-content: center;
+                    gap: 2rem;
+                    margin-bottom: 1rem;
+                }
+                #cgu .card-list .card-item .icon{
+                    flex: 0 0 50px;
+                }
+                #cgu .card-list .card-item .icon i{
+                    font-size: 50px;
+                    color: #3e7a9e;
+                }
+                #cgu .card-list .card-item .contents{
+
+                }
+                #cgu .card-list .card-item .contents h2 {
+                    font-weight: bold;
+                    color: #3e7a9e;
+                }
+                #cgu .card-list .card-item .contents ul {
+                    margin: 0;
+                    padding: 0px 2rem;
+                }
+                #cgu .card-list .card-item .contents ul li {
+                    list-style-type: circle;
+                }
+                #accept-cvg {
+                    position: fixed;
+                    bottom: 0;
+                    right: 50%;
+                    transform: translateX(50%);
+                    margin: 2rem;
+                }
+                .form-check-input {
+                    border-color: #4a6ccc;
+                }
+                .form-check-input,
+                .form-check-label {
+                    cursor: pointer;
+                }
+                @media screen and (width < 805px) {
+                    #politiqueCondition .main article .content .logo {
+                        flex: 0 1 250px;
+                    }
+                }
+                @media screen and (width < 685px) {
+                    #cgu .card-list .card-item {
+                        padding: 0;
+                        gap: 1rem;
+                    }
+                }
+            </style>
+        </head>
+        <body>
+            {% for label,messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="d-none kl-flash-message" width="20" height="20" data-type="{{ label }}" data-message="{{ message }}"></div>
+                {% endfor %}
+            {% endfor %}
+
+            <div class="header">
+                <h1>politique de confidentialité</h1>
+            </div>
+            <section id="politiqueCondition">
+                <div class="main">
+                    <article>
+                        <div class="title">
+                            <h2>Mentions Légales</h2>
+                        </div>
+                        <div class="content reverse">
+                            <div class="infos">
+                                <div class="info-group">
+                                    <h3 class="sous-titre">Informations de l'entreprise</h3>
+                                    <div class="info">
+                                        <span class="label">Nom de l'entreprise :</span>
+                                        <span class="descritpion">Yorsil</span>
+                                    </div>
+                                    <div class="info">
+                                        <span class="label">Adresse :</span>
+                                        <span class="descritpion">00 rue Balard, 70000, Paris</span>
+                                    </div>
+                                    <div class="info">
+                                        <span class="label">Téléphone :</span>
+                                        <span class="descritpion">060000000</span>
+                                    </div>
+                                    <div class="info">
+                                        <span class="label">Email :</span>
+                                        <span class="descritpion">yorsil@mail.com</span>
+                                    </div>
+                                    <div class="info">
+                                        <span class="label">Numéro d'enregistrement :</span>
+                                        <span class="descritpion">00000 SIRET/SIREN</span>
+                                    </div>
+                                </div>
+                                <div class="info-group">
+                                    <h3 class="sous-titre">Directeur de la publication</h3>
+                                    <div class="info">
+                                        <span class="label">Nom :</span>
+                                        <span class="descritpion">Directeur de la Publication</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="logo">
+                                <img src="{{ asset('modernize/images/logos/fahana.svg') }}" alt="">
+                            </div>
+                        </div>
+                        <div class="content">
+                            <div class="logo hebergeur">
+                                <img src="{{ asset('modernize/images/logos/Logo-ovh.png') }}" alt="">
+                            </div>
+                            <div class="infos">
+                                <div class="info-group">
+                                    <h3 class="sous-titre">Hébergeur du site</h3>
+                                    <div class="info">
+                                        <span class="label">Nom de l'hébergeur :</span>
+                                        <span class="descritpion">[Nom de l'Hébergeur]</span>
+                                    </div>
+                                    <div class="info">
+                                        <span class="label">Adresse :</span>
+                                        <span class="descritpion">[Adresse de l'Hébergeur]</span>
+                                    </div>
+                                    <div class="info">
+                                        <span class="label">Téléphone :</span>
+                                        <span class="descritpion">[Numéro de Téléphone de l'Hébergeur]</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </section>
+            <section id="politiqueCondition">
+                <div class="main">
+                    <article id="donnee-perso">
+                        <div class="title">
+                            <h2>Protection des Données Personnelles</h2>
+                        </div>
+                        <div class="cards">
+                            <div class="card-content">
+                                <div class="card">
+                                    <h2 class="title">Collecte des données personnelles</h2>
+                                    <div class="image">
+                                        <img src="{{ asset('modernize/images/donees-personnelles/collect-data.png') }}" alt="">
+                                    </div>
+                                    <div class="infos">
+                                        <h3>Nous collectons les informations personnelles suivantes :</h3>
+                                        <ul>
+                                            <li>Nom</li>
+                                            <li>Adresse email</li>
+                                            <li>Numéro de téléphone</li>
+                                            <li>Adresse IP</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-content">
+                                <div class="card">
+                                    <h2 class="title">Utilisation des données personnelles</h2>
+                                    <div class="image">
+                                        <img src="{{ asset('modernize/images/donees-personnelles/use-data.png') }}" alt="">
+                                    </div>
+                                    <div class="infos">
+                                        <h3>Vos données personnelles sont utilisées pour :</h3>
+                                        <ul>
+                                            <li>Fournir les services demandés</li>
+                                            <li>Améliorer notre site web</li>
+                                            <li>Envoyer des communications marketing</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-content">
+                                <div class="card">
+                                    <h2 class="title">Droits des utilisateurs</h2>
+                                    <div class="image">
+                                        <img src="{{ asset('modernize/images/donees-personnelles/user_rights.png') }}" alt="">
+                                    </div>
+                                    <div class="infos">
+                                        <h3>Conformément à la loi Informatique et Libertés du 6 janvier 1978 et au Règlement Général sur la Protection des Données (RGPD), vous disposez des droits suivants :</h3>
+                                        <ul>
+                                            <li>Droit d'accès</li>
+                                            <li>Droit de rectification</li>
+                                            <li>Droit à l'effacement</li>
+                                            <li>Droit à la portabilité des données</li>
+                                            <li>Droit d'opposition</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="link">
+                            <a href="javascript:void(0)">Pour exercer ces droits, vous pouvez nous contacter à l'adresse suivante : [Votre Adresse Email].</a>
+                        </div>
+                    </article>
+                        {# ti ti-checkup-list/ti ti-file-check, ti ti-world-upload, ti ti-brain, ti ti-script-x, ti ti-writing #}
+                </div>
+            </section>
+
+            <section id="cgu">
+                <div class="main">
+                    <article id="condition-general">
+                        <div class="title">
+                            <h2>Conditions Générales d'Utilisation</h2>
+                        </div>
+                        <div class="card-list">
+                            <div class="card-item">
+                                <div class="icon">
+                                    <i class="ti ti-checkup-list"></i>
+                                </div>
+                                <div class="contents">
+                                    <h2>Acceptation des conditions</h2>
+                                    <p>En accédant et en utilisant le site [Votre Site Web], vous acceptez les présentes conditions générales d'utilisation.</p>
+                                </div>
+                            </div>
+                            <div class="card-item">
+                                <div class="icon">
+                                    <i class="ti ti-world-upload"></i>
+                                </div>
+                                <div class="contents">
+                                    <h2>Utilisation du site</h2>
+                                    <p>Vous vous engagez à :</p>
+                                    <ul>
+                                        <li>Ne pas utiliser le site de manière illégale</li>
+                                        <li>Ne pas porter atteinte à l'intégrité du site</li>
+                                        <li>Ne pas collecter les informations personnelles des autres utilisateurs</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="card-item">
+                                <div class="icon">
+                                    <i class="ti ti-brain"></i>
+                                </div>
+                                <div class="contents">
+                                    <h2>Propriété intellectuelle</h2>
+                                    <p>Tout le contenu du site, y compris les textes, images, graphismes, logos, vidéos, est protégé par les lois sur la propriété intellectuelle et appartient à Yorsil ou à ses partenaires.</p>
+                                </div>
+                            </div>
+                            <div class="card-item">
+                                <div class="icon">
+                                    <i class="ti ti-script-x"></i>
+                                </div>
+                                <div class="contents">
+                                    <h2>Limitation de responsabilité</h2>
+                                    <p>Yorsil ne saurait être tenu responsable des dommages directs ou indirects résultant de l'utilisation ou de l'incapacité d'utiliser le site.</p>
+                                </div>
+                            </div>
+                            <div class="card-item">
+                                <div class="icon">
+                                    <i class="ti ti-writing"></i>
+                                </div>
+                                <div class="contents">
+                                    <h2>Modifications des conditions</h2>
+                                    <p>Yorsil se réserve le droit de modifier les présentes conditions générales d'utilisation à tout moment</p>
+                                    <p>Les modifications seront publiées sur cette page et entreront en vigueur dès leur mise en ligne.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <div id="accept-cvg" class="alert alert-primary alert-dismissible fade show shadow-sm" role="alert">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="check-cgv">
+                    <label class="form-check-label" for="check-cgv">
+                        <strong>Je suis d'accord</strong>
+                    </label>
+                </div>
+                <button type="button" class="btn-close btn-alert-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+
+            <div class="preloader"><img src="{{ asset('modernize/images/logos/favicon.svg') }}" alt="loader" class="lds-ripple img-fluid" /></div>
+            <div class="preloading">
+                <div class="LoadSubmite">
+                    <img src="{{ asset('modernize/images/logos/fahana.svg') }}" alt="circlePreload" class="circlePreload img-fluid" />
+                </div>
+            </div>
+
+            <script src="{{ asset('modernize/libs/jquery/dist/jquery.min.js') }}"></script>
+            <script src="{{ asset('modernize/libs/simplebar/dist/simplebar.min.js') }}"></script>
+            <script src="{{ asset('modernize/libs/bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script>
+            <script src="{{ asset('modernize/js/app.min.js') }}"></script>
+            <script src="{{ asset('modernize/js/app.dark.init.js') }}"></script>
+            <script src="{{ asset('modernize/js/app-style-switcher.js') }}"></script>
+            <script src="{{ asset('modernize/js/custom.js') }}"></script>
+            <script src="{{ asset('modernize/libs/sweetalert/sweetalert.min.js') }}"></script>
+            <script src="{{ asset('modernize/libs/notify/notify.min.js') }}"></script>
+            <script src="{{ asset('modernize/js/notification.js') }}"></script>
+            <script src="{{ asset('backoffice/general.js') }}"></script>
+            {% include 'globale_javascript.html.twig' %}
+        </body>
+    </html>

@@ -1,0 +1,508 @@
+{% extends 'base_front.html.twig' %}
+
+{% set menu_billeteries = true %}
+
+{% block title %}billeteries{% endblock %}
+
+{% block stylesheets %} 
+    {{ parent() }}
+    echo trajets;
+    <style type="text/css">
+        .card-trx-selected {
+            cursor: pointer;
+            border: 2px solid transparent !important;
+            transition: all 0.4s;
+        }
+        .card-trx-selected p,
+        .card-trx-selected span {
+            font-size: 12px;
+        }
+        .card-trx-selected:hover {
+            border: 2px solid #539BFF !important;
+        }
+        .card-trx-selected .card-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .trx-depature-name span{
+            color: #539BFF;
+            font-weight: 800;
+        }
+        .trx-depature-name span.h-duration{
+            color: #2A3547;
+        }
+        .trx-citie{
+            flex: 1 0 auto;
+        }
+        .trx-citie div span.hr{
+            flex: 1 1 50px;
+            width: 50px;
+            position: relative;
+            height: 3px;
+            background-color: #2A3547;
+        }
+        .trx-citie div span.hr::before{
+            content: "";
+            position: absolute;
+            width: 10px;
+            aspect-ratio: 1/1;
+            background-color: #fff;
+            border: 2px solid #2A3547;
+            border-radius: 50%;
+            top: calc(50% - 5px);
+        }
+        .trx-citie div span.hr.d::before{
+            left: 0;
+        }
+        .trx-citie div span.hr.a::before{
+            right: 0;
+        }
+        .text-muted {
+            color: dimgray;
+        }
+        .trx-citie.d-flex.flex-wrap.align-items-start.gap-2.mb-3 {
+            flex: 1 0 86%;
+        }
+        p.trx-depature-name {
+            flex: 1 1 30%;
+        }
+        .line-clamp {
+            max-width: 100%;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .loading {
+            position: relative;
+        }
+
+        .loading > div {
+            width: 60px;
+            height: 60px;
+        }
+
+
+        .loading > div > div {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background: #61a3ff;
+            top: 10px;
+            left: 10px;
+            transform-origin: 20px 20px;
+            border-radius: 8px;
+            animation: spin-a 2s infinite cubic-bezier(0.5, 0, 0.5, 1);
+        }
+
+        .loading > div > .c2 {
+        top: 10px;
+        left: auto;
+        right: 10px;
+        transform-origin: -4px 20px;
+        animation: spin-b 2s infinite cubic-bezier(0.5, 0, 0.5, 1);
+        }
+        .loading > div > .c3 {
+        top: auto;
+        left: auto;
+        right: 10px;
+        bottom: 10px;
+        transform-origin: -4px -4px;
+        animation: spin-c 2s infinite cubic-bezier(0.5, 0, 0.5, 1);
+        }
+        .loading > div > .c4 {
+        top: auto;
+        bottom: 10px;
+        transform-origin: 20px -4px;
+        animation: spin-d 2s infinite cubic-bezier(0.5, 0, 0.5, 1);
+        }
+
+        @keyframes spin-a {
+        0%   { transform: rotate(90deg); }
+        0%  { transform: rotate(90deg); }
+        50%  { transform: rotate(180deg); }
+        75%  { transform: rotate(270deg); }
+        100% { transform: rotate(360deg); }
+        }
+        @keyframes spin-b {
+        0%   { transform: rotate(90deg); }
+        25%  { transform: rotate(90deg); }
+        25%  { transform: rotate(180deg); }
+        75%  { transform: rotate(270deg); }
+        100% { transform: rotate(360deg); }
+        }
+        @keyframes spin-c {
+        0%   { transform: rotate(90deg); }
+        25%  { transform: rotate(90deg); }
+        50%  { transform: rotate(180deg); }
+        50%  { transform: rotate(270deg); }
+        100% { transform: rotate(360deg); }
+        }
+        @keyframes spin-d {
+        0%   { transform: rotate(90deg); }
+        25%  { transform: rotate(90deg); }
+        50%  { transform: rotate(180deg); }
+        75%  { transform: rotate(270deg); }
+        75% { transform: rotate(360deg); }
+        100% { transform: rotate(360deg); }
+        }
+
+
+        .loading > span {
+        width: 100px;
+        height: 30px;
+        position: absolute;
+        left: 50%;
+        margin-left: -50px;
+        top: 50%;
+        margin-top: 30px;
+        color: #ff8c00;
+        font-size: 12px;
+        text-align: center;
+        }
+
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="card-blabla-trajet">
+        <div class="header-trx d-flex align-items-end justify-content-between">
+            <h5 class="fw-bolder header-title-trx">
+                <p class="date-trx">--/--/-- </p>
+                <span class="trx-depature text-muted" id="head-trx-depature">---</span>
+                <span class="text-muted"> → </span>
+                <span class="trx-destination text-muted" id="head-trx-destination">---</span>
+            </h5>
+            
+            <a href="{{path('blablacar')}}" class="btn btn-warning" id="modifier-destination">Modifier la destination</a>
+            
+            
+            <span class="h5 fw-bolder nbr-trx-dispo">trajets disponibles</span>
+        </div>
+
+        <div class="listes-trx my-3" id="listes-trx">
+            <div class="loadging-content d-flex align-items-center justify-content-center">
+                <div class="loading">
+                    <div>
+                        <div class="c1"></div>
+                        <div class="c2"></div>
+                        <div class="c3"></div>
+                        <div class="c4"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(document).ready(function(){
+            const $trajets = {{ trajets|json_encode|raw }},
+            $travels = $trajets.offer.travels;
+
+            console.log("trajet",$trajets);
+
+            let $outbound = {},
+            $inbound = {},
+            $routeSelectedAller,
+            $routeSelectedRetour,
+            dateTrx = formatDate($travels[0].departure_date);
+
+            
+            $.each($travels, function(index, route) {
+                switch (route.direction) {
+                    case "outbound":
+                        $outbound = {
+                            'trajet': route.id,
+                            'routes': route.routes,
+                        }
+                        break;
+
+                    case "inbound":
+                        $inbound = {
+                            'trajet': route.id,
+                            'routes': route.routes,
+                        }
+                        break;
+                }
+            });
+
+            if ($.isEmptyObject($outbound)) {
+                console.log("Le tableau est vide !");
+            } else {
+                initTrajets()
+            }
+
+            function initTrajets() {
+                $("#listes-trx").empty()
+                let depature = "",
+                destination = "";
+
+                let nbrTrx = 0
+
+                $.each($outbound.routes, function(index, route) {
+                    if (route.hasOwnProperty("bundles") && Array.isArray(route.bundles) && route.bundles.length > 0 && "price" in route.bundles[0]) {
+                        ++nbrTrx
+                        if(depature === "") {
+                            depature = formatName(route.legs[0].departure_station.name).name
+                        }
+                        if(destination === "") {
+                            destination = formatName(route.legs[0].arrival_station.name).name
+                        }
+                        $("#listes-trx").append(`
+                            <div class="card card-trx-selected" data-trajet="${$outbound.trajet}" data-id="${route.id}">
+                                <div class="card-body d-flex flex-wrap align-items-center justify-content-between">
+                                    <div class="trx-citie d-flex flex-wrap align-items-start gap-2 mb-3">
+                                        <p class="trx-depature-name fw-bolder m-0">
+                                            <span class="h-depature d-block">${timeStamp(route.legs[0].departure_station.departure_timestamp).heure}</span>
+                                            <span class="text-dark d-block">${route.legs[0].departure_station.name}</span>
+                                            <span class="text-muted line-clamp">
+                                                ${metaData(route.legs[0].departure_station.meta_data)}
+                                            </span>
+                                        </p>
+    
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="hr d"></span>
+                                            <span class="h-duration">${formatHeureDuration(route.travel_duration)}</span>
+                                            <span class="hr a"></span>
+                                        </div>
+    
+                                        <p class="trx-depature-name fw-bolder m-0">
+                                            <span class="h-destination d-block">${timeStamp(route.legs[0].arrival_station.arrival_timestamp).heure}</span>
+                                            <span class="text-dark d-block">${route.legs[0].arrival_station.name}</span>
+                                            <span class="text-muted">${metaData(route.legs[0].arrival_station.meta_data)}</span>
+                                        </p>
+                                    </div>
+    
+                                    <h4 class="prix-trx fw-bolder">${formatPrix(route.bundles[0].price)}€</h4>
+                                </div>
+                                <div class="card-footer text-muted px-4 py-1">
+                                    <img src="{{asset('modernize/images/Blablabus/icon-bus.svg')}}" alt="" width="35px">
+                                    <span> | </span>
+                                    <span>Prises électriques</span>
+                                    <span> | </span>
+                                    <span>Toilettes à bord</span>
+                                </div>
+                            </div>
+                        `)
+                    }
+                });
+
+               if (nbrTrx === 0) {
+    $(".nbr-trx-dispo").text("Aucun trajet disponible aujourd'hui entre ces villes");
+} else {
+    $(".nbr-trx-dispo").text(`${nbrTrx} trajets disponibles`);
+}
+
+$("#head-trx-depature").text(depature);
+$("#head-trx-destination").text(destination);
+$('.date-trx').text(dateTrx);
+
+            }
+
+            $(document).on("click", ".card-trx-selected", function (e) {
+                const $trajet = $(this).data('trajet'),
+                $id = $(this).data('id'),
+                isRetour = $(this).hasClass('retour');
+
+                if (isRetour) {
+                    $routeSelectedRetour = $inbound.routes.find(route => route.id === $id)
+
+                    let form = $('<form>', {
+                        'method': 'POST',
+                        'action': "/trajet-selectionner"
+                    });
+
+                    $('<input>').attr({'type': 'hidden','name': 'trajetSelected','value': JSON.stringify($routeSelectedAller)}).appendTo(form);
+                    $('<input>').attr({'type': 'hidden','name': 'trajetSelectedRetour','value': JSON.stringify($routeSelectedRetour)}).appendTo(form);
+
+                    form.appendTo('body').submit();
+                } else {
+                    $routeSelectedAller = $outbound.routes.find(route => route.id === $id)
+
+                    let isRetour = Object.keys($inbound).length !== 0;
+
+                    if (isRetour) {
+                        selectTrxRetour()
+                    } else {
+                        let form = $('<form>', {
+                            'method': 'POST',
+                            'action': "/trajet-selectionner"
+                        });
+
+                        $('<input>').attr({'type': 'hidden','name': 'trajetSelected','value': JSON.stringify($routeSelectedAller)}).appendTo(form);
+
+                        form.appendTo('body').submit();
+                    }
+                }
+
+            })
+
+            function selectTrxRetour() {
+                $("#listes-trx").empty()
+                $("#listes-trx").append(`
+                    <div class="card mb-2 animated fadeInRight">
+                        <div class="card-body p-2 text-center">
+                            <h4 class="m-0">Trajet du retour</h4>
+                        </div>
+                    </div>
+                `)
+                let nbrTrx = 0
+                $.each($inbound.routes, function(index, route) {
+                    if (route.hasOwnProperty("bundles") && Array.isArray(route.bundles) && route.bundles.length > 0 && "price" in route.bundles[0]) {
+                        ++nbrTrx
+                        $("#listes-trx").append(`
+                            <div class="card card-trx-selected animated fadeInRight retour" data-trajet="${$inbound.trajet}" data-id="${route.id}">
+                                <div class="card-body d-flex flex-wrap align-items-center justify-content-between">
+                                    <div class="trx-citie d-flex flex-wrap align-items-start gap-2 mb-3">
+                                        <p class="trx-depature-name fw-bolder m-0">
+                                            <span class="h-depature d-block">${timeStamp(route.legs[0].departure_station.departure_timestamp).heure}</span>
+                                            <span class="text-dark d-block">${route.legs[0].departure_station.name}</span>
+                                            <span class="text-muted line-clamp">
+                                                ${metaData(route.legs[0].departure_station.meta_data)}
+                                            </span>
+                                        </p>
+    
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="hr d"></span>
+                                            <span class="h-duration">${formatHeureDuration(route.travel_duration) ? formatHeureDuration(route.travel_duration) : ""}</span>
+                                            <span class="hr a"></span>
+                                        </div>
+    
+                                        <p class="trx-depature-name fw-bolder m-0">
+                                            <span class="h-destination d-block">${timeStamp(route.legs[0].arrival_station.arrival_timestamp).heure}</span>
+                                            <span class="text-dark d-block">${route.legs[0].arrival_station.name}</span>
+                                            <span class="text-muted">${metaData(route.legs[0].arrival_station.meta_data)}</span>
+                                        </p>
+                                    </div>
+    
+                                    <h4 class="prix-trx fw-bolder">${formatPrix(route.bundles[0].price)}€</h4>
+                                </div>
+                                <div class="card-footer text-muted px-4 py-1">
+                                    <img src="{{asset('modernize/images/Blablabus/icon-bus.svg')}}" alt="" width="35px">
+                                    <span> | </span>
+                                    <span>Prises électriques</span>
+                                    <span> | </span>
+                                    <span>Toilettes à bord</span>
+                                </div>
+                            </div>
+                        `)
+                    }
+                });
+               $(".nbr-trx-dispo").each(function() {
+                console.log(nbrTrx);
+    if (nbrTrx === 0) {
+        
+        $(this).text("Aucun trajet disponible");
+      
+    } else {
+        $(this).text(`${nbrTrx} trajets disponibles B`);
+
+    }
+});
+
+            }
+
+            function formatDate(date) {
+                const thisDate = (date instanceof Date && !isNaN(date)) ? date : new Date(date),
+                daysOfWeek = ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"],
+                months = ["janv.", "févr.", "mars", "avr", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."];
+                
+                let today = new Date(),
+                    tomorrow = new Date(today);
+                
+                tomorrow.setDate(today.getDate() + 1);
+
+                const dayOfWeek = daysOfWeek[thisDate.getDay()];
+                const dayOfMonth = thisDate.getDate();
+                const month = months[thisDate.getMonth()];
+                const year = thisDate.getFullYear();
+
+                today.setHours(0, 0, 0, 0);
+                tomorrow.setHours(0, 0, 0, 0);
+                thisDate.setHours(0, 0, 0, 0);
+
+                return thisDate.getTime() === today.getTime() ? "Aujourd’hui" :
+                    thisDate.getTime() === tomorrow.getTime() ? "Demain" :
+                    `${dayOfWeek}. ${dayOfMonth} ${month} ${thisDate.getFullYear() !== today.getFullYear() ? year : '' }`;
+            }
+
+            function formatHeureDuration(heure) {
+                const matches = heure.match(/PT(\d+)H(\d+)M/);
+
+                if (matches) {
+                    const hours = matches[1].padStart(2, '0'); // Ajoute un zéro devant si nécessaire
+                    const minutes = matches[2].padStart(2, '0');
+
+                    const formattedTime = `${hours}h${minutes}`;
+
+                    return formattedTime
+                } else {
+                    console.log("Format invalide !");
+                }
+            }
+
+            function timeStamp(date) {
+                const dateObj = new Date(date);
+
+                const jour = dateObj.getDate().toString().padStart(2, '0');
+                const mois = (dateObj.getMonth() + 1).toString().padStart(2, '0');
+                const annee = dateObj.getFullYear();
+                const heures = dateObj.getHours().toString().padStart(2, '0');
+                const minutes = dateObj.getMinutes().toString().padStart(2, '0');
+
+                const formattedDate = `${jour}/${mois}/${annee}`;
+                const formattedHeur = `${heures}:${minutes}`;
+
+                return {
+                    "date" : formattedDate,
+                    "heure" : formattedHeur,
+                }
+            }
+
+            function formatName(name) {
+                let parts = name.split(" - ");
+                
+                // Formatage des milliers avec une virgule
+                let nom = parts[0];
+
+                // S'il y a une partie décimale, mettre en puissance
+                let sub = parts[1] ? parts[1] : "";
+
+                return {
+                    "name" : nom,
+                    "sub" : sub
+                };
+            }
+
+            function metaData(meta) {
+                let metaDataFormat = "";
+
+                $.each(meta, function(index, meta) {
+                    metaDataFormat += (index > 0 ? " - " : "") + meta.value;
+                });
+
+                return metaDataFormat
+            }
+
+            function formatPrix(prix) {
+                let parts = prix.toString().split(".");
+                
+                // Formatage des milliers avec une virgule
+                let entier = parts[0];
+
+                // S'il y a une partie décimale, mettre en puissance
+                let decimal = parts[1] ? `<sup>.${parts[1]}</sup>` : "";
+
+                return `${entier}${decimal}`;
+            }
+
+        });
+    </script>
+{% endblock %}

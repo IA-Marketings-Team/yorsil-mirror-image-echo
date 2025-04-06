@@ -1,0 +1,181 @@
+{% extends 'base_front.html.twig' %}
+
+    {% set menu_hist_reservations = true %}
+    
+    {% block title %}Historique des reservations{% endblock %}
+    
+    {% block stylesheets %}
+        {{ parent() }}
+        <link rel="stylesheet" href="{{ asset('modernize/libs/select2/dist/css/select2.min.css') }}">
+        <style>
+            .table-responsive::-webkit-scrollbar {
+                width: 5px;
+            }
+            .table-responsive::-webkit-scrollbar-track {
+                background: #f1f1f1;
+                border-radius: 10px;
+            }
+            .table-responsive::-webkit-scrollbar-thumb {
+                background: #c1c1c1;
+                border-radius: 10px;
+            }
+            
+        </style>
+    {% endblock %}
+    
+    {% block body %}
+        <div class="card bg-light-info shadow-none position-relative overflow-hidden">
+            <div class="card-body px-4 py-3">
+              <div class="row align-items-center">
+                <div class="col-9">
+                  <h4 class="fw-semibold mb-8">Historique des reservations</h4>
+                  <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                      <li class="breadcrumb-item"><a class="text-muted" href="javascript:void(0)">Reservations</a></li>
+                      <li class="breadcrumb-item active" aria-current="page">Liste</li>
+                    </ol>
+                  </nav>
+                </div>
+                {# <div class="col-3">
+                  <div class="text-center mb-n5">  
+                    <img src="{{ asset('modernize/images/logos/favicon.svg') }}" alt="" class="img-fluid mb-n4">
+                  </div>
+                </div> #}
+              </div>
+            </div>
+        </div>
+    
+        <section>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            {# <div class="mb-2">
+                                <a id="ajout_reservation" href="{{ path('flixBus') }}" class="btn btn-primary mb-2">
+                                    <i class="ti ti-plus fs-4"></i> Ajouter une reservation
+                                </a>
+                            </div> #}
+                            <form id="exportForm" action="{{ path('facture_services_boutique') }}" method="post" target="_blank">
+                                <input type="hidden" name="type" value="1">
+                                <div class="row mb-2">
+                                    <div class="col-sm-3">
+                                        <input type="date" id="id-date-debut" class="form-control" name="date_debut" required="Valeur requis">
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <input type="date" id="id-date-fin" class="form-control" name="date_fin" required="Valeur requis">
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <button onclick="submitFormInNewTab()" class="btn btn-danger mb-2"> 
+                                            <i class="ti ti-file fs-4"></i> Exporter Facture Reservation
+                                        </button>
+                            </form>
+                                        <a id="ajout_reservation" href="{{ path('flixBus') }}" class="btn btn-primary mb-2" style="margin-left: 20px;">
+                                            <i class="ti ti-plus fs-4"></i> Ajouter une reservation
+                                        </a>
+                                    </div>
+                                </div>
+                            <div class="table-responsive p-1">
+                                <table id="id-reservation-liste" class="table table-light">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th class="text-center">N°</th>
+                                            <th>Date de départ</th>
+                                            <th>Date d'arriver</th>
+                                            <th>Station de départ</th>
+                                            <th>Station d'arriver</th>
+                                            {# <th class="text-center">Prix Unité</th> #}
+                                            <th class="text-center">Prix d'Achat</th>
+                                            {# <th class="text-center">Remise</th> #}
+                                            <th>Passagers</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for reservation in reservations %} 
+                                            <tr>
+                                                <td>
+                                                    <small>{{ reservation.dateResa | date('d-m-Y') }}</small> <sup> | {{ reservation.dateResa | date('H:m') }}</sup>
+                                                </td>
+                                                <td class="text-center">{{ reservation.orderId }}</td>
+                                                <td>
+                                                    <small>{{ reservation.dateDepart | date('d-m-Y') }}  <sup> | {{ reservation.dateDepart | date('H:m') }}</sup></small>
+                                                </td>
+                                                <td>
+                                                    <small>{{ reservation.dateArriver | date('d-m-Y') }} <sup> | {{ reservation.dateArriver | date('H:m') }}</sup></small>
+                                                </td>
+                                                <td>{{ reservation.stationDepart }}</td>
+                                                <td>{{ reservation.stationArriver }}</td>
+                                                {% set ca = (reservation.fraisBoutique) ? reservation.fraisBoutique|number_format(2, '.', '') : 0 %}
+                                                {# <td class="text-center"><b>{{ reservation.montantTotal|number_format(2, '.', '') }} &euro;</b></td> #}
+                                                <td class="text-center"><b>{{ (reservation.montantTotal - ca)|number_format(2, '.', '') }} &euro;</b></td>
+                                                {# <td class="text-center"><b>{{ (reservation.fraisBoutique) ? reservation.fraisBoutique|number_format(2, '.', '') : 0 }} &euro;</b></td> #}
+                                                <td>
+                                                    {% set passagers = reservation.nbrePassagers %}
+                                                    {% set result = [] %}
+
+                                                    {% if passagers.adult > 0 %}
+                                                        {% set result = result|merge([passagers.adult ~ ' adulte' ~ (passagers.adult > 1 ? 's' : '')]) %}
+                                                    {% endif %}
+                                                    {% if passagers.children > 0 %}
+                                                        {% set result = result|merge([passagers.children ~ ' enfant' ~ (passagers.children > 1 ? 's' : '')]) %}
+                                                    {% endif %}
+                                                    {% if passagers.bike_slot > 0 %}
+                                                        {% set result = result|merge([passagers.bike_slot ~ ' place vélo' ~ (passagers.bike_slot > 1 ? 's' : '')]) %}
+                                                    {% endif %}
+
+                                                    {{ result|join(', ') }}
+                                                </td>
+                                                <td>
+                                                    {% if reservation.description.lien_rappel is defined %}
+                                                        <a title="Télécharger" href="{{ reservation.description.lien_rappel }}" target="_blank">
+                                                            <i class="ti ti-download fs-4"></i>
+                                                        </a>
+                                                    {% else %}
+                                                        <a title="Télécharger" href="javascript:void(0)">
+                                                            <i class="ti ti-reload fs-4"></i>
+                                                        </a>
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    
+    {% endblock %}
+    
+    {% block javascripts %}
+        {{ parent() }}
+        <script src="{{ asset('modernize/libs/select2/dist/js/select2.full.min.js') }}"></script>
+        <script src="{{ asset('modernize/libs/select2/dist/js/select2.min.js') }}"></script>
+        <script>
+            $('#id-reservation-liste').DataTable({
+                language: { 
+                    "url": global_utils.urls.datatable_fr,
+                    "order": [[0, "desc"]],
+                }
+            });
+
+            function submitFormInNewTab() {
+                const form = document.getElementById('exportForm');
+
+                var debut = $('#id-date-debut').val();
+                var fin   = $('#id-date-fin').val();
+                if (debut != '' && fin != '') {
+                  // Crée un nouvel onglet
+                    const newTab = window.open('', '_blank');
+                    form.target = newTab.name;
+                    form.submit();
+                } else {
+                    notification('warning', "Veuillez choisir les dates pour la période du facture");
+                }
+            }
+
+        </script>
+    {% endblock %}

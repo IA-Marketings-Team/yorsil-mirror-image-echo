@@ -1,0 +1,55 @@
+{% if forfaits is defined %}
+{% if forfaits.fixedAmounts | length %}
+    <div class="card w-100">
+        <div class="card-body">
+        <div class="d-sm-flex d-block align-items-center justify-content-between mb-7">
+            <div class="mb-3 mb-sm-0">
+            <h5 class="card-title fw-semibold">Sélectionnez le montant de la recharge</h5>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table align-middle text-nowrap mb-0">
+            <thead>
+                <tr class="text-muted fw-semibold">
+                <th scope="col" class="ps-0">Opérateur</th>
+                <th scope="col">Montante</th>
+                <th scope="col">Code de devise</th>
+                <th scope="col">Concevoir</th>
+                <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody class="border-top forfaitDispo">
+                {% for amount in forfaits.fixedAmounts %}
+                    <tr>
+                        <td class="ps-0">
+                            <div class="d-flex align-items-center">
+                                <div class="me-2 pe-1 square" data-image="{{forfaits.logoUrls[0]}}">
+                                    <img src="{{forfaits.logoUrls[0]}}" width="40" alt="">
+                                </div>
+                                <div>
+                                    <h6 class="fw-semibold mb-1">{{forfaits.name}}</h6>
+                                    <p class="fs-2 mb-0 text-muted">{{ forfaits.country.isoName }}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <p class="mb-0 fs-3">{{amount}}</p>
+                        </td>
+                        <td>
+                            <p class="fs-3 text-dark mb-0">{{forfaits.senderCurrencyCode}}</p>
+                        </td>
+                        <td>
+                            <p class="fs-3 text-dark mb-0">{{ devise(amount,forfaits.senderCurrencyCode) }}</p>
+                        </td>
+                        <td>
+                            <span class="badge fw-semibold py-1 w-85 bg-light-primary text-primary">Confirmer</span>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+            </table>
+        </div>
+        </div>
+    </div>
+{% endif %}
+{% endif %}

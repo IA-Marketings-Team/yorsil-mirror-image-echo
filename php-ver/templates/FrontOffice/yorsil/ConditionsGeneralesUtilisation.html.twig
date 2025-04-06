@@ -1,0 +1,272 @@
+{% extends 'base_front.html.twig' %}
+
+{% set politique_Confidentialite = true %}
+
+{% block title %}Conditions Générales d’Utilisation{% endblock %}
+
+{% block stylesheets %} 
+    {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-none border">
+                <div class="card-body">
+                    <h4 class="fw-semibold">Conditions Générales d’Utilisation</h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="card shadow-none border">
+                <div class="card-body p-2">
+                    <h5 class="fw-semibold mb-2">Objet</h5>
+                    <p class="fs-2">Les présentes CGU régissent l’accès et l’utilisation du site YORSIL (ci-après « le Site ») et des services qu’il propose, notamment :</p>
+                    <ul class="list-unstyled mb-0">
+                        <li class="d-flex align-items-center gap-3 mb-2">
+                            <i class="ti ti-point text-dark fs-2"></i>
+                            <p class="fs-2 fw-semibold mb-0">Vente de recharges téléphoniques,</p>
+                        </li>
+                        <li class="d-flex align-items-center gap-3 mb-2">
+                            <i class="ti ti-point text-dark fs-2"></i>
+                            <p class="fs-2 fw-semibold mb-0">Transfert de crédits de communication,</p>
+                        </li>
+                        <li class="d-flex align-items-center gap-3 mb-2">
+                            <i class="ti ti-point text-dark fs-2"></i>
+                            <p class="fs-2 fw-semibold mb-0">Vente de billetterie de voyages,</p>
+                        </li>
+                        <li class="d-flex align-items-center gap-3 mb-2">
+                            <i class="ti ti-point text-dark fs-2"></i>
+                            <p class="fs-2 fw-semibold mb-0">Vente de produits physiques.</p>
+                        </li>
+                    </ul>
+                    <p class="mt-3 fs-2 text-center">En accédant au Site, vous acceptez pleinement les présentes CGU.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-7">
+            <div class="p-4 rounded-2 bg-light ms-7">
+                <div class="d-flex align-items-center gap-3">
+                    <img src="{{asset('images/contact.png')}}" alt="" class="rounded-circle" width="40" height="40">
+                    <h6 class="fw-semibold mb-0 fs-4">Contact</h6>
+                </div>
+                <p class="my-3">
+                    <span class="fs-2">Pour toute question ou réclamation, veuillez nous contacter : </span>
+                </p>
+                <div class="mb-2 d-flex align-items-center">
+                    <span class="ms-1">
+                        <i class="ti ti-mail text-success"></i>
+                    </span>
+                    <span class="text-dark fs-2 fw-bold ms-1">Email : </span>
+                    <a href="mailto:contact@yorsil.com" class="fw-bold fs-2 ms-2">contact@yorsil.com</a>
+                </div>
+                <div class="mb-2 d-flex align-items-center">
+                    <span class="ms-1">
+                        <i class="ti ti-phone text-success"></i>
+                    </span>
+                    <span class="text-dark fs-2 fw-bold ms-1">Téléphone : </span>
+                    <a href="tel:+33 01 88 61 16 20" class="text-light-dark fw-bold fs-2 ms-2">+33 01 88 61 16 20</a>
+                </div>
+                <div class="mb-2 d-flex align-items-center">
+                    <span class="ms-1">
+                        <i class="ti ti-map-pin text-success"></i>
+                    </span>
+                    <span class="text-dark fs-2 fw-bold ms-1">Adresse postale : </span>
+                    <span class="fw-bold fs-2 ms-2">61 rue de Lyon, 75012 Paris, France</span>
+                </div>
+                <div class="d-flex align-items-center">
+                    <span class="ms-1">
+                        <i class="ti ti-world-www text-success"></i>
+                    </span>
+                    <span class="text-dark fs-2 fw-bold ms-1">Site web : </span>
+                    <span class="fw-bold fs-2 ms-2">www.yorsil.com</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12">
+            <div class="card w-100">
+                <div class="card-body p-3">
+                    <div class="mb-4">
+                        <h5 class="mb-0">Services proposés</h5>
+                    </div>
+                    <div class="accordion" id="services_Proposes">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingVenteRechargesTelephoniques">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#venteRechargesTelephoniques" aria-expanded="false" aria-controls="venteRechargesTelephoniques">
+                                Vente de recharges téléphoniques
+                                </button>
+                            </h2>
+                            <div id="venteRechargesTelephoniques" class="accordion-collapse collapse" aria-labelledby="headingVenteRechargesTelephoniques" data-bs-parent="#services_Proposes" style="">
+                                <div class="accordion-body">
+                                    <p>
+                                        <strong>Description : </strong>Le Site permet l’achat de recharges téléphoniques prépayées pour divers opérateurs.
+                                    </p>   
+                                    <div>
+                                        <p class="mb-2"><strong>Conditions d’utilisation : </strong></p>
+                                        <ul class="list-unstyled mb-0">
+                                            <li class="d-flex align-items-center gap-3 mb-2">
+                                                <i class="ti ti-point text-dark fs-2"></i>
+                                                <p class="fs-2 fw-semibold mb-0">Les utilisateurs doivent s’assurer de sélectionner l’opérateur et le numéro de téléphone corrects avant de valider la commande.</p>
+                                            </li>
+                                            <li class="d-flex align-items-center gap-3 mb-2">
+                                                <i class="ti ti-point text-dark fs-2"></i>
+                                                <p class="fs-2 fw-semibold mb-0">Une fois la transaction validée, la recharge est directement créditée sur le numéro fourni.</p>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <p>
+                                        <strong>Responsabilité : </strong>Les transactions sont définitives et non remboursables, sauf en cas d’erreur imputable au Site.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingTransfertCreditsCommunication">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#transfertCreditsCommunication" aria-expanded="false" aria-controls="transfertCreditsCommunication">
+                                Transfert de crédits de communication
+                                </button>
+                            </h2>
+                            <div id="transfertCreditsCommunication" class="accordion-collapse collapse" aria-labelledby="headingTransfertCreditsCommunication" data-bs-parent="#services_Proposes">
+                                <div class="accordion-body">
+                                    <p>
+                                        <strong>Description : </strong>Ce service permet de transférer des crédits de communication à d’autres numéros compatibles.
+                                    </p>
+                                    <p>
+                                        <strong>Limites : </strong>Les montants transférables peuvent être soumis à des restrictions imposées par les opérateurs.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingVenteBilletterieVoyages">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#venteBilletterieVoyages" aria-expanded="false" aria-controls="venteBilletterieVoyages">
+                                Vente de billetterie de voyages
+                                </button>
+                            </h2>
+                            <div id="venteBilletterieVoyages" class="accordion-collapse collapse" aria-labelledby="headingVenteBilletterieVoyages" data-bs-parent="#services_Proposes">
+                                <div class="accordion-body">
+                                    <p>
+                                        <strong>Services concernés : </strong>Achat de billets pour trajets en avion, train, bus, etc.
+                                    </p>
+                                    <p>
+                                        <strong>Conditions spécifiques : </strong>Les politiques de remboursement ou modification dépendent des transporteurs partenaires.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingVenteProduitsPhysiques">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#venteProduitsPhysiques" aria-expanded="false" aria-controls="venteProduitsPhysiques">
+                                Vente de produits physiques
+                                </button>
+                            </h2>
+                            <div id="venteProduitsPhysiques" class="accordion-collapse collapse" aria-labelledby="headingVenteProduitsPhysiques" data-bs-parent="#services_Proposes">
+                                <div class="accordion-body">
+                                    <p>
+                                        <strong>Produits disponibles : </strong>YORSIL propose une gamme de produits physiques tels que l’électronique, vêtements, etc.
+                                    </p>
+                                    <p>
+                                        <strong>Politique de retour : </strong>Les retours sont acceptés sous [X jours] suivant la réception, à condition que le produit soit inutilisé et dans son emballage d’origine.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingTarifsPaiements">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#tarifsPaiements" aria-expanded="false" aria-controls="tarifsPaiements">
+                                Tarifs et paiements
+                                </button>
+                            </h2>
+                            <div id="tarifsPaiements" class="accordion-collapse collapse" aria-labelledby="headingTarifsPaiements" data-bs-parent="#services_Proposes">
+                                <div class="accordion-body">
+                                    <p>
+                                        <strong>Prix : </strong>Les prix affichés sur le Site incluent toutes les taxes applicables.
+                                    </p>
+                                    <p>
+                                        <strong>Paiements : </strong>Les transactions sont effectuées via des moyens sécurisés (cartes bancaires, mobile money, etc.).
+                                    </p>
+                                    <p>
+                                        <strong>Validation : </strong>Une commande est confirmée uniquement après validation du paiement.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingSecuriteConfidentialite">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#securiteConfidentialite" aria-expanded="false" aria-controls="securiteConfidentialite">
+                                Sécurité et confidentialité
+                                </button>
+                            </h2>
+                            <div id="securiteConfidentialite" class="accordion-collapse collapse" aria-labelledby="headingSecuriteConfidentialite" data-bs-parent="#services_Proposes">
+                                <div class="accordion-body">
+                                    <p>
+                                        <strong>Protection des données : </strong>Les informations personnelles collectées sont traitées conformément aux lois en vigueur ([RGPD] ou équivalentes).
+                                    </p>
+                                    <p>
+                                        <strong>Sécurisation des paiements : </strong>Les transactions sont protégées par des protocoles de sécurité conformes aux normes industrielles (SSL, PCI-DSS).
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingResponsabilites">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#responsabilites" aria-expanded="false" aria-controls="responsabilites">
+                                Responsabilités
+                                </button>
+                            </h2>
+                            <div id="responsabilites" class="accordion-collapse collapse" aria-labelledby="headingResponsabilites" data-bs-parent="#services_Proposes">
+                                <div class="accordion-body">
+                                    <p>
+                                        <strong>Disponibilité des services : </strong>YORSIL s’efforce d’assurer une disponibilité continue du Site mais ne peut garantir une absence totale d’interruptions.
+                                    </p>
+                                    <p>
+                                        <strong>Exclusion : </strong>YORSIL n’est pas responsable des erreurs dues à des informations incorrectes fournies par l’utilisateur (numéro de téléphone, opérateur, etc.).
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingProprieteIntellectuelle">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#proprieteIntellectuelle" aria-expanded="false" aria-controls="proprieteIntellectuelle">
+                                Propriété intellectuelle
+                                </button>
+                            </h2>
+                            <div id="proprieteIntellectuelle" class="accordion-collapse collapse" aria-labelledby="headingProprieteIntellectuelle" data-bs-parent="#services_Proposes">
+                                <div class="accordion-body">
+                                    <strong>Tous les contenus du Site (textes, images, logos, etc.) sont protégés par les lois sur la propriété intellectuelle. Toute reproduction sans autorisation est interdite.</strong>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingModificationsCgu">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#modificationsCgu" aria-expanded="false" aria-controls="modificationsCgu">
+                                Modifications des CGU
+                                </button>
+                            </h2>
+                            <div id="modificationsCgu" class="accordion-collapse collapse" aria-labelledby="headingModificationsCgu" data-bs-parent="#services_Proposes">
+                                <div class="accordion-body">
+                                    <strong>YORSIL se réserve le droit de modifier les présentes CGU à tout moment. Les utilisateurs seront informés des modifications et devront les accepter pour continuer à utiliser les services.</strong>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingLoiApplicableJuridiction">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#loiApplicableJuridiction" aria-expanded="false" aria-controls="loiApplicableJuridiction">
+                                Loi applicable et juridiction
+                                </button>
+                            </h2>
+                            <div id="loiApplicableJuridiction" class="accordion-collapse collapse" aria-labelledby="headingLoiApplicableJuridiction" data-bs-parent="#services_Proposes">
+                                <div class="accordion-body">
+                                    <strong>Les présentes CGU sont régies par les lois françaises. En cas de litige, les tribunaux compétents de Paris seront seuls habilités à trancher.</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

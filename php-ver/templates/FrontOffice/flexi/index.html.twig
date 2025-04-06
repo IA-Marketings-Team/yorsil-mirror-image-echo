@@ -1,0 +1,401 @@
+{% extends 'base_front.html.twig' %}
+
+{% set menu_flexi = true %}
+
+{% block title %}Flexi{% endblock %}
+
+{% block stylesheets %} 
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('modernize/libs/select2/dist/css/select2.min.css') }}">
+     <link rel="stylesheet" href="{{ asset('flag-icon-css/css/flag-icons.min.css') }}">
+    <style type="text/css">
+      .kl-img{
+        box-shadow: rgba(93 ,135 ,255 ,1 );
+        border: 2px solid #E4E6EF !important;
+      }
+
+      .radio-section {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      /*  height: 100vh;*/
+      }
+
+      .radio-item input[type="radio"] {
+        display: none;
+      }
+      .radio-item + .radio-item {
+        margin-top: 10px;
+      }
+      .radio-item label {
+        display: block;
+        border: .2rem solid;
+        border-color: #ebf3fe;
+        border-radius: 2px;
+        width: 75px;
+        height: 75px;
+        border-radius: 5px;
+        cursor: pointer;
+        white-space: nowrap;
+        position: relative;
+        /*background: #1d1d42;*/
+        transition: 0.1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
+
+      .radio-item :checked ~ label {
+        border-color: #0d863a99;
+        border-left-width: 3px;
+        border-right-width: 3px;
+      }
+      .radio-item :checked ~ label::before {
+        opacity: 1;
+        visibility: visible;
+        transform: scale(1);
+      }
+
+      .radio-item label img {
+        width: 100%;
+        height: 100%;
+        padding: 5px;
+        object-fit: contain;
+      }
+
+      .select-coutry{
+            position: relative;
+            width: 100%;
+            padding: 8px 16px;
+            font-size: .875rem;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #5a6a85;
+            background-color: transparent;
+            background-clip: padding-box;
+            border: var(--bs-border-width) solid #dfe5ef;
+            appearance: none;
+            border-radius: 7px;
+            box-shadow: unset;
+            transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+        }
+        .form-country {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .toggle-country {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .form-country #tel{
+            flex: 1 0 auto;
+            color: #5a6a85;
+            padding: 0 5px;
+            background-color: transparent;
+            background-clip: padding-box;
+            border: none;
+            border-left: var(--bs-border-width) solid #dfe5ef;
+            appearance: none;
+        }
+        .dropdown-country-menu {
+            position: absolute;
+            background: white;
+            opacity: 0;
+            top: 0;
+            pointer-events: none;
+            left: 0;
+            padding: 5px;
+            border: var(--bs-border-width) solid #dfe5ef;
+            appearance: none;
+            border-radius: 7px;
+            box-shadow: rgba(145, 158, 171, 0.2) 0px 0px 2px 0px, rgba(145, 158, 171, 0.12) 0px 12px 24px -4px;;
+            z-index: 1000;
+            transition: 0.2s;
+        }
+        .dropdown-country-menu.open{
+            opacity: 1;
+            top: 37px;
+            pointer-events: all;
+            transition: 0s;
+        }
+        .dropdown-country-menu .country-list{
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            overflow-y: auto;
+            max-height: 155px;
+        }
+        .dropdown-country-menu .country-list::-webkit-scrollbar{
+            width: 5px;
+        }
+        .dropdown-country-menu .country-list::-webkit-scrollbar-track{
+            background: #f1f1f1;
+            border-radius: 7px;
+        }
+        .dropdown-country-menu .country-list::-webkit-scrollbar-thumb{
+            background: #c1c1c1;
+            border-radius: 7px;
+        }
+        .dropdown-country-menu .country-list li{
+            padding: 5px;
+            cursor: pointer;
+            transition: 0.4s;
+        }
+        .dropdown-country-menu .country-list li:hover{
+            background: #0a7ea4;
+            color: white;
+        }
+        #searchCoutry {
+            margin-bottom: 5px;
+        }
+
+        #numForm.modif .select-coutry{
+            pointer-events: none;
+        }
+
+        .kl-offer-card {
+          background-color: #0a7ea4 !important;
+          max-width: 22rem;
+        }
+
+        .kl-ml{
+          margin-left: 15px !important;
+        }
+
+    </style>
+{% endblock %}
+
+{% block body %}
+
+    <div class="card bg-light-info shadow-none position-relative overflow-hidden">
+        <div class="card-body px-4 py-3">
+          <div class="row">
+            <div class="col-md-9">
+              <h4 class="fw-semibold mb-8">Flexi</h4>
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item active" aria-current="page">Flexi</li>
+                </ol>
+              </nav>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <div class="row kl-liste-operateur">
+      <div class="col-md-6">
+        <h1 class="fw-semibold mb-2">Recharges Téléphoniques</h1>
+          <div class="row mb-1">
+            <h5> Veuillez choisir l'operateur où vous voulez faire un rechargement </h5>
+              {% for i in 0..2 %}
+                <div class="col-md-3 col-lg-2">
+                  <div class="radio-item">
+                    <input value="{{i+1}}" class="kl-operateur" data-id="{{i+1}}" name="radio" id="radio{{i}}" type="radio">
+                    <label for="radio{{i}}">
+                      {% set op = 'logo-'~ (i+1) %}
+                      {% set logo = 'uploads/logos/' ~ op ~ '.png'%}
+                      <img src="{{ asset(logo) }}" class="card-img-top rounded-0" alt="..." width="60" height="50">
+                        
+                    </label>
+                  </div>
+                </div>
+              {% endfor %}
+          </div>
+        </div>
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-body p-4">
+            <h3 class="fw-semibold mb-2 text-center">Numéro à recharger</h3>
+            <form role="form" id="numForm">
+              <input type="hidden" name="operateur" id="id-operateur"/>
+              <div class="select-coutry">
+                <div class="form-country" type="button" id="dropdownCountryListes">
+                    <div class="toggle-country" id="toggleCountry">
+                        <i class="fi fi-fr"></i>
+                        <span class="prefix">+33</span>
+                        <i class="ti ti-caret-down"></i>
+                    </div>
+                    <input type="text" name="tel" id="tel" required/>
+                    <input type="hidden" value="+33" name="pref" id="pref" required/>
+                </div>
+                <div class="dropdown-country-menu" id="dropdownCountryMenu">
+                    <input type="search" class="form-control" id="searchCoutry" placeholder="Rechercher..."/>
+                    <ul class="country-list" id="countryList" aria-labelledby="dropdownCountryListes" >
+                        {% include 'FrontOffice/transfert/listCountry.html.twig' %}
+                    </ul>
+                </div>
+              </div>
+              <div class=" text-center">
+                <button type="button" class="btn btn-success mt-2 kl-voir-offre">Voir les offres <i class="ti ti-arrow-right"></i></button>  
+              </div>
+            </form>
+          </div>
+        </div>  
+      </div>
+    </div>
+
+    <div class="kl-offre-operateur" style="display: none;">
+
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('modernize/libs/select2/dist/js/select2.full.min.js') }}"></script>
+    <script src="{{ asset('modernize/libs/select2/dist/js/select2.min.js') }}"></script>
+    <script>
+
+      var href = "{{path('liste_offre_flexi')}}";
+      var href_recharge = "{{path('new_rechargement_flexi')}}";
+
+      $(document).ready(function(){
+
+        const regexFormats = /^[0-9]{9,}$/;
+
+        function checkImmatriculation(input) {
+            if (regexFormats.test(input)) {
+                return true;
+            }
+            return false;
+        }
+
+        $("#toggleCountry").click(function() {
+            $("#dropdownCountryMenu").toggleClass("open");
+        });
+
+        $("#numForm").submit(function(e) {
+            e.preventDefault();
+            let destiataireForm = this
+            
+            if($(destiataireForm).hasClass("modif")) {
+                modifDestinataire()
+                $(destiataireForm).removeClass("modif")
+            } else {
+                let $tel = $("#tel").val()
+                if(checkImmatriculation($tel)){
+                    $("#cardOperateurInfo").fadeIn(400);
+                    $("#cardTarifList").fadeIn(400);
+                    $("#valideDestinataire").text("Modifier")
+                    $("#tel").addClass('modif')
+                    $(destiataireForm).addClass("modif")
+                } else {
+                    notification('danger', 'Numéro invalide. Veuillez entrer un numéro valide.')
+                }
+            }
+        });
+
+        $("#searchCoutry").on("input", function() {
+            let searchText = $(this).val().toLowerCase();
+            $("#countryList li").filter(function() {
+                $(this).toggle($(this).text().toLowerCase().indexOf(searchText) > -1);
+            });
+        });
+
+        $("#countryList li").on("click", function() {
+
+            const country = this
+            const code = $(country).data('code')
+            const prefix = $(country).data('prefix')
+
+            $("#toggleCountry").html(`
+                <i class="fi fi-${code}"></i>
+                <span class="prefix">${prefix}</span>
+                <i class="ti ti-caret-down"></i>
+            `)
+
+            $('#pref').val(prefix);
+
+            $("#dropdownCountryMenu").removeClass("open")
+
+            $("#searchCoutry").val("")
+            $("#countryList li").fadeIn(400)
+        });
+
+        $(document).click(function(event) {
+            if ($(event.target).closest('#dropdownCountryMenu').length || $(event.target).closest('#toggleCountry').length) {
+                return false
+            } else {
+                $("#dropdownCountryMenu").removeClass("open");
+            }
+        });
+
+        $(document).on('click','.kl-voir-offre', function(e) {
+          $('.kl-offre-operateur').html("");
+          var radio = $("input[name='radio']:checked").val();
+          let $tel = $("#tel").val()
+          if(checkImmatriculation($tel)){
+            $("#tel").addClass('modif')
+            if(radio!=null){
+              $.ajax({
+                url: href,
+                method: 'POST',
+                data: {
+                    off: radio,
+                },
+                success: function (response) {
+                    if (response) {
+                      $('.kl-offre-operateur').fadeToggle("slow", "linear");
+                      $('.kl-offre-operateur').html(response.html);
+                      $('.kl-liste-operateur').fadeOut("slow", "linear");
+                        // $('.kl-confirmation').attr('data_name',response.nom_boutique);
+                        // $('.kl-confirmation').attr('data_mail',response.email);
+                    }
+                    else{
+                        window.location.reload();
+                        console.log('Error');    
+                    }
+                },
+                error: function (error) {
+                  console.log(error);
+                }
+              })
+              
+            }else{
+              notification('warning', 'Veuillez séléctionner un opérateur!');
+            }
+          }else {
+            notification('danger', 'Numéro invalide. Veuillez entrer un numéro valide.')
+          }
+        });
+
+      $(document).on('click','.kl-acheter', function(e) {
+        $('.spinner').removeClass('d-none');
+        var radio   = $("input[name='radio']:checked").val();
+        var tel     = $("#pref").val() + $("#tel").val();
+        var offre   = 'Offre '+$(this).attr('data-type')+' de '+$(this).attr('data-montant')+'€';
+        var montant = $(this).attr('data-montant');
+
+        $.ajax({
+          url: href_recharge,
+          method: 'POST',
+          data: {
+            id: radio,
+            tel: tel,
+            off: offre,
+            montant: montant
+          },
+          success: function (response) {
+              if (response) {
+                window.location.reload();
+                notification('success', 'Votre demande de rechargement a été envoyé avec succès');
+              }
+              else{
+                window.location.reload();
+                notification('success', 'Erreur');    
+              }
+          },
+          error: function (error) {
+            console.log(error);
+          }
+        })
+      });
+
+    });
+
+    $(document).on('click','.kl-retour', function(e) {
+      $('.kl-offre-operateur').fadeOut("slow", "linear");
+      $('.kl-liste-operateur').fadeIn("slow", "linear");
+    });
+
+    </script>
+{% endblock %}

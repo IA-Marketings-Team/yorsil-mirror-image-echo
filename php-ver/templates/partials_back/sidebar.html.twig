@@ -1,0 +1,425 @@
+<aside class="left-sidebar">
+    <!-- Sidebar scroll-->
+    <div class="sidebaNavScroll">
+        <div class="brand-logo d-flex align-items-center justify-content-between">
+            <a href="{{ path('tableau_de_bord') }}" class="text-nowrap logo-img">
+                <img src="{{ asset('modernize/images/logos/largeicon.svg') }}" width="110" alt="" />
+            </a>
+            <div class="close-btn d-lg-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
+                <i class="ti ti-x fs-8"></i>
+            </div>
+        </div>
+        <!-- Sidebar navigation-->
+        <nav class="sidebar-nav scroll-sidebar" data-simplebar>
+            {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_SUPER_ADMIN') %}
+                <ul id="sidebarnav">
+                    <!-- =================== -->
+                    <!-- Dashboard -->
+                    <!-- =================== -->
+                    <li class="sidebar-item {{ menu_dashboard is defined ? 'selected' }}">
+                        <a class="sidebar-link {{ menu_dashboard is defined ? 'active' }}" href="{{ path('tableau_de_bord') }}" aria-expanded="false">
+                            <span><i class="ti ti-category"></i></span>
+                            <span class="hide-menu">Tableau de bord</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item {{ menu_user_admin is defined ? 'selected' }}">
+                        <a class="sidebar-link {{ menu_user_admin is defined ? 'active' }}" href="{{ path('liste_admin') }}" aria-expanded="false">
+                            <span><i class="ti ti-ad"></i></span>
+                            <span class="hide-menu">Administrateurs</span>
+                        </a>
+                    </li>
+                    {# <li class="sidebar-item {{ menu_user is defined ? 'selected' }}">
+                        <a class="sidebar-link has-arrow {{ menu_user is defined ? 'active' }}" href="#" aria-expanded="false">
+                            <span class="d-flex"><i class="ti ti-user-circle"></i></span>
+                            <span class="hide-menu">Utilisateurs</span>
+                        </a>
+                        <ul aria-expanded="false" class="collapse first-level">
+                            <li class="sidebar-item {{ menu_user_admin is defined ? 'active' }}">
+                                <a href="{{ path('liste_admin') }}" class="sidebar-link {{ menu_user_admin is defined ? 'active' }}">
+                                    <div class="round-16 d-flex align-items-center justify-content-center">
+                                        <i class="ti ti-circle"></i>
+                                    </div>
+                                    <span class="hide-menu">Administrateurs</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item {{ menu_user_emploie is defined ? 'active' }}">
+                                <a href="{{ path('liste_user') }}" class="sidebar-link {{ menu_user_emploie is defined ? 'active' }}">
+                                    <div class="round-16 d-flex align-items-center justify-content-center">
+                                        <i class="ti ti-circle"></i>
+                                    </div>
+                                    <span class="hide-menu">Employés</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li> #}
+
+                    <li class="sidebar-item {{ menu_boutique is defined ? 'selected' }}">
+                        <a class="sidebar-link {{ menu_boutique is defined ? 'active' }}" href="{{ path('boutique') }}" aria-expanded="false">
+                            <span><i class="ti ti-building-store"></i></span>
+                            <span class="hide-menu">Boutiques</span>
+                        </a>
+                    </li>
+
+                    <li class="sidebar-item {{ menu_services is defined ? 'selected' }}">
+                        <a class="sidebar-link {{ menu_services is defined ? 'active' }}" href="{{ path('liste_services_bout') }}" aria-expanded="false">
+                            <span><i class="ti ti-icons"></i></span>
+                            <span class="hide-menu">Services</span>
+                        </a>
+                    </li>
+
+                    <li class="sidebar-item {{ menu_pays is defined ? 'selected' }}">
+                        <a class="sidebar-link {{ menu_pays is defined ? 'active' }}" href="{{ path('pays') }}" aria-expanded="false">
+                            <span><i class="ti ti-flag"></i></span>
+                            <span class="hide-menu">Pays</span>
+                        </a>
+                    </li>
+
+                    <li class="sidebar-item {{ menu_produit is defined ? 'selected' }}">
+                        <a class="sidebar-link has-arrow {{ menu_produit is defined ? 'active' }}" href="#" aria-expanded="false">
+                            <span class="d-flex"><i class="ti ti-apps"></i></span>
+                            <span class="hide-menu">Gestion de produits</span>
+                        </a>
+                        <ul aria-expanded="false" class="collapse first-level">
+                            <li class="sidebar-item {{ menu_categorie is defined ? 'active' }}">
+                                <a href="{{path('categorie')}}" class="sidebar-link {{ menu_categorie is defined ? 'active' }}">
+                                    <div class="round-16 d-flex align-items-center justify-content-center">
+                                        <i class="ti ti-circle"></i>
+                                    </div>
+                                    <span class="hide-menu">Catégories</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item {{ menu_produit_liste is defined ? 'active' }}">
+                                <a href="{{path('produit')}}" class="sidebar-link {{ menu_produit_liste is defined ? 'active' }}">
+                                    <div class="round-16 d-flex align-items-center justify-content-center">
+                                        <i class="ti ti-circle"></i>
+                                    </div>
+                                    <span class="hide-menu">MarketPlace</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item {{ menu_produit_physique_liste is defined ? 'active' }}">
+                                <a href="{{path('produit_physique')}}" class="sidebar-link {{ menu_produit_physique_liste is defined ? 'active' }}">
+                                    <div class="round-16 d-flex align-items-center justify-content-center">
+                                        <i class="ti ti-circle"></i>
+                                    </div>
+                                    <span class="hide-menu">Produits virtuels</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    {# <li class="sidebar-item {{ menu_marque_blanche is defined ? 'active' }}">
+                        <a href="#" class="sidebar-link {{ menu_marque_blanche is defined ? 'active' }}">
+                            <div class="round-16 d-flex align-items-center justify-content-center">
+                                <i class="ti ti-building-skyscraper"></i>
+                            </div>
+                            <span class="hide-menu">Marques blanches</span>
+                        </a>
+                    </li>
+
+                    <li class="sidebar-item {{ menu_apport_affaire is defined ? 'active' }}">
+                        <a href="#" class="sidebar-link {{ menu_apport_affaire is defined ? 'active' }}">
+                            <div class="round-16 d-flex align-items-center justify-content-center">
+                                <i class="ti ti-briefcase"></i>
+                            </div>
+                            <span class="hide-menu">Apporteurs d'affaires</span>
+                        </a>
+                    </li>#}
+
+                    <li class="sidebar-item {{ menu_percepteur is defined ? 'selected' }}">
+                        <a class="sidebar-link {{ menu_percepteur is defined ? 'active' }}" href="{{ path('percepteur') }}" aria-expanded="false">
+                            <span><i class="ti ti-currency-euro"></i></span>
+                            <span class="hide-menu">Percepteurs</span>
+                        </a>
+                    </li>
+
+                    <li class="sidebar-item {{ menu_slider_list is defined ? 'selected' }}">
+                        <a class="sidebar-link {{ menu_slider_list is defined ? 'active' }}" href="{{ path('liste_slides') }}" aria-expanded="false">
+                            <span><i class="ti ti-slideshow"></i></span>
+                            <span class="hide-menu">Slides</span>
+                        </a>
+                    </li>
+
+                    <li class="sidebar-item {{ menu_taux_change is defined ? 'selected' }}">
+                        <a class="sidebar-link {{ menu_taux_change is defined ? 'active' }}" href="{{ path('liste_changes') }}" aria-expanded="false">
+                            <span><i class="ti ti-replace"></i></span>
+                            <span class="hide-menu">Taux de Change</span>
+                        </a>
+                    </li>
+                    
+
+                   {# <li class="sidebar-item {{ menu_grille_tarifaire is defined ? 'active' }}">
+                        <a href="{{path('grilles_tarifaires')}}" class="sidebar-link {{ menu_grille_tarifaire is defined ? 'active' }}">
+                            <div class="round-16 d-flex align-items-center justify-content-center">
+                                <i class="ti ti-list"></i>
+                            </div>
+                            <span class="hide-menu">Grilles tarifaires</span>
+                        </a>
+                    </li> #}
+
+                    <li class="sidebar-item {{ menu_grille_tarifaire is defined ? 'selected' }}">
+                        <a class="sidebar-link has-arrow {{ menu_grille_tarifaire is defined ? 'active' }}" href="#" aria-expanded="false">
+                            <span class="d-flex"><i class="ti ti-list"></i></span>
+                            <span class="hide-menu">Grilles tarifaires</span>
+                        </a>
+                        <ul aria-expanded="false" class="collapse first-level">
+                            <li class="sidebar-item {{ menu_standard is defined ? 'active' }}">
+                                <a href="{{ path('grilles_tarifaires') }}" class="sidebar-link {{ menu_standard is defined ? 'active' }}">
+                                    <div class="round-16 d-flex align-items-center justify-content-center">
+                                        <i class="ti ti-circle"></i>
+                                    </div>
+                                    <span class="hide-menu">Standard</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item {{ menu_priv is defined ? 'active' }}">
+                                <a href="{{ path('grilles_tarifaires_boutiques') }}" class="sidebar-link {{ menu_priv is defined ? 'active' }}">
+                                    <div class="round-16 d-flex align-items-center justify-content-center">
+                                        <i class="ti ti-circle"></i>
+                                    </div>
+                                    <span class="hide-menu">Privilégié</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li class="sidebar-item {{ menu_gestion_opera is defined ? 'selected' }}">
+                        <a class="sidebar-link has-arrow {{ menu_gestion_opera is defined ? 'active' }}" href="#" aria-expanded="false">
+                            <span class="d-flex"><i class="ti ti-phone"></i></span>
+                            <span class="hide-menu">Gestion opérateurs</span>
+                        </a>
+                        <ul aria-expanded="false" class="collapse first-level">
+                            <li class="sidebar-item {{ menu_operateurs is defined ? 'active' }}">
+                                <a href="{{ path('operateurs') }}" class="sidebar-link {{ menu_operateurs is defined ? 'active' }}">
+                                    <div class="round-16 d-flex align-items-center justify-content-center">
+                                        <i class="ti ti-circle"></i>
+                                    </div>
+                                    <span class="hide-menu">Opérateurs</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item {{ menu_offres is defined ? 'active' }}">
+                                <a href="{{ path('offres') }}" class="sidebar-link {{ menu_offres is defined ? 'active' }}">
+                                    <div class="round-16 d-flex align-items-center justify-content-center">
+                                        <i class="ti ti-circle"></i>
+                                    </div>
+                                    <span class="hide-menu">Offres</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item {{ menu_type_offres is defined ? 'active' }}">
+                                <a href="{{ path('type_offres') }}" class="sidebar-link {{ menu_type_offres is defined ? 'active' }}">
+                                    <div class="round-16 d-flex align-items-center justify-content-center">
+                                        <i class="ti ti-circle"></i>
+                                    </div>
+                                    <span class="hide-menu">Types d'Offres</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    
+                    <li class="sidebar-item {{ menu_frais is defined ? 'selected' }}">
+                        <a class="sidebar-link has-arrow {{ menu_frais is defined ? 'active' }}" href="#" aria-expanded="false">
+                            <span class="d-flex"><i class="ti ti-cards"></i></span>
+                            <span class="hide-menu">Offres</span>
+                        </a>
+                        <ul aria-expanded="false" class="collapse first-level">
+                            <li class="sidebar-item {{ menu_frais is defined ? 'active' }}">
+                                <a href="{{path('frais_services')}}" class="sidebar-link {{ menu_1 is defined ? 'active' }}">
+                                    <div class="round-16 d-flex align-items-center justify-content-center">
+                                        <i class="ti ti-circle"></i>
+                                    </div>
+                                    <span class="hide-menu">Partage de REM</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item {{ menu_frais is defined ? 'active' }}">
+                                <a href="{{path('frais_services_perso')}}" class="sidebar-link {{ menu_2 is defined ? 'active' }}">
+                                    <div class="round-16 d-flex align-items-center justify-content-center">
+                                        <i class="ti ti-circle"></i>
+                                    </div>
+                                    <span class="hide-menu">Details de PV en %</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    {# <li class="sidebar-item {{ menu_transfert_credit is defined ? 'selected' }}">
+                        <a class="sidebar-link has-arrow {{ menu_transfert_credit is defined ? 'active' }}" href="#" aria-expanded="false">
+                            <span class="d-flex"><i class="ti ti-replace"></i></span>
+                            <span class="hide-menu">Transfert de crédit</span>
+                        </a>
+                        <ul aria-expanded="false" class="collapse first-level">
+                            <li class="sidebar-item {{ menu_1 is defined ? 'active' }}">
+                                <a href="#" class="sidebar-link {{ menu_1 is defined ? 'active' }}">
+                                    <div class="round-16 d-flex align-items-center justify-content-center">
+                                        <i class="ti ti-circle"></i>
+                                    </div>
+                                    <span class="hide-menu">Sous-Menu 1</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item {{ menu_2 is defined ? 'active' }}">
+                                <a href="#" class="sidebar-link {{ menu_2 is defined ? 'active' }}">
+                                    <div class="round-16 d-flex align-items-center justify-content-center">
+                                        <i class="ti ti-circle"></i>
+                                    </div>
+                                    <span class="hide-menu">Sous-Menu 2</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li> #}
+
+                    <li class="sidebar-item {{ menu_journal is defined ? 'selected' }}">
+                        <a class="sidebar-link has-arrow {{ menu_journal is defined ? 'active' }}" href="#" aria-expanded="false">
+                            <span class="d-flex"><i class="ti ti-book"></i></span>
+                            <span class="hide-menu">Journal</span>
+                        </a>
+                        <ul aria-expanded="false" class="collapse first-level">
+                            <li class="sidebar-item {{ menu_credit is defined ? 'active' }}">
+                                <a href="{{ path('credit') }}" class="sidebar-link {{ menu_credit is defined ? 'active' }}">
+                                    <div class="round-16 d-flex align-items-center justify-content-center">
+                                        <i class="ti ti-circle"></i>
+                                    </div>
+                                    <span class="hide-menu">Rechargement boutique</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item {{ menu_debit is defined ? 'active' }}">
+                                <a href="{{ path('debit') }}" class="sidebar-link {{ menu_debit is defined ? 'active' }}">
+                                    <div class="round-16 d-flex align-items-center justify-content-center">
+                                        <i class="ti ti-circle"></i>
+                                    </div>
+                                    <span class="hide-menu">Débit</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item {{ menu_depot is defined ? 'active' }}">
+                                <a href="{{ path('journal_depot') }}" class="sidebar-link {{ menu_depot is defined ? 'active' }}">
+                                    <div class="round-16 d-flex align-items-center justify-content-center">
+                                        <i class="ti ti-circle"></i>
+                                    </div>
+                                    <span class="hide-menu">Dépôt</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item {{ menu_GestComm is defined ? 'active' }}">
+                                <a href="{{ path('GestComm') }}" class="sidebar-link {{ menu_GestComm is defined ? 'active' }}">
+                                    <div class="round-16 d-flex align-items-center justify-content-center">
+                                        <i class="ti ti-circle"></i>
+                                    </div>
+                                    <span class="hide-menu">Geste Commerciale</span>
+                                </a>
+                            </li>
+                            {# <li class="sidebar-item {{ menu_Seuil is defined ? 'active' }}">
+                                <a href="{{ path('seuil') }}" class="sidebar-link {{ menu_Seuil is defined ? 'active' }}">
+                                    <div class="round-16 d-flex align-items-center justify-content-center">
+                                        <i class="ti ti-circle"></i>
+                                    </div>
+                                    <span class="hide-menu">Seuil</span>
+                                </a>
+                            </li>  #}
+                            <li class="sidebar-item {{ menu_Transfert is defined ? 'active' }}">
+                                <a href="{{ path('jour_transfert') }}" class="sidebar-link {{ menu_Transfert is defined ? 'active' }}">
+                                    <div class="round-16 d-flex align-items-center justify-content-center">
+                                        <i class="ti ti-circle"></i>
+                                    </div>
+                                    <span class="hide-menu">Transfert Crédit</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item {{ menu_transfert_manuel is defined ? 'active' }}">
+                                <a href="{{ path('journal_transfert_manuel') }}" class="sidebar-link {{ menu_transfert_manuel is defined ? 'active' }}">
+                                    <div class="round-16 d-flex align-items-center justify-content-center">
+                                        <i class="ti ti-circle"></i>
+                                    </div>
+                                    <span class="hide-menu">Diaspo transfert</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item {{ menu_reservation is defined ? 'active' }}">
+                                <a href="{{ path('reservations_litse') }}" class="sidebar-link {{ menu_reservation is defined ? 'active' }}">
+                                    <div class="round-16 d-flex align-items-center justify-content-center">
+                                        <i class="ti ti-circle"></i>
+                                    </div>
+                                    <span class="hide-menu">Billeteries</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item {{ menu_recharge is defined ? 'active' }}">
+                                <a href="{{ path('journal_recharge') }}" class="sidebar-link {{ menu_recharge is defined ? 'active' }}">
+                                    <div class="round-16 d-flex align-items-center justify-content-center">
+                                        <i class="ti ti-circle"></i>
+                                    </div>
+                                    <span class="hide-menu">Recharge</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item {{ menu_paiement is defined ? 'active' }}">
+                                <a href="{{ path('journal_paiement_facture') }}" class="sidebar-link {{ menu_paiement is defined ? 'active' }}">
+                                    <div class="round-16 d-flex align-items-center justify-content-center">
+                                        <i class="ti ti-circle"></i>
+                                    </div>
+                                    <span class="hide-menu">Paiement facture</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                </ul>
+            {% else %}
+                <ul id="sidebarnav">
+                    <li class="sidebar-item {{ menu_dashboard is defined ? 'selected' }}">
+                        <a class="sidebar-link {{ menu_dashboard is defined ? 'active' }}" href="{{ path('dashboard_percepteur') }}" aria-expanded="false">
+                            <span><i class="ti ti-category"></i></span>
+                            <span class="hide-menu">Tableau de bord</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item {{ menu_persept_recharge is defined ? 'selected' }}">
+                        <a class="sidebar-link {{ menu_persept_recharge is defined ? 'active' }}" href="{{ path('rechargement_du_compte') }}" aria-expanded="false">
+                            <span><i class="ti ti-replace"></i></span>
+                            <span class="hide-menu">Rechargement</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item {{ menu_persept_depot is defined ? 'selected' }}">
+                        <a class="sidebar-link {{ menu_persept_depot is defined ? 'active' }}" href="{{ path('faire_un_depot') }}" aria-expanded="false">
+                            <span><i class="ti ti-transfer-in"></i></span>
+                            <span class="hide-menu">Dépot</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item {{ menu_journal is defined ? 'selected' }}">
+                        <a class="sidebar-link has-arrow {{ menu_journal is defined ? 'active' }}" href="#" aria-expanded="false">
+                            <span class="d-flex"><i class="ti ti-book"></i></span>
+                            <span class="hide-menu">Journal</span>
+                        </a>
+                        <ul aria-expanded="false" class="collapse first-level">
+                            <li class="sidebar-item {{ menu_journal_depot is defined ? 'active' }}">
+                                <a href="{{ path('journal_depot_percepteur') }}" class="sidebar-link {{ menu_journal_depot is defined ? 'active' }}">
+                                    <div class="round-16 d-flex align-items-center justify-content-center">
+                                        <i class="ti ti-circle"></i>
+                                    </div>
+                                    <span class="hide-menu">Dépot</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item {{ menu_journal_recharge is defined ? 'active' }}">
+                                <a href="{{ path('journal_rechargement_percepteur') }}" class="sidebar-link {{ menu_journal_recharge is defined ? 'active' }}">
+                                    <div class="round-16 d-flex align-items-center justify-content-center">
+                                        <i class="ti ti-circle"></i>
+                                    </div>
+                                    <span class="hide-menu">Rechargement</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            {% endif %}
+        </nav>
+        <div class="fixed-profile p-3 bg-light-secondary rounded mt-3">
+            <div class="hstack gap-3">
+                <div class="john-img">
+                    {% if app.user.picture != NULL %}
+                        <img src="{{ asset('uploads/images/users/' ~ app.user.picture) }}"  class="rounded-circle" width="40" height="40" alt="">
+                    {% else %}
+                        <img src="{{ asset('modernize/images/profile/user-1.jpg') }}" class="rounded-circle" width="40" height="40" alt=""/>
+                    {% endif %}
+                </div>
+                <div class="john-title">
+                <h6 class="mb-0 fs-4 fw-semibold" aria-label="nom" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{{ app.user.nom }}">{{ app.user.nom | length > 8 ? app.user.nom | slice(0, 8) ~ '...' : app.user.nom }}</h6>
+                <span class="fs-2 text-dark">{{ role }}</span>
+                </div>
+                <a href="javascript:void(0)" class="border-0 bg-transparent text-primary ms-auto logout" tabindex="0" type="button" aria-label="Déconnexion" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Déconnexion">
+                <i class="ti ti-power fs-6"></i>
+                </a>
+            </div>
+        </div>  
+        <!-- End Sidebar navigation -->
+    </div>
+<!-- End Sidebar scroll-->
+</aside>

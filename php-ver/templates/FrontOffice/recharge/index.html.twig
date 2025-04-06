@@ -1,0 +1,1471 @@
+{% extends 'base_front.html.twig' %}
+
+{% set menu_menu_recharge_mobile = true %}
+
+{% block title %}Recharge{% endblock %}
+
+{% block stylesheets %} 
+    {{ parent() }}
+    <style type="text/css">
+      .card {
+          margin-bottom: 1rem;
+      }
+      .kl-img{
+        box-shadow: rgba(93 ,135 ,255 ,0.43) 2.5px 2.5px;
+        border: 2px solid #E4E6EF !important;
+      }
+
+      .kl-img:hover {
+        box-shadow:  rgba(93 ,135 ,255 ,0.33) 5px 5px;
+      }
+
+      .kl-pad{
+        padding-bottom: 60px;
+        padding-top: 30px;
+      }
+
+      .kl-box{
+        box-shadow: rgba(93 ,135 ,255 ,0.43) 2.5px 2.5px;
+        border: 3px solid #E4E6EF !important;
+      }
+
+      .overflowcard{
+        display: block;
+        height: 150px;
+        overflow-y: scroll;
+      }
+
+      .overflowcard::-webkit-scrollbar{
+        width: 5px;
+      }
+
+      .overflowcard::-webkit-scrollbar-track{
+        background: #f1f1f1;
+      }
+
+      .overflowcard::-webkit-scrollbar-track-thumb{
+        background: #red;
+      }
+
+      .overflowcard::-webkit-scrollbar-track-thumb:hover{
+        background: #555;
+      }
+
+      .label-tiny {
+        font-size: 0.8rem;
+        font-weight: 700;
+        white-space: nowrap;
+        color: #b5b5c3;
+      }
+
+      .price {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #5e6278;
+      }
+      .operateur-load .card .image-load {
+        width: 100%;
+        height: 90px;
+        border-radius: 5px;
+        background: #c4c4c4;
+        animation: loading 1s infinite;
+      }
+      .operateur-load .card .card-body h5 {
+        width: 100%;
+        height: 20px;
+        background: #cdcdcd;
+        margin: 0;
+        border-radius: 5px;
+        animation: loading 1s infinite;
+      }
+      .card-operateur{
+        box-shadow: rgba(93 ,135 ,255 ,0.43) 2.5px 2.5px;
+        border: 2px solid #E4E6EF !important;
+        transition: 0.2s ease;
+      }
+
+      .card-operateur:hover {
+        box-shadow:  rgba(93 ,135 ,255 ,0.33) 5px 5px;
+      }
+      .card-operateur .card-operateur-img {
+        width: 100%;
+        min-width: 125px;
+        height: 125px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .card-operateur .card-operateur-img img{
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+      .card-operateur .card-operateur-name {
+        font-size: 15px;
+      }
+      .card-head {
+        gap: 1rem;
+      }
+      .card-head img {
+        height: 50px;
+      }
+      .categorie {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        background: #f6f6f6;
+        padding: 5px;
+      }
+      .categorie h5 {
+        margin: 0;
+      }
+      .categorie img {
+        height: 30px;
+      }
+      .offre-item .operateur {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        flex-direction: column;
+        height: 100%;
+        word-break: break-word;
+      }
+      .offre-item .operateur img{
+        width: 100%;
+      }
+      .offre-item .operateur h5{
+        margin: 0;
+        font-size: 12px;
+      }
+      .offre-item .title {
+        border-bottom: 1px solid lightgray;
+        margin-bottom: 5px;
+        font-size: 12px;
+      }
+      .offre-item .title h2{
+        font-size: 12px;
+      }
+      .offre-item .details{
+        display: flex;
+        align-items: center;
+      }
+      .offre-item .details .show-detail-produit{
+        font-size: 20px;
+        cursor: pointer;
+        margin-left: auto;
+      }
+
+      .offre-item .details::-webkit-scrollbar {
+          width: 10px; 
+          background-color: #fcfcfc; 
+      }
+
+      .offre-item .details::-webkit-scrollbar-thumb {
+          background-color: rgba(0, 0, 0, 0.4);
+          border-radius: 8px; 
+          border: 2px solid #fcfcfc; 
+      }
+
+      .offre-item .details::-webkit-scrollbar-thumb:hover {
+          background-color: rgba(0, 0, 0, 0.6); 
+      }
+
+      
+      .offre-item .details::-webkit-scrollbar-button:vertical:decrement {
+          background-color: #f1f1f1; 
+          height: 16px;
+          border-radius: 5px 5px 0 0;  
+          background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill="%23000000" d="M8 4l4 4H4z"/></svg>'); 
+          background-repeat: no-repeat;
+          background-position: center;
+      }
+
+      .offre-item .details::-webkit-scrollbar-button:vertical:increment {
+          background-color: #f1f1f1; 
+          height: 16px;
+          border-radius: 0 0 5px 5px; 
+          background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill="%23000000" d="M8 12l4-4H4z"/></svg>'); 
+          background-repeat: no-repeat;
+          background-position: center;
+      }
+      
+      .offre-item .details::-webkit-scrollbar-track {
+          background-color: #fcfcfc; 
+          border-radius: 8px;
+      }
+      .detail-hidden {
+        display: none;
+      }
+
+      @keyframes loading {
+          0%,100% {
+              animation-timing-function: cubic-bezier(0, 0, .2, 1);
+              opacity: 1;
+          }
+
+          50% {
+              animation-timing-function: cubic-bezier(.8, 0, 1, 1);
+              opacity: 0.5;
+          }
+      }
+
+    </style>
+{% endblock %}
+
+{% block body %}
+
+  <div class="card bg-light-info shadow-none position-relative overflow-hidden">
+      <div class="card-body px-4 py-3">
+        <div class="row">
+          <div class="col-md-9">
+            <h4 class="fw-semibold mb-8">Recharge</h4>
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item active"><a class="text-muted" href="javascript:void(0)">Recharge</a></li>
+              </ol>
+            </nav>
+          </div>
+        </div>
+      </div>
+  </div>
+
+  <div id="kl-liste-operateur">
+    <div class="row" id="liste-catalogues">
+      <nav>
+        <div class="nav nav-tabs" id="nav-tab-catalogue" role="tablist">
+          <button class="nav-link active" id="nav-load-tab" data-bs-toggle="tab" data-bs-target="#nav-load" type="button" role="tab" aria-controls="nav-load" aria-selected="true">Liste des catalogues</button>
+        </div>
+      </nav>
+      <div class="tab-content mt-3" id="tab-content-catalogue">
+        <div class="tab-pane animated fadeInRight row show active" id="nav-load" role="tabpanel" aria-labelledby="nav-load-tab">
+          <div class="col-md-12">
+            <div class="card">
+              <div class="card-body p-4">
+                <div class="row">
+                  <div class="col-md-4 col-lg-2">
+                    <div class="operateur-load">
+                      <div class="card rounded-2 p-1 overflow-hidden" style="">
+                        <div class="image-load"></div>
+                        <div class="card-body p-2">
+                          <h5 class="fw-semibold fs-4 text-center"></h5>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-4 col-lg-2">
+                    <div class="operateur-load">
+                      <div class="card rounded-2 p-1 overflow-hidden" style="">
+                        <div class="image-load"></div>
+                        <div class="card-body p-2">
+                          <h5 class="fw-semibold fs-4 text-center"></h5>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-4 col-lg-2">
+                    <div class="operateur-load">
+                      <div class="card rounded-2 p-1 overflow-hidden" style="">
+                        <div class="image-load"></div>
+                        <div class="card-body p-2">
+                          <h5 class="fw-semibold fs-4 text-center"></h5>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-4 col-lg-2">
+                    <div class="operateur-load">
+                      <div class="card rounded-2 p-1 overflow-hidden" style="">
+                        <div class="image-load"></div>
+                        <div class="card-body p-2">
+                          <h5 class="fw-semibold fs-4 text-center"></h5>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-4 col-lg-2">
+                    <div class="operateur-load">
+                      <div class="card rounded-2 p-1 overflow-hidden" style="">
+                        <div class="image-load"></div>
+                        <div class="card-body p-2">
+                          <h5 class="fw-semibold fs-4 text-center"></h5>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-4 col-lg-2">
+                    <div class="operateur-load">
+                      <div class="card rounded-2 p-1 overflow-hidden" style="">
+                        <div class="image-load"></div>
+                        <div class="card-body p-2">
+                          <h5 class="fw-semibold fs-4 text-center"></h5>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="kl-offre-operateur" style="display: none;">
+    <div class="row">
+        <div class="col-md-12">
+          <div class="card animated fadeInRight" id="card-offre-operateur-container">
+
+          </div>
+        </div>
+      </div>
+  </div>
+
+  <div class="modal fade" id="id-modal-confirmation" tabindex="-1" aria-labelledby="modal-vente">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+              <div class="modal-header d-flex align-items-center gap-1">
+                <h5 class="modal-title">Confirmation de vente</h5>
+                <button type="button" class="kl-close btn-close" data-bs-dismiss="modal" aria-label="Close"></button>                    
+              </div>
+              <div class="kl-result-offre modal-body" id="confirm-modal-body">
+                
+              </div>  
+          </div>
+      </div>
+  </div>
+
+  <div class="modal fade" id="details-produits" tabindex="-1">
+    <div class="modal-dialog modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Plus de détails</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="modal-detail-produits">
+          <p>détails...</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block javascripts %}
+  {{ parent() }}
+  <script>
+  $(document).ready(function() {
+    const $produitPhysiques = {{produitPhysique|json_encode|raw }};
+    const $categories       = {{categories|json_encode|raw }};
+    let $catalogue          = {{catalogues|json_encode|raw }};
+
+    console.log('session catalogue', $catalogue);
+    console.log('$produitPhysiques', $produitPhysiques);
+    console.log('$categories', $categories);
+    
+    
+    let $telephonieCategories = []
+
+    function sendRequest(method = "POST", url, data = null) {
+        return new Promise((resolve, reject) => {
+            const request = $.ajax({
+                type: method,
+                url: url,
+                data: data,
+                // beforeSend: function () {
+                //     loading
+                // }
+            });
+
+            request.done(function (response) {
+                resolve(response);
+            });
+
+            request.fail(function (error) {
+                reject(error);
+            });
+
+            request.always(function () {
+                // removeLoading
+            });
+        });
+    }
+
+    function afficheListeCatalogue() {
+      const navCat = $("#nav-tab-catalogue")
+      const tabCat = $("#tab-content-catalogue")
+
+      navCat.empty()
+      tabCat.empty()
+      
+      $.each($catalogue, function(indexCatalogue, catalogue) {
+        
+        navCat.append(`
+          <button class="nav-link ${indexCatalogue == 0 ? 'active' : ''}" id="nav-${catalogue.name}-tab" data-bs-toggle="tab" data-bs-target="#nav-${catalogue.name}" type="button" role="tab" aria-controls="nav-${catalogue.name}" aria-selected="${indexCatalogue == 0 ? 'true' : 'false'}">${catalogue.name}</button>
+        `)
+        
+        let categoriesListe = ''
+        $.each(catalogue.categories, function(indexCategorie, categorie) {
+          categoriesListe +=
+            `<div class="col-md-4 col-lg-2 d-flex cursor-pointer">
+              <div class="card card-operateur p-2" data-catalogue="${catalogue.name}" data-categorie="${categorie.name}" rounded-2">
+                <div class="card-operateur-img">
+                  <img src="${categorie.catalogImageUrl}" alt="...">
+                </div>
+                <div class="card-body p-0">
+                  <h5 class="card-operateur-name m-0 text-center">${categorie.name}</h5>
+                </div>
+              </div>
+            </div>`
+        });
+
+        tabCat.append(`
+          <div class="tab-pane animated fadeInRight row ${indexCatalogue == 0 ? 'show active' : ''}" id="nav-${catalogue.name}" role="tabpanel" aria-labelledby="nav-${catalogue.name}-tab">
+            <div class="col-md-12">
+              <div class="card">
+                <div class="card-body p-4">
+                  <div class="row">
+                    ${categoriesListe}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `)
+      })
+      
+      $.each($categories, function(indexCategories, categorie) {
+        console.log(categorie);
+        
+        navCat.append(`
+          <button class="nav-link ${categorie.produits.length == 0 ? 'd-none' : ''}" id="nav-tab-${indexCategories}" data-bs-toggle="tab" data-bs-target="#nav-${indexCategories}" type="button" role="tab" aria-controls="nav-${indexCategories}" aria-selected="false">${categorie.nom}</button>
+        `)
+
+        let categoriesListe = ''
+        $.each(categorie.produits, function(indexProduit, produit) {
+          categoriesListe +=
+            `<div class="col-md-4 col-lg-2 d-flex cursor-pointer">
+              <div class="card card-operateur hors-api p-2" data-catalogue="${categorie.nom}" data-categorie="${produit.nom}" rounded-2">
+                <div class="card-operateur-img">
+                  <img src="${produit.operateurImage ? produit.operateurImage : '/images/operateurs.jpeg' }" alt="...">
+                </div>
+                <div class="card-body p-0">
+                  <h5 class="card-operateur-name m-0 text-center">${produit.operateur}</h5>
+                </div>
+              </div>
+            </div>`
+        });
+
+        tabCat.append(`
+          <div class="tab-pane animated fadeInRight row" id="nav-${indexCategories}" role="tabpanel" aria-labelledby="nav-tab-${indexCategories}">
+            <div class="col-md-12">
+              <div class="card">
+                <div class="card-body p-4">
+                  <div class="row">
+                    ${categoriesListe}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `)
+
+      })
+
+
+    }
+
+    function afficheListeOperateur() {
+      const telephonie = $.grep($catalogue, function(item) {
+          return item.name === 'Téléphonie';
+      });
+
+      if (telephonie.length > 0) {
+          $telephonieCategories = telephonie[0].categories;
+          const categorieContainer = $("#liste-catalogues")
+
+          categorieContainer.empty()
+          $.each($telephonieCategories, function(index, categorie) {
+            categorieContainer.append(
+              `<div class="col-md-4 col-lg-2 d-flex cursor-pointer">
+                <div class="card card-operateur p-2" data-name="${categorie.name}" rounded-2">
+                  <div class="card-operateur-img">
+                    <img src="${categorie.catalogImageUrl}" alt="...">
+                  </div>
+                  <div class="card-body p-0">
+                    <h5 class="card-operateur-name m-0 text-center">${categorie.name}</h5>
+                  </div>
+                </div>
+              </div>`
+            )
+          });
+      } else {
+          console.log("L'élément 'Téléphonie' n'a pas été trouvé.");
+      }
+    }
+
+    function afficherOffre(setCatalogue, setCategorie) {
+      const getCatalogue = $.grep($catalogue, function(item) {
+          return item.name === setCatalogue;
+      });
+
+      const getCategorie = $.grep(getCatalogue[0].categories, function(item) {
+          return item.name === setCategorie;
+      });
+
+      if (getCategorie.length > 0) {
+        const categorieSelected = getCategorie[0]
+        
+        const cardContainerOffreOperateur = $("#card-offre-operateur-container")
+
+        cardContainerOffreOperateur.empty()
+
+        const operateurSelectedTemplate = `
+          <div class="px-3 py-2 border-bottom card-head d-flex align-items-center">
+              <div class="d-flex align-items-center gap-2">
+                <img src="${categorieSelected.catalogImageUrl}" alt="...">
+                <h5 class="m-0">${categorieSelected.name}</h5>
+              </div>
+              <i class="ti ti-xbox-x close-offre-liste ms-auto text-danger fs-7 cursor-pointer"></i>
+          </div>`
+        
+        cardContainerOffreOperateur.append(operateurSelectedTemplate)
+
+        if ('categories' in categorieSelected) {
+            $.each(categorieSelected.categories, function(index, categorie) {
+              cardContainerOffreOperateur.append(
+                `<div class="categorie">
+                  <h5 class="m-0">${categorie.name}</h5>
+                </div>`
+              )
+
+              let cardOffreItems = '';
+              let cardOffreNew = '';
+
+              var produitPhysiquesHorsApi = $produitPhysiques.filter(function(produitPhysique) {
+                  return !categorie.products.some(function(produit) {
+                      return produit.productCode === produitPhysique.gencode;
+                  }) && produitPhysique.operateur === categorie.name && produitPhysique.isVisible !== true;
+              });
+
+
+              $.each(produitPhysiquesHorsApi, function(index, produitPhysique) {
+                cardOffreNew += `
+                <div class="col-md-4 d-flex">
+                  <div class="card offre-item">
+                    <div class="card-body p-2">
+                      <div class="row h-100">
+                        <div class="col-4">
+                          <div class="operateur">
+                            <img src="${categorie.catalogImageUrl}" alt="...">
+                            <h5 class="m-0 fw-bolder">${produitPhysique.prix} €</h5>
+                          </div>
+                        </div>
+                        <div class="col-8">
+                          <div class="title">
+                            <h2>${categorie.name}</h2>
+                            <span class="descritpion">${arrondir(produitPhysique.prix)} € classique </span>
+                          </div>
+                          <div class="details">
+                            ${categorie.name} ${arrondir(produitPhysique.prix)} € classique 
+                          </div>
+                          <div class="infos text-dark mb-2">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                          </div>
+                          <div class="validity text-dark">
+                            <p>Validité : 1 an</p>
+                          </div>
+                        </div>
+                        <div class="col-12 mt-auto">
+                          <div class="d-flex align-items-center justify-content-between">
+                            <div class="tarif fw-bolder">
+                              ${arrondir(produitPhysique.prix)} €
+                            </div>
+                            <button class="vendre-offre-code btn btn-outline-primary btn-sm" data-validity="1 an" data-bs-toggle="modal" data-bs-target="#id-modal-confirmation" data-tva="0" data-instruction="${produitPhysique.instruction}" data-image="${categorieSelected.catalogImageUrl}" data-amount="${produitPhysique.prix}" data-code="${produitPhysique.gencode}" data-description="${produitPhysique.description ? produitPhysique.description : produitPhysique.nom}" data-operateur-image="${categorieSelected.catalogImageUrl}" data-operateur-name="${categorieSelected.name}">
+                              Imprimer
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                `
+              });
+
+              $.each(categorie.products, function(index, product) {
+                if(product.amount) {
+
+                  let hideOffre = false;
+                  let isCodeProd = false;
+                  let isNew = false;
+                  let productNew = '';
+
+                  $.each($produitPhysiques, function(index, produitPhysique) {
+                      if (produitPhysique.gencode === product.productCode) {
+                        if (produitPhysique.isVisible) {
+                          hideOffre = true;
+                        } else if (produitPhysique.isCode) {
+                          if (produitPhysique.isNew) {
+                            isNew = true
+                            cardOffreNew += `
+                              <div class="col-md-4 d-flex">
+                                <div class="card offre-item">
+                                  <div class="card-body p-2">
+                                    <div class="row h-100">
+                                      <div class="col-4">
+                                        <div class="operateur">
+                                          <img src="${categorie.catalogImageUrl}" alt="...">
+                                          <h5 class="m-0 fw-bolder">${arrondir(produitPhysique.prix)} €</h5>
+                                        </div>
+                                      </div>
+                                      <div class="col-8">
+                                        <div class="title">
+                                          <h2>${categorie.name}</h2>
+                                          <span class="descritpion">${arrondir(produitPhysique.prix)} € classique </span>
+                                        </div>
+                                        <div class="details">
+                                          ${categorie.name} ${arrondir(produitPhysique.prix)} € classique 
+                                        </div>
+                                        <div class="infos text-dark mb-2">
+                                          <span></span>
+                                          <span></span>
+                                          <span></span>
+                                        </div>
+                                        <div class="validity text-dark">
+                                          <p>Validité : ${product.validity}</p>
+                                        </div>
+                                      </div>
+                                      <div class="col-12 mt-auto">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                          <div class="tarif fw-bolder">
+                                            ${arrondir(produitPhysique.prix)} €
+                                          </div>
+                                          <button class="vendre-offre-code btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#id-modal-confirmation" data-validity="${product.validity}" data-instruction="${produitPhysique.instruction}" data-image="${categorie.catalogImageUrl}" data-tva="0" data-amount="${produitPhysique.prix}" data-code="${produitPhysique.gencode}" data-description="${produitPhysique.description ? produitPhysique.description : produitPhysique.nom}" data-operateur-image="${categorie.catalogImageUrl}" data-operateur-name="${categorie.name}">
+                                            Imprimer
+                                          </button>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              `
+                          } else {
+                            isCodeProd = true
+                            cardOffreItems += `
+                              <div class="col-md-4 d-flex">
+                                <div class="card offre-item">
+                                  <div class="card-body p-2">
+                                    <div class="row h-100">
+                                      <div class="col-4">
+                                        <div class="operateur">
+                                          <img src="${product.productImageUrl}" alt="...">
+                                          <h5 class="m-0 fw-bolder">${arrondir(product.amount)} €</h5>
+                                        </div>
+                                      </div>
+                                      <div class="col-8">
+                                        <div class="title">
+                                          <h2>${product.countermarkName}</h2>
+                                          <span class="descritpion">${product.description}</span>
+                                        </div>
+                                        <div class="details">
+                                          <i class="ti ti-message-2 show-detail-produit" data-bs-toggle="modal" data-bs-target="#details-produits"></i>
+                                          <div class="detail-hidden">
+                                            ${product.details}
+                                          </div>
+                                        </div>
+                                        <div class="infos text-dark mb-2">
+                                          <span>${product.information1 ? product.information1 : ""} </span>
+                                          <span>${product.information2 ? product.information2 : ""} </span>
+                                          <span>${product.information3 ? product.information3 : ""}</span>
+                                        </div>
+                                        <div class="validity text-dark">
+                                          <p>Validité: ${product.validity}</p>
+                                        </div>
+                                      </div>
+                                      <div class="col-12 mt-auto">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                          <div class="tarif fw-bolder">
+                                            ${arrondir(product.amount)} €
+                                          </div>
+                                          <button class="vendre-offre-code btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#id-modal-confirmation" data-validity="${product.validity}" data-instruction="${produitPhysique.instruction}" data-tva="${product.tva}" data-image="${product.productImageUrl}" data-amount="${product.amount}" data-code="${product.productCode}" data-description="${product.description}" data-operateur-image="${categorie.catalogImageUrl}" data-operateur-name="${categorie.name}">
+                                            Imprimer
+                                          </button>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              `
+                          }
+                        }
+                      }
+                  });
+
+                  if(hideOffre) {
+                    return;
+                  }
+
+                  if(isNew) {
+                    return;
+                  }
+
+                  if(!isCodeProd) {
+                    cardOffreItems += `
+                      <div class="col-md-4 d-flex">
+                        <div class="card offre-item">
+                          <div class="card-body p-2">
+                            <div class="row h-100">
+                              <div class="col-4">
+                                <div class="operateur">
+                                  <img src="${product.productImageUrl}" alt="...">
+                                  <h5 class="m-0 fw-bolder">${arrondir(product.amount)} €</h5>
+                                </div>
+                              </div>
+                              <div class="col-8">
+                                <div class="title">
+                                  <h2>${product.countermarkName}</h2>
+                                  <span class="descritpion">${product.description}</span>
+                                </div>
+                                <div class="details">
+                                  <i class="ti ti-message-2 show-detail-produit" data-bs-toggle="modal" data-bs-target="#details-produits"></i>
+                                  <div class="detail-hidden">
+                                    ${product.details}
+                                  </div>
+                                </div>
+                                <div class="infos text-dark mb-2">
+                                  <span>${product.information1 ? product.information1 : ""} </span>
+                                  <span>${product.information2 ? product.information2 : ""} </span>
+                                  <span>${product.information3 ? product.information3 : ""}</span>
+                                </div>
+                                <div class="validity text-dark">
+                                  <p>Validité: ${product.validity}</p>
+                                </div>
+                              </div>
+                              <div class="col-12 mt-auto">
+                                <div class="d-flex align-items-center justify-content-between">
+                                  <div class="tarif fw-bolder">
+                                    ${arrondir(product.amount)} €
+                                  </div>
+                                  <button class="vendre-offre btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#id-modal-confirmation" data-validity="${product.validity}" data-tva="${product.tva}" data-image="${product.productImageUrl}" data-amount="${product.amount}" data-code="${product.productCode}" data-description="${product.description}" data-operateur-image="${categorieSelected.catalogImageUrl}" data-operateur-name="${categorieSelected.name}">Imprimer</button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      `
+                  }
+
+                }
+                
+              });
+
+              cardContainerOffreOperateur.append(`
+                <div class="card-body p-2">
+                  <div class="row">
+                    ${cardOffreNew}
+                    ${cardOffreItems}
+                  </div>
+                </div>
+              `)
+            });
+        } else {
+          let cardOffreItems = '';
+          let cardOffreNew = '';
+
+          var produitPhysiquesHorsApi = $produitPhysiques.filter(function(produitPhysique) {
+              return !categorieSelected.products.some(function(produit) {
+                  return produit.productCode === produitPhysique.gencode;
+              }) && produitPhysique.operateur === categorieSelected.name && produitPhysique.isVisible !== true;
+          });
+
+
+          $.each(produitPhysiquesHorsApi, function(index, produitPhysique) {
+            cardOffreNew += `
+            <div class="col-md-4 d-flex">
+              <div class="card offre-item">
+                <div class="card-body p-2">
+                  <div class="row h-100">
+                    <div class="col-4">
+                      <div class="operateur">
+                        <img src="${categorieSelected.catalogImageUrl}" alt="...">
+                        <h5 class="m-0 fw-bolder">${arrondir(produitPhysique.prix)} €</h5>
+                      </div>
+                    </div>
+                    <div class="col-8">
+                      <div class="title">
+                        <h2>${categorieSelected.name}</h2>
+                        <span class="descritpion">${arrondir(produitPhysique.prix)} € classique </span>
+                      </div>
+                      <div class="details">
+                        ${categorieSelected.name} ${arrondir(produitPhysique.prix)} € classique 
+                      </div>
+                      <div class="infos text-dark mb-2">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                      </div>
+                      <div class="validity text-dark">
+                        <p>Validité: ${product.validity}</p>
+                      </div>
+                    </div>
+                    <div class="col-12 mt-auto">
+                      <div class="d-flex align-items-center justify-content-between">
+                        <div class="tarif fw-bolder">
+                          ${arrondir(produitPhysique.prix)} €
+                        </div>
+                        <button class="vendre-offre-code btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#id-modal-confirmation" data-validity="${product.validity}" data-tva="0" data-instruction="${produitPhysique.instruction}" data-image="${categorieSelected.catalogImageUrl}" data-amount="${produitPhysique.prix}" data-code="${produitPhysique.gencode}" data-description="${produitPhysique.description ? produitPhysique.description : produitPhysique.nom}" data-operateur-image="${categorieSelected.catalogImageUrl}" data-operateur-name="${categorieSelected.name}">
+                          Imprimer
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            `
+          });
+
+          $.each(categorieSelected.products, function(index, product) {
+            if(product.amount) {
+
+              let hideOffre = false;
+              let isCodeProd = false;
+              let isNew = false;
+              let productNew = '';
+
+              $.each($produitPhysiques, function(index, produitPhysique) {
+                  if (produitPhysique.gencode === product.productCode) {
+                    if (produitPhysique.isVisible) {
+                      hideOffre = true;
+                    } else if (produitPhysique.isCode) {
+                      if (produitPhysique.isNew) {
+                        isNew = true
+                        cardOffreNew += `
+                          <div class="col-md-4 d-flex">
+                            <div class="card offre-item">
+                              <div class="card-body p-2">
+                                <div class="row h-100">
+                                  <div class="col-4">
+                                    <div class="operateur">
+                                      <img src="${categorieSelected.catalogImageUrl}" alt="...">
+                                      <h5 class="m-0 fw-bolder">${arrondir(produitPhysique.prix)} €</h5>
+                                    </div>
+                                  </div>
+                                  <div class="col-8">
+                                    <div class="title">
+                                      <h2>${categorieSelected.name}</h2>
+                                      <span class="descritpion">${arrondir(produitPhysique.prix)} € classique </span>
+                                    </div>
+                                    <div class="details">
+                                      ${categorieSelected.name} ${arrondir(produitPhysique.prix)} € classique 
+                                    </div>
+                                    <div class="infos text-dark mb-2">
+                                      <span></span>
+                                      <span></span>
+                                      <span></span>
+                                    </div>
+                                    <div class="validity text-dark">
+                                      <p>Validité: ${product.validity}</p>
+                                    </div>
+                                  </div>
+                                  <div class="col-12 mt-auto">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                      <div class="tarif fw-bolder">
+                                        ${arrondir(produitPhysique.prix)} €
+                                      </div>
+                                      <button class="vendre-offre-code btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#id-modal-confirmation" data-validity="${product.validity}" data-tva="0" data-instruction="${produitPhysique.instruction}" data-image="${categorieSelected.catalogImageUrl}" data-amount="${produitPhysique.prix}" data-code="${produitPhysique.gencode}" data-description="${produitPhysique.description ? produitPhysique.description : produitPhysique.nom}" data-operateur-image="${categorieSelected.catalogImageUrl}" data-operateur-name="${categorieSelected.name}">
+                                        Imprimer
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          `
+                      } else {
+                        isCodeProd = true
+                        cardOffreItems += `
+                          <div class="col-md-4 d-flex">
+                            <div class="card offre-item">
+                              <div class="card-body p-2">
+                                <div class="row h-100">
+                                  <div class="col-4">
+                                    <div class="operateur">
+                                      <img src="${product.productImageUrl}" alt="...">
+                                      <h5 class="m-0 fw-bolder">${arrondir(product.amount)} €</h5>
+                                    </div>
+                                  </div>
+                                  <div class="col-8">
+                                    <div class="title">
+                                      <h2>${product.countermarkName}</h2>
+                                      <span class="descritpion">${product.description}</span>
+                                    </div>
+                                    <div class="details">
+                                      <i class="ti ti-message-2 show-detail-produit" data-bs-toggle="modal" data-bs-target="#details-produits"></i>
+                                      <div class="detail-hidden">
+                                        ${product.details}
+                                      </div>
+                                    </div>
+                                    <div class="infos text-dark mb-2">
+                                      <span>${product.information1 ? product.information1 : ""} </span>
+                                      <span>${product.information2 ? product.information2 : ""} </span>
+                                      <span>${product.information3 ? product.information3 : ""}</span>
+                                    </div>
+                                    <div class="validity text-dark">
+                                      <p>Validité: ${product.validity}</p>
+                                    </div>
+                                  </div>
+                                  <div class="col-12 mt-auto">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                      <div class="tarif fw-bolder">
+                                        ${arrondir(product.amount)} €
+                                      </div>
+                                      <button class="vendre-offre-code btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#id-modal-confirmation" data-validity="${product.validity}" data-instruction="${produitPhysique.instruction}" data-tva="${product.tva}" data-image="${product.productImageUrl}" data-amount="${product.amount}" data-code="${product.productCode}" data-description="${product.description}" data-operateur-image="${categorieSelected.catalogImageUrl}" data-operateur-name="${categorieSelected.name}">
+                                        Imprimer
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          `
+                      }
+                    }
+                  }
+              });
+
+              if(hideOffre) {
+                return;
+              }
+
+              if(isNew) {
+                return;
+              }
+
+              if(!isCodeProd) {
+                cardOffreItems += `
+                  <div class="col-md-4 d-flex">
+                    <div class="card offre-item">
+                      <div class="card-body p-2">
+                        <div class="row h-100">
+                          <div class="col-4">
+                            <div class="operateur">
+                              <img src="${product.productImageUrl}" alt="...">
+                              <h5 class="m-0 fw-bolder">${arrondir(product.amount)} €</h5>
+                            </div>
+                          </div>
+                          <div class="col-8">
+                            <div class="title">
+                              <h2>${product.countermarkName}</h2>
+                              <span class="descritpion">${product.description}</span>
+                            </div>
+                            <div class="details">
+                              <i class="ti ti-message-2 show-detail-produit" data-bs-toggle="modal" data-bs-target="#details-produits"></i>
+                              <div class="detail-hidden">
+                                ${product.details}
+                              </div>
+                            </div>
+                            <div class="infos text-dark mb-2">
+                              <span>${product.information1 ? product.information1 : ""} </span>
+                              <span>${product.information2 ? product.information2 : ""} </span>
+                              <span>${product.information3 ? product.information3 : ""}</span>
+                            </div>
+                            <div class="validity text-dark">
+                              <p>Validité: ${product.validity}</p>
+                            </div>
+                          </div>
+                          <div class="col-12 mt-auto">
+                            <div class="d-flex align-items-center justify-content-between">
+                              <div class="tarif fw-bolder">
+                                ${arrondir(product.amount)} €
+                              </div>
+                              <button class="vendre-offre btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#id-modal-confirmation" data-validity="${product.validity}" data-tva="${product.tva}" data-image="${product.productImageUrl}" data-amount="${product.amount}" data-code="${product.productCode}" data-description="${product.description}" data-operateur-image="${categorieSelected.catalogImageUrl}" data-operateur-name="${categorieSelected.name}">Imprimer</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  `
+              }
+
+            }
+            
+          });
+
+          cardContainerOffreOperateur.append(`
+            <div class="card-body p-2">
+              <div class="row">
+                ${cardOffreNew}
+                ${cardOffreItems}
+              </div>
+            </div>
+          `)
+        }
+
+        $('#kl-offre-operateur').fadeToggle("slow", "linear");
+        $('#kl-liste-operateur').fadeToggle("slow", "linear");
+      }
+    }
+
+    function afficherOffreHorsApi(setCatalogue, setCategorie) {
+      
+      const getCatalogue = $.grep($categories, function(item) {
+          return item.nom === setCatalogue;
+      });
+
+      const getCategorie = $.grep(getCatalogue[0].produits, function(item) {
+          return item.nom === setCategorie;
+      });
+
+      if (getCategorie.length > 0) {
+        const categorieSelected = getCategorie[0]
+        
+        const cardContainerOffreOperateur = $("#card-offre-operateur-container")
+
+        cardContainerOffreOperateur.empty()
+
+        const operateurSelectedTemplate = `
+          <div class="px-3 py-2 border-bottom card-head d-flex align-items-center">
+              <div class="d-flex align-items-center gap-2">
+                <img src="${categorieSelected.operateurImage ? categorieSelected.operateurImage : '/images/operateurs.jpeg'}" alt="...">
+                <h5 class="m-0">${categorieSelected.operateur}</h5>
+              </div>
+              <i class="ti ti-xbox-x close-offre-liste ms-auto text-danger fs-7 cursor-pointer"></i>
+          </div>`
+        
+        cardContainerOffreOperateur.append(operateurSelectedTemplate)
+
+        let cardOffreItems = `
+            <div class="col-md-4 d-flex">
+              <div class="card offre-item">
+                <div class="card-body p-2">
+                  <div class="row h-100">
+                    <div class="col-4">
+                      <div class="operateur">
+                        <img src="${categorieSelected.operateurImage ? categorieSelected.operateurImage : '/images/operateurs.jpeg'}" alt="...">
+                        <h5 class="m-0 fw-bolder">${arrondir(categorieSelected.prix)} €</h5>
+                      </div>
+                    </div>
+                    <div class="col-8">
+                      <div class="title">
+                        <h2>${categorieSelected.nom}</h2>
+                        <span class="descritpion"></span>
+                      </div>
+                      <div class="details">
+                        ${categorieSelected.description}
+                      </div>
+                      <div class="infos text-dark mb-2">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                      </div>
+                      <div class="validity text-dark">
+                        <p>Validité : 1 an</p>
+                      </div>
+                    </div>
+                    <div class="col-12 mt-auto">
+                      <div class="d-flex align-items-center justify-content-between">
+                        <div class="tarif fw-bolder">
+                          ${arrondir(categorieSelected.prix)} €
+                        </div>
+                        <button class="vendre-offre-code btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#id-modal-confirmation" data-validity="1 an" data-tva="0" data-instruction="${categorieSelected.instruction}" data-image="${categorieSelected.operateurImage ? categorieSelected.operateurImage : '/images/operateurs.jpeg'}" data-amount="${categorieSelected.prix}" data-code="${categorieSelected.gencode}" data-description="${categorieSelected.description}" data-operateur-image="${categorieSelected.operateurImage ? categorieSelected.operateurImage : '/images/operateurs.jpeg'}" data-operateur-name="${categorieSelected.operateur}">
+                          Imprimer
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            `
+
+        cardContainerOffreOperateur.append(`
+          <div class="card-body p-2">
+            <div class="row">
+              ${cardOffreItems}
+            </div>
+          </div>
+        `)
+
+        $('#kl-offre-operateur').fadeToggle("slow", "linear");
+        $('#kl-liste-operateur').fadeToggle("slow", "linear");
+      }
+    }
+
+    async function confirmVente(ref) {
+      let dataRef = {
+        sale_ref: ref
+      }
+      try {
+          const response = await sendRequest("POST", "/confirmation-vente", dataRef);
+          if (response.ventes) {
+            console.log('demande de confirmation: ', response);
+            notification('warning', "Demande de confirmation");
+          } else {
+            $('#id-modal-confirmation').modal('hide')
+            $('.loding-page').addClass('d-none')
+            notification('warning', "Articles indisponibles");
+            console.log("articles indisponibles: ", response);
+          }
+        } catch (error) {
+          $('#id-modal-confirmation').modal('hide');
+          $('.loding-page').addClass('d-none');
+          let errorMessage = error.responseJSON && error.responseJSON.message ? error.responseJSON.message : "Une erreur inattendue s'est produite";
+          notification('warning', "Erreur lors de la confirmation de vente: " + errorMessage);
+          console.log("Erreur lors de confirmation de vente: ", error);
+        }
+    }
+
+    async function saveRecharge(recharge, produit) {
+      let dataSave = {
+        recharge: recharge,
+        tva: produit.productTva,
+        img: produit.productImg,
+        validity: produit.productValidity
+      }
+      try {
+          const response = await sendRequest("POST", "/save-rechargement-telephonie", dataSave);
+          if (response) {
+            $("#solde-js").text(`${response.solde.toFixed(2)} €`)
+            $('#id-modal-confirmation').modal('hide')
+            $('.loding-page').addClass('d-none')
+            notification('success', "Achat effectué, avec succès");
+            if(response.infosFacture) {
+                imprimTicket(response.infosFacture)
+            }
+            // window.location.reload();
+          } else {
+            console.log("Erreur lors de sauvegarder le rechargement: ", response);
+          }
+        } catch (error) {
+          $('#id-modal-confirmation').modal('hide');
+          $('.loding-page').addClass('d-none');
+          let errorMessage = error.responseJSON && error.responseJSON.message ? error.responseJSON.message : "Une erreur inattendue s'est produite";
+          notification('warning', "Erreur lors de l'enregistrement du rechargement: " + errorMessage);
+          console.log("Erreur lors de de sauvegarder le rechargement: ", error);
+        }
+    }
+
+    async function imprimTicket(infosFacture) {
+      let dataFacture = {
+        infosFacture: infosFacture
+      }
+      console.log("infosFacture", dataFacture);
+      notification('success', "Préparation du ticket, Chargement...");
+      $('.close-offre-liste').trigger('click');
+      $.ajax({
+          url: "/preparation-ticket",
+          method: 'POST',
+          data: dataFacture,
+          success: function (response) {
+            if(response.base64Content) {
+                swal({
+                    title: "Impression",
+                    text: "Carte vendu avec succès, imprimer votre ticket !",
+                    type: 'success',
+                    showCancelButton: true,
+                    confirmButtonColor: "#0a7ea4",
+                    confirmButtonText: "Imprimer",
+                    cancelButtonText: "Non Merci !",
+                    closeOnConfirm: true,
+                    closeOnCancel: true },
+                function (isConfirm) {
+                    if (isConfirm) {
+                        const byteCharacters = atob(response.base64Content);
+                        const byteNumbers = new Array(byteCharacters.length);
+                        for (let i = 0; i < byteCharacters.length; i++) {
+                            byteNumbers[i] = byteCharacters.charCodeAt(i);
+                        }
+                        const byteArray = new Uint8Array(byteNumbers);
+                        
+                        // Création du Blob pour afficher le PDF
+                        const file = new Blob([byteArray], { type: 'application/pdf' });
+                        const fileURL = URL.createObjectURL(file);
+                        
+                        // Ouvrir le PDF dans une nouvelle fenêtre
+                        window.open(fileURL, '_blank');
+
+                        if (fileURL) {
+                            fileURL.onload = function () {
+                                fileURL.print();
+                            };
+                        } else {
+                            alert("Veuillez autoriser les pop-ups pour ce site afin d'imprimer le document.");
+                        }
+                    }else{
+                        notification('success', "Rechargemet enregistreé");
+                    }
+                });
+            } else {
+              notification('warning', "Erreur lors de l'impréssion du ticket");
+              console.log("Erreur lors de l'impréssion du ticket: ", response);
+            }
+          },
+          error: function (error) {
+              let errorMessage = error.responseJSON && error.responseJSON.message ? error.responseJSON.message : "Une erreur inattendue s'est produite";
+              notification('warning', "Erreur lors de l'impression du ticket: " + errorMessage);
+              console.log("Erreur lors de l'impression du ticket: ", error);
+          }
+      })
+    }
+
+    function arrondir(nombre) {
+        return (Math.ceil(nombre * 10) / 10).toFixed(2);
+    }
+    
+    async function saveRechargeCode(produit) {
+      let dataSave = {
+        produit: produit
+      }
+      
+      try {
+          const response = await sendRequest("POST", "/save-rechargement-code", dataSave);
+          if (response) {
+            $("#solde-js").text(`${response.solde.toFixed(2)} €`)
+            $('#id-modal-confirmation').modal('hide')
+            $('.loding-page').addClass('d-none')
+            notification('success', "Achat effectué, avec succès");
+            if(response.infosFacture) {
+                imprimTicket(response.infosFacture)
+            }
+          } else {
+            console.log("Erreur lors de sauvegarder le rechargement: ", response);
+          }
+        } catch (error) {
+          $('#id-modal-confirmation').modal('hide');
+          $('.loding-page').addClass('d-none');
+          let errorMessage = error.responseJSON && error.responseJSON.message ? error.responseJSON.message : "Une erreur inattendue s'est produite";
+          notification('warning', "Erreur lors de l'enregistrement du rechargement: " + errorMessage);
+          console.log("Erreur lors de de sauvegarder le rechargement: ", error);
+        }
+    }
+
+    (async function getCatalogue() {
+      console.log('verif catalogue', $catalogue);
+      
+      if($catalogue) {
+        afficheListeCatalogue()
+      } else {
+        try {
+            const response = await sendRequest("POST", "/liste-catalogue-produit");
+            console.log('init calalogue:', response);
+            if (response) {
+              $catalogue = response.catalogues.navigate.categories
+              afficheListeCatalogue()
+              //afficheListeOperateur()
+            } else {
+              console.log("Erreur lors de la récupération des catalogue: ", response);
+            }
+          } catch (error) {
+          console.log("Erreur lors de la récupération des catalogue: ", error);
+        }
+      }
+    })();
+     
+
+    $(document).on('click', '.card-operateur', function () {
+      
+      const catalogue = $(this).data('catalogue')
+      const categorie = $(this).data('categorie')
+
+      if ($(this).hasClass('hors-api')) {
+        afficherOffreHorsApi(catalogue, categorie)
+      } else {
+        afficherOffre(catalogue, categorie)
+      }
+    })
+
+    $(document).on('click', '.show-detail-produit', function () {
+      
+      const details = $(this).next('.detail-hidden').html()
+      const modalDetail = $("#modal-detail-produits")
+      modalDetail.empty()
+      modalDetail.html(details)
+      
+    })
+    
+    $(document).on('click', '.close-offre-liste', function () {
+      $('#kl-offre-operateur').fadeToggle("slow", "linear");
+      $('#kl-liste-operateur').fadeToggle("slow", "linear");
+    })
+    
+    $(document).on('click', '.vendre-offre', async function () {
+      $('.loding-page').removeClass('d-none')
+
+      const produit = {
+        image: $(this).data("image"),
+        amount: $(this).data("amount"),
+        code: $(this).data("code"),
+        tva: $(this).data("tva"),
+        description: $(this).data("description"),
+        validity: $(this).data("validity"),
+        operateurImage: $(this).data("operateur-image"),
+        operateurName: $(this).data("operateur-name")
+      }
+
+      const dataTarif = {
+        tarif: $(this).data("amount")
+      }
+
+      try {
+          const response = await sendRequest("POST", "/verif-sold-bout-recharge", dataTarif);
+          if (response.solde) {
+            $('.loding-page').addClass('d-none')
+            $("#confirm-modal-body").html(`
+              <div class="row">
+                <div class="col-4 align-items-center col-4 d-flex justify-content-center">
+                  <img src="${produit.image}" class="w-100" alt="">
+                </div>
+                <div class="col-8 d-flex align-items-center justify-content-center flex-column gap-1 text-center">
+                  <h4>${produit.operateurName}</h4>
+                  <img src="${produit.operateurImage}" class="w-30" alt="">
+                  <p class="mb-1">${produit.description}</p>
+                  <h5>${arrondir(produit.amount)} €</h5>
+                  <div class="d-flex gap-1 align-items-center justify-content-between flex-wrap">
+                    <button type="button" class="btn btn-outline-danger btn-sm" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" data-validity="${produit.validity}" data-img="${produit.operateurImage}" data-tva="${produit.tva}" data-code="${produit.code}" class="btn btn-success btn-sm kl-confirmation">Confirmer</button>
+                  </div>
+                </div>
+              </div>
+            `)
+          } else {
+            $('#id-modal-confirmation').modal('hide')
+            $('.loding-page').addClass('d-none')
+            notification('warning', response.message);
+            console.log("Erreur lors de l'achat: ", response);
+          }
+      } catch (error) {
+        $('.loding-page').addClass('d-none');
+        let errorMessage = error.responseJSON && error.responseJSON.message ? error.responseJSON.message : "Une erreur inattendue s'est produite";
+        notification('warning', "Erreur lors de l'achat: " + errorMessage);
+        console.log("Erreur lors de l'achat: ", error);
+        $('#id-modal-confirmation').modal('hide');
+      }
+    })
+    
+    $(document).on('click', '.vendre-offre-code', async function () {
+      $('.loding-page').removeClass('d-none')
+
+      console.log("instruction", $(this).data("instruction"));
+      
+
+      const produit = {
+        image: $(this).data("image"),
+        amount: $(this).data("amount"),
+        code: $(this).data("code"),
+        tva: $(this).data("tva"),
+        description: $(this).data("description"),
+        operateurImage: $(this).data("operateur-image"),
+        operateurName: $(this).data("operateur-name"),
+        instruction: $(this).data("instruction"),
+        validity: $(this).data("validity")
+      }
+
+      const dataTarif = {
+        tarif: $(this).data("amount")
+      }
+
+      try {
+          const response = await sendRequest("POST", "/verif-sold-bout-recharge", dataTarif);
+          if (response.solde) {
+            
+            $('.loding-page').addClass('d-none')
+            $("#confirm-modal-body").html(`
+              <div class="row">
+                <div class="col-4 align-items-center col-4 d-flex justify-content-center">
+                  <img src="${produit.image}" class="w-100" alt="">
+                </div>
+                <div class="col-8 d-flex align-items-center justify-content-center flex-column gap-1 text-center">
+                  <h4>${produit.operateurName}</h4>
+                  <img src="${produit.operateurImage}" class="w-30" alt="">
+                  <p class="mb-1">${produit.description}</p>
+                  <h5>${arrondir(produit.amount)} €</h5>
+                  <div class="d-flex gap-1 align-items-center justify-content-between flex-wrap">
+                    <button type="button" class="btn btn-outline-danger btn-sm" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" data-validity="${produit.validity}" data-image="${produit.image}" data-tva="${produit.tva}" data-operateur="${produit.operateurName}" data-amount="${produit.amount}" data-description="${produit.description}" data-code="${produit.code}" data-instruction="${produit.instruction}" class="btn btn-success btn-sm kl-confirmation-code">
+                      Confirmer
+                    </button>
+                  </div>
+                </div>
+              </div>
+            `)
+          } else {
+            $('#id-modal-confirmation').modal('hide')
+            $('.loding-page').addClass('d-none')
+            notification('warning', response.message);
+            console.log("Erreur lors de l'achat: ", response);
+          }
+      } catch (error) {
+        $('.loding-page').addClass('d-none');
+        let errorMessage = error.responseJSON && error.responseJSON.message ? error.responseJSON.message : "Une erreur inattendue s'est produite";
+        notification('warning', "Erreur lors de l'achat: " + errorMessage);
+        console.log("Erreur lors de l'achat: ", error);
+        $('#id-modal-confirmation').modal('hide');
+      }
+    })
+
+    $(document).on('click', '.kl-confirmation', async function () {
+      $('.loding-page').removeClass('d-none')
+      let dataProduit = {
+        productCode: $(this).data('code'),
+        productTva: $(this).data('tva'),
+        productImg: $(this).data('img'),
+        productValidity: $(this).data('validity'),
+      }
+      
+      try {
+          const response = await sendRequest("POST", "/ajout-vente-pdf", dataProduit);
+          if (response) {
+            if(response.ventes.processState == "SOLD") {
+              saveRecharge(response.ventes, dataProduit)
+            } else {
+              confirmVente(response.ventes.saleRef)
+            }
+          } else {
+            $('.loding-page').addClass('d-none')
+            notification('warning', "Erreur lors de l'achat");
+            console.log("Erreur lors de l'achat: ", response);
+          }
+      } catch (error) {
+        $('.loding-page').addClass('d-none');
+        $('#id-modal-confirmation').modal('hide');
+        let errorMessage = error.responseJSON && error.responseJSON.message ? error.responseJSON.message : "Une erreur inattendue s'est produite";
+        notification('warning', "Erreur lors de l'achat: " + errorMessage);
+        console.log("Erreur lors de l'achat: ", error);
+      }
+    })
+
+    $(document).on('click', '.kl-confirmation-code', async function () {
+      $('.loding-page').removeClass('d-none')
+      let product = {
+        operateur: $(this).data('operateur'),
+        image: $(this).data('image'),
+        amount: $(this).data('amount'),
+        tva: $(this).data('tva'),
+        description: $(this).data('description'),
+        productCode: $(this).data('code'),
+        instruction: $(this).data('instruction'),
+        validity: $(this).data('validity')
+      }
+
+      saveRechargeCode(product)
+
+    })
+
+  });
+  </script>
+{% endblock %}

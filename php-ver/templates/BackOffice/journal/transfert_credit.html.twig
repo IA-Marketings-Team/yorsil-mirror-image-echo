@@ -1,0 +1,144 @@
+{% extends 'base_admin.html.twig' %}
+
+{% set menu_journal = true %}
+{% set menu_Transfert = true %}
+
+{% block title %} Journal | Transfert de Crédit {% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .disabled-link {
+            pointer-events: none;  /* Désactive les interactions de la souris */
+            color: gray;           /* Optionnel : Changer la couleur pour indiquer que c'est désactivé */
+            text-decoration: none; /* Optionnel : Enlever le soulignement */
+            cursor: default;       /* Optionnel : Changer le curseur */
+        }
+        </style>
+{% endblock %}
+
+{% block body %}
+
+    <div class="card bg-light-info shadow-none position-relative overflow-hidden">
+        <div class="card-body px-4 py-3">
+            <div class="row align-items-center">
+                <div class="col-9">
+                    <h4 class="fw-semibold mb-8">Journal des transferts de crédit</h4>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                          <li class="breadcrumb-item"><a class="text-muted" href="javascript:void(0)">Transfert de crédit</a></li>
+                          <li class="breadcrumb-item active" aria-current="page">Liste</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+     <section>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-light"  id="id-transfert-liste">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Boutique</th>
+                                        <th>Numéro</th>
+                                        <th>Montant</th>
+                                        <th>Commission</th>
+                                        <th>Fx</th>
+                                        <th>Opérateur</th>
+                                        <th>Pays</th>
+                                        <th>Type</th>
+                                        <th class="text-center">Status</th>
+                						<th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                   {# {% for i in 0..5 %} 
+                                        <tr>
+                                            <td>15/08/2024</td>
+                                            <td>Boutique {{i+1}}</td>
+                                            <td>TR-00{{i+1}}</td>
+                                            <td>+21264565785{{i}}</td>
+    										<td>3{{i}} &euro; </td>
+                                            <td>Maroc Telecom</td>
+                                            <td>MA</td>
+                                            <td class="text-center">
+                                                {% if i % 2 == 0 %}
+                                                    <i class = "ti ti-arrows-diff fs-5 text-success" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Success"></i>
+                                                {% else %}
+                                                    <i class = "ti ti-arrows-diff fs-5 text-warning" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="En attente de validation"></i>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <a class="btn btn-info btn-sm" href="#">
+                                                    <i class = "ti ti-eye fs-5" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Voir détails"></i>
+                                                </a>
+                                                {% set trf = 'TR-00'~(i+1) %}
+                                                {% if i % 2 == 0 %}
+                                                    <a class="btn btn-grey btn-sm disabled-link" href="javascript:void(0)">
+                                                        <i class = "ti ti-check fs-5 text-gray" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Aucune validation"></i>
+                                                    </a>
+                                                {% else %}
+                                                    <a class="btn btn-warning btn-sm "href="{{path('validation_transfert',{transfert:trf})}}">
+                                                        <i class = "ti ti-check fs-5 " data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="En attente de validation"></i>
+                                                    </a>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}  #}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="id-modal" tabindex="-1" aria-labelledby="modal-stock">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Validation d'un transfert manuel</h4>
+                        <button type="button" class="kl-close btn-close" data-bs-dismiss="modal" aria-label="Close"></button>                    </div>
+                    <div class="modal-body">
+                        <form action="{{path('validation_transfert')}}" id="id-form-ajout" method="POST">
+                            <p class="kl-role-actuel mb-2"></p>
+                            <input type="hidden" name="transfert_id" id="id-transfert">
+                            <div class="row py-2">
+                                <div class="col-md-8 col-xl-9">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input primary" type="radio" name="validation" id="secondary-radio" value="oui" checked="">
+                                        <label class="form-check-label" for="secondary-radio">OUI</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input primary" type="radio" name="validation" id="secondary2-radio" value="non">
+                                        <label class="form-check-label" for="secondary2-radio">NON</label>
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">Confirmer</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Annuler</button>
+                    </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </section>
+                    
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        var href_suppr_defaut = '#';
+    </script>
+    <script src="{{ asset('backoffice/journal/transfert.liste.js') }}"></script>
+{% endblock %}

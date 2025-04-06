@@ -1,0 +1,77 @@
+{% extends 'base_admin.html.twig' %}
+
+{% set menu_journal = true %}
+
+{% block title %}journal{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block body %}
+
+<div class="wrapper wrapper-content animated fadeInRight">
+     <div class="row">
+        <div class="col-lg-3">
+            <div class="widget style1 yellow-bg">
+                <div class="row">
+                    <div class="col-4">
+                        <a href="{{path('credit')}}" class="text-white"><i class="fa fa-credit-card fa-5x"></i></a>
+                    </div>
+                    <div class="col-8 text-right">
+                        <h2 class="font-bold"> Crédit </h2>
+                        <h3 class="font-bold">26%</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="widget style1 red-bg">
+                <div class="row">
+                    <div class="col-4">
+                        <a href="{{path('debit')}}" class="text-white"><i class="fa fa-credit-card fa-5x"></i></a>
+                    </div>
+                    <div class="col-8 text-right">
+                        <h2 class="font-bold"> Débit </h2>
+                        <h3 class="font-bold">30%</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="widget style1 blue-bg">
+                <div class="row">
+                    <div class="col- ">
+                        <a href="{{path('GestComm')}}" class="text-white"><i class="fa fa-handshake-o fa-5x"></i></a>
+                    </div>
+                    <div class="col-9 text-right text-center">
+                        <h2 class="font-bold"> Geste commerciale </h2>
+                        <h3 class="font-bold"></h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="widget style1 blue-bg">
+                <div class="row">
+                    <div class="col- ">
+                        <a href="{{path('seuil')}}" class="text-white"><i class="fa fa-handshake-o fa-5x"></i></a>
+                    </div>
+                    <div class="col-9 text-right text-center">
+                        <h2 class="font-bold"> Seuil </h2>
+                        <h3 class="font-bold"></h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+    	
+	</script>
+{% endblock %}

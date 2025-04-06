@@ -1,0 +1,93 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}Listes des administrateurs{% endblock %}
+
+{% set menu_admin_list = true %}
+
+{% block body %}
+    <div class="card bg-light-info shadow-none position-relative overflow-hidden">
+        <div class="card-body px-4 py-3">
+            <div class="row align-items-center">
+                <div class="col-9">
+                    <h4 class="fw-semibold mb-8">Liste des supers administrateurs</h4>
+                    <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a class="text-muted" href="javascript:void(0)">Super administrateur</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Liste</li>
+                    </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <section>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        {% if is_granted("ROLE_SUPER_ADMIN") %}
+                            <div class="d-flex align-items-center justify-content-end mb-2">
+                                <a id="ajout_admin" href="{{ path('ajout_admin') }}" class="btn btn-primary mb-2">
+                                    <i class="ti ti-plus fs-4"></i> Ajouter un super administrateur
+                                </a>
+                            </div>
+                        {% endif %}
+                        <div class="table-responsive">
+                            <table id="table" class="table border table-striped table-bordered display text-nowrap">
+                                <thead>
+                                    <tr>
+                                        <td>Numéro de compte</td>
+                                        <td>Nom</td>
+                                        <td>Prénom(s)</td>
+                                        <td>Téléphone</td>
+                                        <td>Email</td>
+                                        <td>Adresse IP</td>
+                                        <td>Dernière connexion</td>
+                                        {% if is_granted("ROLE_SUPER_ADMIN") %}
+                                            <td class="text-center">Action</td>
+                                        {% endif %}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for user in users %}
+                                        <tr>
+                                            <td>{{ user.numCom }}</td>
+                                            <td>{{ user.nom }}</td>
+                                            <td>{{ user.prenom }}</td>
+                                            <td>{{ user.tel }}</td>
+                                            <td>{{ user.email }}</td>
+                                            <td>{{(user.ipAdress) ? user.ipAdress : ''}}</td>
+                                            <td>{{ (user.dateLastLogin) ? user.dateLastLogin|date('d-m-Y H:i') : ''}}</td>
+                                            {% if is_granted("ROLE_SUPER_ADMIN") %}
+                                                <td class="text-center">
+                                                    <a class="btn btn-info dim btn-sm" type="button" href="{{path('edit_admin',{id:user.id}) }}" aria-label="Modifier" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Modifier">
+                                                        <i class="ti ti-edit fs-3"></i>
+                                                    </a>
+                                                    {#<a href="{{ path('admin_delete',{id:user.id}) }}" class="btn btn-danger dim btn-sm" onclick="return confirm('Est-ce que vous voulez vraiment supprimer cet administrateur');" aria-label="Supprimer" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Supprimer">
+                                                        <i data-toggle="tooltip" data-original-title="Supprimer" class="ti ti-trash fs-3"></i>
+                                                    </a>#}
+                                                    <a class="btn btn-danger dim btn-sm delete" type="button" data-href="{{ path('admin_delete',{id:user.id}) }}"  aria-label="Supprimer" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Supprimer">
+                                                        <i class="ti ti-trash fs-3"></i>
+                                                    </a>
+                                                </td>
+                                            {% endif %}
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $('#table').DataTable({
+            language: { "url": global_utils.urls.datatable_fr }
+        });
+    </script>
+{% endblock %}

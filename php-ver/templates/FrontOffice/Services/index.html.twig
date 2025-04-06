@@ -1,0 +1,135 @@
+{% extends 'base_front.html.twig' %}
+
+{% set menu_service = true %}
+
+{% set service = serviceBoutique(app.user) %}
+
+{% if service is not null and service.service|length > 0 %}
+    {% set statusService = service.service[2].status is defined ? service.service[2].status : true %}
+    {% set menuService = statusService ? service.service[2] : false %}
+    {% set module = menuService ? menuService.modules : false %}
+    {% set moduleSiv = module[0] is defined ? module[0].status : true %}
+    {% set moduleAssurence = module[1] is defined ? module[1].status : true %}
+    {% set moduleFawatir = module[2] is defined ? module[2].status : true %}
+{% else %}
+    {% set moduleSiv = true %}
+    {% set moduleAssurence = true %}
+    {% set moduleFawatir = true %}
+{% endif %}
+
+{% block title %}billeteries{% endblock %}
+
+{% block stylesheets %} 
+    {{ parent() }}
+    <style type="text/css">
+        .card-service {
+            width: 100%;
+            cursor: pointer;
+            height: 240px;
+            border-radius: 10px;
+            box-shadow: 1px 1px 2px #0000006e;
+        }
+        .card-service a{
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+            border-radius: inherit;
+        }
+        .card-service .service-card-img{
+            position: relative;
+            width: 100%;
+            height: 170px;
+            padding: 10px;
+            background: #fcfefc;
+            --background: #0a7ea4;
+            border-radius: inherit;
+            border-bottom-left-radius: 0px;
+            border-bottom-right-radius: 0px;
+            box-shadow: 0 0 0px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        .card-service.fawatir .service-card-img{
+            --background: #feae00;
+        }
+        .card-service .service-card-img img{
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        .card-service .title-card-service {
+            width: 100%;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .card-service:hover .service-card-img{
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+            box-shadow: 0 0 5px;
+            transform: scale(1.03);
+        }
+        .card-service .title-card-service{
+            --color: #0a7ea4;
+        }
+        .card-service .title-card-service h2{
+            text-transform: uppercase;
+            color: var(--color);
+            font-weight: 900;
+            font-family: sans-serif;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+  <section id="liste-card-service">
+    <div class="row">
+        {% if moduleFawatir %}
+            <div class="col-md-3">
+                <a href="{{ path('liste_creanciers') }}" class="card-service fawatir">
+                    <div class="service-card-img">
+                        <img src="{{asset('modernize/images/service/fawatir.jpg')}}" alt="">
+                    </div>
+                    <div class="title-card-service">
+                        <h2 class="fs-5">fawatir</h2>
+                    </div>
+                </a>
+            </div>
+        {% endif %}
+        {% if moduleAssurence %}
+            <div class="col-md-3">
+                <a href="javascript:void(0)" class="card-service service">
+                    <div class="service-card-img">
+                        <img src="{{asset('modernize/images/service/assurance.jpg')}}" alt="">
+                    </div>
+                    <div class="title-card-service">
+                        <h2 class="fs-5">Assurance</h2>
+                    </div>
+                </a>
+            </div>
+        {% endif %}
+        {% if moduleSiv %}
+            <div class="col-md-3">
+                <a href="javascript:void(0)" class="card-service service">
+                    <div class="service-card-img">
+                        <img src="{{asset('modernize/images/service/SIV.jpg')}}" alt="">
+                    </div>
+                    <div class="title-card-service">
+                        <h2 class="fs-5">SIV</h2>
+                    </div>
+                </a>
+            </div>
+        {% endif %}
+
+    </div>
+  </section>
+    
+{% endblock %}
+
+{% block javascripts %}
+  {{ parent() }}
+<script></script>
+{% endblock %}

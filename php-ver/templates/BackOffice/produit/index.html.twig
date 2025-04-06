@@ -1,0 +1,92 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}Liste des produits{% endblock %}
+
+{% set menu_produit = true %}
+{% set menu_produit_liste = true %}
+
+{% block body %}
+
+    <div class="card bg-light-info shadow-none position-relative overflow-hidden">
+        <div class="card-body px-4 py-3">
+            <div class="row align-items-center">
+                <div class="col-9">
+                    <h4 class="fw-semibold mb-8">Liste des produits</h4>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                          <li class="breadcrumb-item"><a class="text-muted" href="javascript:void(0)">Produits</a></li>
+                          <li class="breadcrumb-item active" aria-current="page">Liste</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="mb-2">
+                            <a id="ajout_admin" href="{{ path('new_produit') }}" class="btn btn-primary mb-2">
+                                <i class="ti ti-plus fs-4"></i> Ajouter un produit
+                            </a>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table"  id="id-produit-liste">
+                                <thead>
+                                    <tr>
+                                        <td>Nom</td>
+                                        <td>Categorie</td> 
+                                        <td>Prix d'achat</td>
+                                        <td>Prix de vente</td>
+                                        <td>Quantité</td>
+                                        <td></td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="id-modal" tabindex="-1" aria-labelledby="modal-stock">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Ajout de quantité de produit</h4>
+                        <button type="button" class="kl-close btn-close" data-bs-dismiss="modal" aria-label="Close"></button>                    </div>
+                    <div class="modal-body">
+                        <form action="{{path('ajout_stock')}}" id="id-form-ajout" method="POST">
+                            <p class="kl-role-actuel mb-2"></p>
+                            <input type="hidden" name="produit_id" id="id-produit">
+                            <div class="form-group">
+                                <label>Quantité de produit à ajouter</label>
+                                <input type="text" id="id-qte" name="qte" pattern="^[+]?\d+([.]\d+)?$" class="form-control" />
+                            </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">Valider</button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Annuler</button>
+                    </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+{% endblock %}
+{% block javascripts %}
+	{{ parent() }}
+    <script>
+        var href_suppr_defaut ="{{path('remove_produit',{id:0})}}";
+        var href_edit_defaut = "{{path('edit_produit',{id:0})}}";
+    </script>
+    <script src="{{ asset('backoffice/produit/produit.list.js') }}"></script>
+{% endblock %}

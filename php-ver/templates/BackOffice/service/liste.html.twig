@@ -1,0 +1,126 @@
+{% extends 'base_admin.html.twig' %}
+
+{% set menu_services = true %}
+
+{% block title %}Liste des services{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <div class="card bg-light-info shadow-none position-relative overflow-hidden">
+        <div class="card-body px-4 py-3">
+          <div class="row align-items-center">
+            <div class="col-9">
+              <h4 class="fw-semibold mb-8">Liste des services</h4>
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a class="text-muted" href="javascript:void(0)">Services</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Liste</li>
+                </ol>
+              </nav>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <section>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center justify-content-end flex-wrap gap-3 mb-3">
+                            <a id="ajout_admin" href="{{path('new_service')}}" class="btn btn-sm btn-primary">
+                                <i class="ti ti-plus"></i> Ajouter un service
+                            </a>
+                            <a id="ajout_admin" href="{{path('liste_services_bout')}}" class="btn btn-sm btn-success">
+                                <i class="ti ti-building-store"></i> Services par Boutique
+                            </a>
+                        </div>
+                        
+                        <div class="table-responsive">
+                            <table id="id-service-liste" class="table">
+                                <thead>
+                                    <tr>
+										<th>Nom</th>
+										<th>Description</th>
+										<th>Modules</th>
+										<th></th>
+				                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for service in services %}
+                                        <tr>
+                                            <td>{{ service.nom }}</td>
+                                            <td>{{ service.description }}</td>
+                                            <td>
+                                                {% for id, module in service.module %}
+                                                    {% set idModule = id + 1 %}
+                                                    {% set nbrModules = service.module|length %}
+                                                    
+                                                    <span>{{module}}</span>{% if idModule != nbrModules %}<span class="fw-bolder text-primary"> | </span>{% endif %}
+                                                {% endfor %}
+                                            </td>
+                                            <td class="text-end">
+                                                <div class="btn-group mb-2">
+                                                    <button type="button" class="btn btn-sm btn-light-info text-info dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                        <i class="ti ti-menu-2"></i>
+                                                    </button>
+                                                    <ul class="dropdown-menu animated flipInY">
+                                                        <li class="d-flex justify-content-center align-items-center gap-1">
+                                                            <a class="btn mb-1 btn-sm font-medium d-flex gap-3 align-items-center btn-primary text-white waves-effect waves-light" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Modifier" href="{{path('edite_service', {id: service.id})}}">
+                                                                <i class="ti ti-edit"></i>
+                                                            </a>
+                                                            <button class="btn mb-1 delete-service btn-sm font-medium d-flex gap-3 align-items-center btn-danger text-white waves-effect waves-light" data-id="{{service.id}}" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Supprimer">
+                                                                <i class="ti ti-trash"></i>
+                                                            </button>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        var service = $('#id-service-liste').DataTable({
+            "aaSorting": [],
+            "bProcessing": true,
+            "bFilter": true,
+            "iDisplayLength": 10,
+            language: {"url": global_utils.urls.datatable_fr}        
+        });
+
+        $(document).on('click', '.delete-service', function (e) {
+            const idService = $(e.currentTarget).data('id')
+            
+            swal({
+                title: "Suppression",
+                text: "Vous voulez vraiment supprimer cette service ?",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Oui",
+                cancelButtonText: "Non",
+                closeOnConfirm: false,
+                closeOnCancel: true },
+            function (isConfirm) {
+                if (isConfirm) {
+                    swal("Suppression", "Traitement en cours", "warning");
+                    window.location.pathname = `/supprimer-service/${idService}`;
+                }
+            });
+        })
+	</script>
+{% endblock %}

@@ -1,0 +1,204 @@
+{% extends 'base_front.html.twig' %}
+
+{% set politique_Confidentialite = true %}
+
+{% block title %}Politique de confidentialité{% endblock %}
+
+{% block stylesheets %} 
+    {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-none border">
+                <div class="card-body">
+                    <h4 class="fw-semibold mb-3">Politique de confidentialité</h4>
+                    <p>Chez Yorsil,</p>
+                    <p>nous accordons une grande importance à la protection de vos données personnelles. Cette politique de confidentialité explique comment nous collectons, utilisons, partageons et protégeons vos informations lorsque vous utilisez nos services.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card w-100 overflow-hidden shadow-none">
+                <div class="card-body py-1">
+                    <div class="row justify-content-between align-items-center">
+                        <div class="col-12">
+                            <h5 class="fw-semibold mb-9 fs-5"><i class="ti ti-chart-pie text-dark fs-6"></i> Collecte des informations</h5>
+                            <p class="mb-9">Nous collectons les données suivantes :</p>
+                            <ul class="list-unstyled mb-0">
+                                <li class="d-flex align-items-center gap-3 mb-4">
+                                    <i class="ti ti-tallymark-1 text-dark fs-6"></i>
+                                    <h6 class="fs-4 fw-semibold mb-0">Informations fournies directement : nom, prénom, adresse e-mail, numéro de téléphone, etc., lorsque vous remplissez un formulaire ou créez un compte.</h6>
+                                </li>
+                                <li class="d-flex align-items-center gap-3 mb-4">
+                                    <i class="ti ti-tallymark-1 text-dark fs-6"></i>
+                                    <h6 class="fs-4 fw-semibold mb-0">Données collectées automatiquement : adresse IP, type de navigateur, pages visitées, durée de visite, via des cookies et technologies similaires.</h6>
+                                </li>
+
+                                <!-- <li class="d-flex align-items-center gap-3 mb-2">
+                                <i class="ti ti-chart-infographic text-dark fs-6"></i>
+                                <h6 class="fs-4 fw-semibold mb-0">Utilisation des données</h6>
+                                </li>
+
+                                <li class="d-flex align-items-center gap-3 mb-2">
+                                <i class="ti ti-3d-cube-sphere text-dark fs-6"></i>
+                                <h6 class="fs-4 fw-semibold mb-0">Partage des informations</h6>
+                                </li>
+
+                                <li class="d-flex align-items-center gap-3 mb-2">
+                                <i class="ti ti-books text-dark fs-6"></i>
+                                <h6 class="fs-4 fw-semibold mb-0">Conservation des données</h6>
+                                </li>
+
+                                <li class="d-flex align-items-center gap-3 mb-2">
+                                <i class="ti ti-scale text-dark fs-6"></i>
+                                <h6 class="fs-4 fw-semibold mb-0">Vos droits</h6>
+                                </li>
+
+                                <li class="d-flex align-items-center gap-3 mb-2">
+                                <i class="ti ti-cookie text-dark fs-6"></i>
+                                <h6 class="fs-4 fw-semibold mb-0">Cookies et technologies similaires</h6>
+                                </li>
+
+                                <li class="d-flex align-items-center gap-3 mb-2">
+                                <i class="ti ti-shield-check text-dark fs-6"></i>
+                                <h6 class="fs-4 fw-semibold mb-0">Sécurité des données</h6>
+                                </li>
+
+                                <li class="d-flex align-items-center gap-3 mb-2">
+                                <i class="ti ti-gavel text-dark fs-6"></i>
+                                <h6 class="fs-4 fw-semibold mb-0">Modifications de cette politique</h6>
+                                </li>-->
+
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body p-0 text-center">
+                    <img src="{{ asset('images/data-collection.jpg') }}" alt="" class="img-fluid" width="250">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body p-0 text-center">
+                    <img src="{{ asset('images/utilisation-donnée.png') }}" alt="" class="img-fluid" width="250">
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card w-100 overflow-hidden shadow-none">
+                <div class="card-body py-1">
+                    <div class="row justify-content-between align-items-center">
+                        <div class="col-12">
+                            <h5 class="fw-semibold mb-9 fs-5"><i class="ti ti-chart-infographic text-dark fs-6"></i> Utilisation des données</h5>
+                            <p class="mb-9">Vos données sont utilisées pour :</p>
+                            <ul class="list-unstyled mb-0">
+                                <li class="d-flex align-items-center gap-3 mb-2">
+                                    <i class="ti ti-tallymark-1 text-dark fs-6"></i>
+                                    <h6 class="fs-4 fw-semibold mb-0">Fournir et personnaliser nos services.</h6>
+                                </li>
+                                <li class="d-flex align-items-center gap-3 mb-2">
+                                    <i class="ti ti-tallymark-1 text-dark fs-6"></i>
+                                    <h6 class="fs-4 fw-semibold mb-0">Gérer votre compte utilisateur.</h6>
+                                </li>
+                                <li class="d-flex align-items-center gap-3 mb-2">
+                                    <i class="ti ti-tallymark-1 text-dark fs-6"></i>
+                                    <h6 class="fs-4 fw-semibold mb-0">Répondre à vos demandes ou questions.</h6>
+                                </li>
+                                <li class="d-flex align-items-center gap-3 mb-2">
+                                    <i class="ti ti-tallymark-1 text-dark fs-6"></i>
+                                    <h6 class="fs-4 fw-semibold mb-0">Améliorer notre site et nos services grâce à des analyses statistiques.</h6>
+                                </li>
+                                <li class="d-flex align-items-center gap-3 mb-2">
+                                    <i class="ti ti-tallymark-1 text-dark fs-6"></i>
+                                    <h6 class="fs-4 fw-semibold mb-0">Respecter nos obligations légales.</h6>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card w-100 overflow-hidden shadow-none">
+                <div class="card-body py-3">
+                  <div class="row justify-content-between align-items-center">
+                    <div class="col-sm-6">
+                      <h5 class="fw-semibold mb-9 fs-5"><i class="ti ti-3d-cube-sphere text-dark fs-6"></i> Partage des informations</h5>
+                      <p class="mb-9">Nous ne partageons vos données qu’avec :</p>
+                      <ul class="list-unstyled mb-0">
+                        <li class="d-flex align-items-center gap-3 mb-2">
+                            <i class="ti ti-tallymark-1 text-dark fs-6"></i>
+                            <h6 class="fs-4 fw-semibold mb-0">Des prestataires de services tiers (hébergement, paiement, marketing) strictement nécessaires à l’exécution de nos services.</h6>
+                        </li>
+                        <li class="d-flex align-items-center gap-3 mb-2">
+                            <i class="ti ti-tallymark-1 text-dark fs-6"></i>
+                            <h6 class="fs-4 fw-semibold mb-0">Des autorités légales, en cas d’obligation réglementaire.</h6>
+                        </li>
+                      </ul>
+                      <p class="mb-9">Vos données ne sont jamais vendues à des tiers.</p>
+                    </div>
+                    <div class="col-sm-5">
+                      <div class="position-relative text-end">
+                        <img src="{{ asset('images/Partage_informations.jpg') }}" alt="" class="img-fluid">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body p-2 text-center">
+                  <p>Conservation des données</p>
+                  <img src="{{ asset('images/conservation_donnee.jpeg') }}" alt="" class="img-fluid mb-4" width="150">
+                  <h5 class="fw-semibold fs-5 mb-2">Nous conservons vos données personnelles uniquement le temps nécessaire aux finalités décrites dans cette politique,</h5>
+                  <p class="mb-3">sauf obligation légale contraire.</p>
+                </div>
+              </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card w-100 overflow-hidden shadow-none">
+                <div class="card-body py-3">
+                  <div class="row justify-content-between align-items-center">
+                    <div class="col-sm-6">
+                      <h5 class="fw-semibold mb-9 fs-5"><i class="ti ti ti-scale text-dark fs-6"></i> Vos droits</h5>
+                      <p class="mb-9">Conformément aux lois en vigueur ([RGPD pour l’UE, ou autre législation locale applicable]) :</p>
+                      <ul class="list-unstyled mb-0">
+                        <li class="d-flex align-items-center gap-3 mb-2">
+                            <i class="ti ti-tallymark-1 text-dark fs-6"></i>
+                            <h6 class="fs-4 fw-semibold mb-0">Vous avez le droit d’accéder à vos données, de les corriger, de les supprimer ou de demander leur portabilité.</h6>
+                        </li>
+                        <li class="d-flex align-items-center gap-3 mb-2">
+                            <i class="ti ti-tallymark-1 text-dark fs-6"></i>
+                            <h6 class="fs-4 fw-semibold mb-0">Vous pouvez également retirer votre consentement ou vous opposer à certains traitements.</h6>
+                        </li>
+                      </ul>
+                      <p class="mb-9">Pour exercer ces droits, contactez-nous à : <a href="mailto:serviceclient@yorsil.com">support@yorsil.com</a>.</p>
+                    </div>
+                    <div class="col-sm-5">
+                      <div class="position-relative text-end">
+                        <img src="{{ asset('images/droit.jpg') }}" alt="" class="img-fluid">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

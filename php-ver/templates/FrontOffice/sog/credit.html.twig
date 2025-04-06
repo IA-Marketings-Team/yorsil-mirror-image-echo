@@ -1,0 +1,69 @@
+{% extends 'base_front.html.twig' %}
+
+{% block title %} Paiement {% endblock %}
+
+{% block stylesheets %} 
+    {{ parent() }}
+	<style>
+		.form-paiement {
+			min-height: 60vh;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+		.card-paiement {
+			padding: 2rem;
+			border-radius: 10px;
+			box-shadow: 0 0 5px black;
+		}
+		.kr-smart-form .kr-smart-form-wrapper.kr-type-embedded .kr-card-header {
+			border-bottom: 1px solid #b7b7b7 !important;
+		}
+	</style>
+{% endblock %}
+
+{% block head %}
+    {{ parent() }}
+    <script type="text/javascript"
+                src="https://static-sogecommerce.societegenerale.eu/static/js/krypton-client/V4.0/stable/kr-payment-form.min.js"
+                kr-public-key="67615767:publickey_HwkDPFGnDJHI5H5UJNp02etn90Wr0WvXCbKcKmtkxlejn"
+                kr-post-url-success="{{ path('paiement_check_client') }}"
+                kr-language="fr-FR">
+    </script>
+    <!--  theme NEON should be loaded in the HEAD section   -->
+    <link rel="stylesheet" href= "https://static-sogecommerce.societegenerale.eu/static/js/krypton-client/V4.0/ext/neon-reset.min.css">
+    <script src= "https://static-sogecommerce.societegenerale.eu/static/js/krypton-client/V4.0/ext/neon.js"> </script>
+{% endblock %}
+
+
+{% block body %}
+
+	<div class="card bg-light-info shadow-none position-relative overflow-hidden">
+        <div class="card-body px-4 py-3">
+          <div class="row align-items-center">
+            <div class="col-9">
+              <h4 class="fw-semibold mb-8">Rechargement par Cartes</h4>
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a class="text-muted" href="javascript:void(0)">Rechargement</a></li>
+                </ol>
+              </nav>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <section>
+		<div class="form-paiement">
+			<div class="card-paiement">
+				<div class="kr-smart-form" kr-card-form-expanded kr-form-token="{{ app.session.get('formToken') }}"></div>
+			</div>
+		</div>
+	</section>
+
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+
+{% endblock %}

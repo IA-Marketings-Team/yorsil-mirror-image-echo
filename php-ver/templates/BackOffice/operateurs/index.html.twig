@@ -1,0 +1,197 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}Opérateurs{% endblock %}
+
+{% set menu_operateurs = true %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('flag-icon-css/css/flag-icons.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('modernize/libs/selectCountry/style.min.css') }}">
+{% endblock %}
+
+{% block body %}
+
+    <div class="card bg-light-info shadow-none position-relative overflow-hidden">
+        <div class="card-body px-4 py-3">
+            <div class="row align-items-center">
+                <div class="col-9">
+                    <h4 class="fw-semibold mb-8">Opérateurs</h4>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                          <li class="breadcrumb-item"><a class="text-muted" href="javascript:void(0)">Opérateurs</a></li>
+                          <li class="breadcrumb-item active" aria-current="page">Liste</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="mb-2">
+                            <a id="ajout_admin" href="{{ path('new_operateur') }}" class="btn btn-primary mb-2">
+                                <i class="ti ti-plus fs-4"></i> Nouvel opérateur
+                            </a>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table" id="id-operateur-liste">
+                                <thead>
+                                    <tr>
+                                        <td>Nom</td>
+                                        <td>Famille</td>
+                                        <td>Pays</td>
+                                        <td class="text-center">Longueur code</td>
+                                        <td>Actif</td>
+                                        <td></td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for operateur in operateurs %}
+                                        <tr>
+                                            <td>{{operateur.nom}}</td>
+                                            <td>{{ (operateur.type) ? operateur.type : '--'}}</td>
+                                            <td>{{ (operateur.idPays) ? operateur.idPays.nom : '--'}}</td>
+                                            <td class="text-center">{{(operateur.longueurCode) ? operateur.longueurCode : '--'}}</td>
+                                            <td>
+                                                <i class="ti ti-flag fs-7 text-{{(operateur.actif == 1) ? 'success': 'danger' }}"></i>
+                                            </td>
+                                            <td class="text-center">
+                                                <div class="btn-group">
+                                                    <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                        Action
+                                                    </button>
+                                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                                        <li>
+                                                            <a class="dropdown-item" href="#">
+                                                                <i class="ti ti-category"></i>
+                                                                Codes USSD
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="dropdown-item" href="#">
+                                                                <i class="ti ti-cards"></i>
+                                                                Cartes de recharges
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="dropdown-item modif-operateur" data-id="{{operateur.id}}" data-nom="{{operateur.nom}}" data-logo="{{operateur.logo ? operateur.logo.urlFichier : '' }}" data-actif="{{operateur.actif}}" data-type="{{ (operateur.type) ? operateur.type : ''}}" data-id-pays="{{ (operateur.idPays) ? operateur.idPays.id : ''}}" data-longueur-code="{{(operateur.longueurCode) ? operateur.longueurCode : ''}}" data-bs-toggle="modal" data-bs-target="#modal-edit-operateur" href="#">
+                                                                <i class="ti ti-edit"></i>
+                                                                Mettre à jour
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="dropdown-item" href="#">
+                                                                <i class="ti ti-trash"></i>
+                                                                Supprimer
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- modal mise à jours -->
+    <div class="modal fade" id="modal-edit-operateur" tabindex="-1" aria-labelledby="bs-example-modal-lg" aria-hidden="true" >
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content">
+                <div class="modal-header d-flex align-items-center" >
+                    <h4 class="modal-title" id="myLargeModalLabel">
+                        Modification opérateur Nom_opérateur
+                    </h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" ></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <label for="modif-logo" class="operateur-logo position-relative w-100 cursor-pointer d-flex flex-column align-items-center justify-content-center gap-1">
+                                        <img src="{{ asset('images/operateurs.jpeg') }}" data-logo="{{ asset('images/operateurs.jpeg') }}" id="preview-img-operateur" class="w-100" alt="">
+                                        <i class="ti ti-download fs-8 text-primary"></i>
+                                        <div class="form-group position-absolute opacity-0">
+                                          <input type="file" class="form-control" name="logo" id="modif-logo">
+                                        </div>
+                                    </label>
+                                </div>
+                                <div class="col-md-10">
+                                    <form id="form-modif-operateur">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Nom</label>
+                                                    <input type="text" id="input-modif-nom" class="form-control" required>
+                                                    <input type="hidden" id="input-modif-id" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Famille</label>
+                                                    <input type="text" id="input-modif-famille" class="form-control" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Pays</label>
+                                                    <select class="form-select select-pays-operateur" id="select-pays-operateur">
+                                                        {% for pays in listePays %}
+                                                            <option value="{{pays.id}}" data-nom="{{ pays.nom }}">{{ pays.nom }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Longueur code</label>
+                                                    <input type="text" id="input-modif-longueur-code" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="form-check form-switch mb-3">
+                                                    <input class="form-check-input" type="checkbox" id="is-active-operateur">
+                                                    <label class="form-check-label" for="CodeLettres">Activer ?</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light-danger text-danger font-medium waves-effect text-start" data-bs-dismiss="modal" >
+                        Close
+                    </button>
+                    <button type="submit" form="form-modif-operateur" class="modif-modal-operateur btn btn-light-primary font-medium waves-effect">
+                        Modifier
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('modernize/libs/selectCountry/script.min.js') }}"></script>
+    <script src="{{ asset('backoffice/operateur/operateur.liste.js') }}"></script>
+    <script>
+        $('.select-pays-operateur').select2({
+            dropdownParent: $('#modal-edit-operateur'),
+            width: '100%'
+        });
+    </script>
+{% endblock %}

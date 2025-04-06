@@ -1,0 +1,169 @@
+{% set service = serviceBoutique(app.user) %}
+{% if service is not null and service.service|length > 0 %}
+    {% set menuTransfert  = service.service[0].status is defined ? service.service[0].status : true %}
+    {% set menuRecharge   = service.service[1].status is defined ? service.service[1].status : true %}
+    {% set menuService    = service.service[2].status is defined ? service.service[2].status : true %}
+    {% set menuBilleterie = service.service[3].status is defined ? service.service[3].status : true %}
+{% else %}
+    {% set menuTransfert  = true %}
+    {% set menuRecharge   = true %}
+    {% set menuService    = true %}
+    {% set menuBilleterie = true %}
+{% endif %}
+<aside class="left-sidebar">
+    <!-- Sidebar scroll-->
+    <div class="sidebaNavScroll">
+        <div class="brand-logo d-flex align-items-center justify-content-between">
+            <a href="{{ path('home_office') }}" class="text-nowrap logo-img">
+                <img src="{{ asset('modernize/images/logos/largeicon.svg') }}" width="110" alt="" />
+            </a>
+            <div class="close-btn d-lg-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
+                <i class="ti ti-x fs-8"></i>
+            </div>
+        </div>
+        <!-- Sidebar navigation-->
+        <nav class="sidebar-nav scroll-sidebar" data-simplebar>
+            <ul id="sidebarnav">
+                <!-- =================== -->
+                <!-- Dashboard -->
+                <!-- =================== -->
+                <li class="sidebar-item {{ menu_dashboard is defined ? 'selected' }}">
+                    <a class="sidebar-link {{ menu_dashboard is defined ? 'active' }}" href="{{ path('home_office') }}" aria-expanded="false">
+                        <span><i class="ti ti-category"></i></span>
+                        <span class="hide-menu">Tableau de bord</span>
+                    </a>
+                </li>
+                {% if menuRecharge %}
+                    <li class="sidebar-item {{ menu_recharge_mobile is defined ? 'selected' }}">
+                        <a class="sidebar-link {{ menu_recharge_mobile is defined ? 'active' }}" href="{{ path('recharge') }}" aria-expanded="false">
+                            <span><i class="ti ti-cards"></i></span>
+                            <span class="hide-menu">Recharge</span>
+                        </a>
+                    </li>
+                {% endif %}
+                {# <li class="sidebar-item {{ menu_flexi is defined ? 'selected' }}">
+                    <a class="sidebar-link {{ menu_flexi is defined ? 'active' }}" href="{{ path('flexi') }}" aria-expanded="false">
+                        <span><i class="ti ti-cards"></i></span>
+                        <span class="hide-menu">Flexi</span>
+                    </a>
+                </li> #}
+                {% if menuTransfert %}
+                    <li class="sidebar-item {{ menu_transfert_credit is defined ? 'selected' }}">
+                        <a class="sidebar-link {{ menu_transfert_credit is defined ? 'active' }}" href="{{ path('transfert_credit') }}" aria-expanded="false">
+                            <span><i class="ti ti-window-maximize"></i></span>
+                            <span class="hide-menu">Transfert Crédit</span>
+                        </a>
+                    </li>
+                {% endif %}
+                {% if menuBilleterie %}
+                    <li class="sidebar-item {{ menu_billeteries is defined ? 'selected' }}">
+                        <a class="sidebar-link {{ menu_billeteries is defined ? 'active' }}" href="{{ path('billeteries') }}" aria-expanded="false">
+                            <span><i class="ti ti-ticket"></i></span>
+                            <span class="hide-menu">Billeteries</span>
+                        </a>
+                    </li>
+                {% endif %}
+                {% if menuService %}
+                    <li class="sidebar-item {{ menu_service is defined ? 'selected' }}">
+                        <a class="sidebar-link {{ menu_service is defined ? 'active' }}" href="{{ path('services') }}" aria-expanded="false">
+                            <span><i class="ti ti-browser"></i></span>
+                            <span class="hide-menu">Services</span>
+                        </a>
+                    </li>
+                {% endif %}
+                {# <li class="sidebar-item {{ menu_transfert_argent is defined ? 'selected' }}">
+                    <a class="sidebar-link {{ menu_transfert_argent is defined ? 'active' }}" href="{{ path('transfert_argent') }}" aria-expanded="false">
+                        <span><i class="ti ti-window-maximize"></i></span>
+                        <span class="hide-menu">Transfert d'argent</span>
+                    </a>
+                </li> #}
+
+                <li class="sidebar-item {{ menu_journal is defined ? 'selected' }}">
+                    <a class="sidebar-link has-arrow {{ menu_journal is defined ? 'active' }}" href="#" aria-expanded="false">
+                        <span class="d-flex"><i class="ti ti-book"></i></span>
+                        <span class="hide-menu">Journal</span>
+                    </a>
+                    <ul aria-expanded="false" class="collapse first-level">
+                        <li class="sidebar-item {{ menu_rechargement is defined ? 'active' }}">
+                            <a href="{{ path('journal_rechargement') }}" class="sidebar-link {{ menu_rechargement is defined ? 'active' }}">
+                                <div class="round-16 d-flex align-items-center justify-content-center">
+                                    <i class="ti ti-circle"></i>
+                                </div>
+                                <span class="hide-menu">Rechargement de compte</span>
+                            </a>
+                        </li>
+                        {% if menuRecharge %}
+                            <li class="sidebar-item {{ menu_hist_recharge is defined ? 'active' }}">
+                                <a href="{{ path('hist_recharge') }}" class="sidebar-link {{ menu_hist_recharge is defined ? 'active' }}">
+                                    <div class="round-16 d-flex align-items-center justify-content-center">
+                                        <i class="ti ti-circle"></i>
+                                    </div>
+                                    <span class="hide-menu">Recharge</span>
+                                </a>
+                            </li>
+                        {% endif %}
+                        {% if menuTransfert %}
+                            <li class="sidebar-item {{ menu_hist_transfert is defined ? 'active' }}">
+                                <a href="{{ path('hist_transf') }}" class="sidebar-link {{ menu_hist_transfert is defined ? 'active' }}">
+                                    <div class="round-16 d-flex align-items-center justify-content-center">
+                                        <i class="ti ti-circle"></i>
+                                    </div>
+                                    <span class="hide-menu">Transfert Crédit</span>
+                                </a>
+                            </li>
+                        {% endif %}
+                        {% if menuBilleterie %}
+                            <li class="sidebar-item {{ menu_hist_reservations is defined ? 'active' }}">
+                                <a href="{{ path('hist_reservation') }}" class="sidebar-link {{ menu_hist_reservations is defined ? 'active' }}">
+                                    <div class="round-16 d-flex align-items-center justify-content-center">
+                                        <i class="ti ti-circle"></i>
+                                    </div>
+                                    <span class="hide-menu">Billeteries</span>
+                                </a>
+                            </li>
+                        {% endif %}
+                        {% if menuService %}
+                            <li class="sidebar-item {{ menu_paiement is defined ? 'active' }}">
+                                <a href="{{ path('historique_paiement') }}" class="sidebar-link {{ menu_paiement is defined ? 'active' }}">
+                                    <div class="round-16 d-flex align-items-center justify-content-center">
+                                        <i class="ti ti-circle"></i>
+                                    </div>
+                                    <span class="hide-menu">Paiement de facture</span>
+                                </a>
+                            </li>
+                        {% endif %}
+                            <li class="sidebar-item {{ menu_ca is defined ? 'active' }}">
+                                <a href="{{ path('chiffre_affaire_boutiques') }}" class="sidebar-link {{ menu_ca is defined ? 'active' }}">
+                                    <div class="round-16 d-flex align-items-center justify-content-center">
+                                        <i class="ti ti-circle"></i>
+                                    </div>
+                                    <span class="hide-menu">Chiffre d'affaires</span>
+                                </a>
+                            </li>
+                    </ul>
+                </li>
+
+            </ul>
+        </nav>
+        <div class="fixed-profile p-3 bg-light-secondary rounded mt-3">
+            <div class="hstack gap-3">
+                <div class="john-img">
+                    {% if app.user.picture != NULL %}
+                        <img src="{{ asset('uploads/images/users/' ~ app.user.picture) }}"  class="rounded-circle" width="40" height="40" alt="">
+                    {% else %}
+                        <img src="{{ asset('modernize/images/profile/user-1.jpg') }}" class="rounded-circle" width="40" height="40" alt=""/>
+                    {% endif %}
+                </div>
+                <div class="john-title">
+                <h6 class="mb-0 fs-4 fw-semibold" aria-label="nom" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{{ app.user.nom }}">{{ app.user.nom | length > 8 ? app.user.nom | slice(0, 8) ~ '...' : app.user.nom }}</h6>
+                <span class="fs-2 text-dark">Boutique</span>
+                </div>
+                <a href="javascript:void(0)" class="border-0 bg-transparent text-primary ms-auto logout" tabindex="0" type="button" aria-label="logout" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Déconnexion">
+                <i class="ti ti-power fs-6"></i>
+                </a>
+            </div>
+        </div>  
+        <!-- End Sidebar navigation -->
+    </div>
+<!-- End Sidebar scroll-->
+</aside>

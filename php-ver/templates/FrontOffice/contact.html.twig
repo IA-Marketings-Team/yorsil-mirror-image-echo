@@ -1,0 +1,66 @@
+{% extends 'base_auth.html.twig' %}
+
+{% block title %}Réactivation{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .img-deblock {width: 100%;height: 100%;position: absolute;right: 0;object-fit: cover;}
+        .content-deblock{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            flex-direction: column;
+            width: 60%;
+            background: #000000c7;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 15px black;
+        }
+        .content-deblock h1 {
+            margin-bottom: 2rem;
+            color: #f1c40f;
+            font-weight: 900;
+            text-shadow: 1px 1px 1px #f39c12;
+        }
+        .content-deblock h2 {
+            color: #f39c12;
+            margin-bottom: 2rem;
+        }
+        .content-deblock h3 {
+            color: white;
+            margin-bottom: 1rem;
+        }
+        @media screen and (max-width: 600px) {
+            .content-deblock {
+                width: 90%;
+            }
+            .img-deblock {
+                width: 100%;
+                height: 50%;
+                position: absolute;
+                object-fit: cover;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="position-relative overflow-hidden d-flex align-items-center justify-content-center flex-column min-vh-100">
+        <img src="{{ asset('modernize/images/logos/debloq.png') }}" class="img-deblock" alt="Réactivation">
+        <div class="content-deblock z-index-5">
+            <h1>Réactivation</h1>
+            <h2>Pour réactiver votre compte, veuillez contacter l'administrateur</h2>
+            <div class="">
+                <h3>Tel : +33 6 14 14 72 33</h3>
+            </div>
+            <a href="{{path('app_logout')}}" class="alert customize-alert text-primary border border-primary">
+                <div class="d-flex align-items-center justify-content-center font-medium me-3 me-md-0">
+                    <i class="ti ti-info-circle fs-5 me-2 flex-shrink-0 text-primary"></i>
+                    Retour à l'accueil
+                </div>
+            </a>
+        </div>
+    </div>
+{% endblock %}

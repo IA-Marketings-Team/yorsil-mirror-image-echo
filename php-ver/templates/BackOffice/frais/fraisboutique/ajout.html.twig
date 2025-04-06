@@ -1,0 +1,49 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}Ajout d'un frais de service personnalisé{% endblock %}
+
+{% set menu_frais = true %}
+
+{% block body %}
+
+    <div class="card bg-light-info shadow-none position-relative overflow-hidden">
+        <div class="card-body px-4 py-3">
+          <div class="row align-items-center">
+            <div class="col-9">
+              <h4 class="fw-semibold mb-8">Frais de services personnalisé</h4>
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a class="text-muted" href="javascript:void(0)">Frais de services personnalisés</a></li>
+                  <li class="breadcrumb-item"><a class="text-muted" href="{{ path('frais_services_perso')}}">Liste</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Ajout</li>
+                </ol>
+              </nav>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    {{ form_start(form) }}
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body p-4">
+                        <div class="row mb-4">
+                            <div class="col md-3">{{ form_row(form.boutique) }}</div>
+                            <div class="col md-3">{{ form_row(form.type) }}</div>
+                            <div class="col md-3">{{ form_row(form.pourcentage) }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="d-flex align-items-center justify-content-end gap-3">
+                    <button class="btn btn-primary">Ajouter</button>
+                    <a href="{{ path('frais_services_perso')}}" class="btn btn-danger">Annuler</a>
+                </div>
+            </div>
+        </div>
+    {{ form_end(form) }}
+                   
+
+{% endblock %}

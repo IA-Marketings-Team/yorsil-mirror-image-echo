@@ -1,0 +1,227 @@
+{% extends 'base_admin.html.twig' %}
+
+{% set menu_bout = true %}
+
+{% block title %}Caissiers{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <div class="card bg-light-info shadow-none position-relative overflow-hidden">
+        <div class="card-body px-4 py-3">
+          <div class="row">
+            <div class="col-md-9">
+              <h4 class="fw-semibold mb-8">Liste des Caissiers</h4>
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a class="text-muted" href="{{ path('boutique')}}">Boutique</a></li>
+                  <li class="breadcrumb-item"><a class="text-muted" href="javascript:void(0)">Caissiers</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Liste</li>
+                </ol>
+              </nav>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <div class="updateContent" style="display: none;">
+        {{ form_start(form, {'attr':{'id': 'formCaiss', 'action': path('bout_caissier', {'id':boutique.id})} })}}
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="px-4 py-3 border-bottom">
+                            <h5 class="card-title fw-semibold mb-0">Photo de profil</h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <p class="card-subtitle mb-4">Changez votre photo de profil à partir d'ici</p>
+                            <div class="text-center">
+                            {% set userProfil = boutique.user.picture ? 'uploads/images/users/' ~ boutique.user.picture : 'modernize/images/profile/user-1.jpg' %}
+                            <img id="img_prev" src="{{ asset(userProfil) }}" alt="" class="img-fluid rounded-circle" width="120" height="120">
+                            <div class="d-flex align-items-center justify-content-center my-4 gap-3">
+                                {{ form_row(form.picture, {'attr':{'class':'form-control'} }) }}
+                            </div>
+                            <p class="mb-0">JPG ou PNG autorisés</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="px-4 py-3 border-bottom">
+                            <h5 class="card-title fw-semibold mb-0">Informations personnelles</h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="mb-4">
+                                {{ form_label(form.nom, 'Nom', {'label_attr': {'class': 'form-label'} }) }}
+                                {{ form_widget(form.nom, {'attr':{'class':'form-control'} }) }}
+                            </div>
+                            <div class="mb-4">
+                                {{ form_label(form.prenom, 'Prenom', {'label_attr': {'class': 'form-label'} }) }}
+                                {{ form_widget(form.prenom, {'attr':{'class':'form-control'} }) }}
+                            </div>
+                            <div class="mb-4">
+                                {{ form_label(form.email, 'Email', {'label_attr': {'class': 'form-label'} }) }}
+                                {{ form_widget(form.email, {'attr':{'class':'form-control'} }) }}
+                            </div>
+                            <div class="mb-4">
+                                {{ form_label(form.tel, 'Téléphone', {'label_attr': {'class': 'form-label'} }) }}
+                                {{ form_widget(form.tel, {'attr':{'class':'form-control'} }) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="card">
+                        <div class="px-4 py-3 border-bottom">
+                            <h5 class="card-title fw-semibold mb-0">Caissier status</h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="mb-4">
+                                <div class="form-check form-switch">
+                                    <label class="form-check-label label-is-actif" for="id-is-actif">
+                                        Caissier {{ boutique.user.isActif ? 'actif' : 'inactif'}}
+                                    </label>
+                                    <input class="form-check-input js-switch-actif" type="checkbox" id="id-is-actif" name="actif_caissier" {{ boutique.user.isActif ? 'checked' : '' }}/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 mb-4">
+                    <div class="d-flex align-items-center justify-content-end mt-4 gap-3">
+                        <button class="btn btn-success">Modifier</button>
+                        <a href="javascript:void(0)" class="btn btn-danger annuler">Annuler</a>
+                    </div>
+                </div>
+            </div>
+        {{ form_end(form) }}
+	</div>
+
+    <section>
+        <div class="row">
+            <div class="col-12">
+                <div class="card animated fadeInRight">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-end mb-2">
+                            <a id="ajout_admin" href="javascript:void(0)" class="btn btn-primary update">
+                                <i class="ti ti-edit fs-4"></i> Mettre à jour
+                            </a>
+                        </div>
+                        <div class="table-responsive listeTable">
+                            {% include 'BackOffice/caissier/liste.html.twig' %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+    $(document).ready(function(){
+        const inputPicture = document.getElementById("profil_picture");
+        const img_prev = document.getElementById("img_prev");
+        const imgSrc = img_prev.getAttribute("src");
+
+        inputPicture.addEventListener('change', function(){
+            const fichier_categorie = this.files[0];
+            if (fichier_categorie) {
+                const read_file_cate = new FileReader();
+
+                read_file_cate.addEventListener("load", function(){
+                    img_prev.setAttribute("src", this.result);
+                });
+
+                read_file_cate.readAsDataURL(fichier_categorie);
+            } else {
+                img_prev.setAttribute("src", imgSrc);
+            }
+        });
+
+        {# --------------------------------------------- #}
+
+
+            $(document).on('click','.update', function() {
+                $('.updateContent').fadeToggle("slow", "linear");
+                $('.update').fadeOut("slow", "linear");
+            });
+
+            $(document).on('click','.annuler', function() {
+                $('.updateContent').fadeOut("slow", "linear");
+                $('.update').fadeIn("slow", "linear");
+            });
+
+            $(document).on('change','.js-switch-actif', function() {
+                if ($(this).is(':checked')) {
+                    $(this).attr('value', 'true');
+                }
+                else {
+                   $(this).attr('value', 'false');
+                }
+
+                var checked = $(this).val(); 
+                
+                (checked === 'false') ? $('.label-is-actif').text('Caissier inactif') : $('.label-is-actif').text('Caissier actif');
+            });
+
+            $('#new-Password').attr('required', false);
+            $('#confirm-Password').attr('required', false);
+
+            $(document).on('change','.js-switch-mdp', function() {
+                if ($(this).is(':checked')) {
+                    $(this).attr('value', 'true');
+                }
+                else {
+                   $(this).attr('value', 'false');
+                }
+
+                var check = $(this).val(); 
+                
+                (check === 'false') ? $('.kl-mdp').addClass('d-none') : $('.kl-mdp').removeClass('d-none');
+                
+                (check === 'false') ? $('#new-Password').attr('required', false) : $('#new-Password').attr('required', true);
+                (check === 'false') ? $('#confirm-Password').attr('required', false) : $('#confirm-Password').attr('required', true); 
+                (check === 'false') ? $('#new-Password').val('') : '';
+                (check === 'false') ? $('#confirm-Password').val('') : '';
+            });
+
+            $('#formCaiss').attr('autocomplete', 'off');
+
+            $(document).on('submit','#formCaiss', function(e){
+                e.preventDefault()
+                e.stopPropagation()
+                $(".preloading").fadeIn();
+
+                let url = $(this).attr('action')
+                let formData = new FormData(this)
+                $.ajax({
+                    url: url,
+                    method: 'POST',
+                    dataType: 'json',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        notification('success',response.message)
+                        $(".preloading").fadeOut();
+                        $('.updateContent').fadeOut("slow", "linear");
+                        $('.update').fadeIn("slow", "linear");
+                        $('.listeTable').html(response.table)
+                    },
+                    error: function (error) {
+                        $(".preloading").fadeOut();
+                        notification('warning','Réessayer plus tard')
+                        console.log(error);
+                    }
+                })
+                /* $(this).addClass('was-validated'); */
+            })
+        })
+
+
+    </script>
+{% endblock %}

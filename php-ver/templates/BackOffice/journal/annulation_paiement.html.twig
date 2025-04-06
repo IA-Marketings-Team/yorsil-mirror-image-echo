@@ -1,0 +1,87 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}Fawatir{% endblock %}
+
+{% block stylesheets %}
+	{{ parent() }}
+	<style>
+		body {
+			background: #f5f5f5;
+		}
+		.container {
+			min-height: 90vh;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+		.confirm-message {
+			position: relative;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			max-width: 450px;
+			text-align: center;
+			flex-direction: column;
+			border-radius: 10px;
+			padding: 2rem 1rem;
+			background: #fff;
+			box-shadow: 0 0 5px #ccc;
+		}
+		.confirm-message .check-img{
+			position: absolute;
+			top: 0;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			background: #fff;
+			border-radius: 50%;
+		}
+		.confirm-message .btn-ok{
+			position: absolute;
+			bottom: 0;
+			left: 50%;
+			transform: translate(-50%, 50%);
+			background: #63e6be;
+			padding: 5px 20px;
+			color: #fff;
+			font-weight: 900;
+			font-family: sans-serif;
+		}
+		.confirm-message .btn-ok:hover{
+			background: #63e6be;
+			box-shadow: 0 0 5px #ccc;
+		}
+		.message {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			text-align: center;
+			flex-direction: column;
+			gap: 5px;
+		}
+		.message h6{
+			color: gray;
+		}
+	</style>
+{% endblock %}
+
+{% block body %}
+	<div class="container">
+		<div class="confirm-message">
+			{% if(response.codeRetour == "000") %}
+				<img src="{{ asset('images/circle-check.svg') }}" width="50" class="check-img" alt="">
+				<div class="message">
+					<h5>Ref: {{response.refTxSysPmt}}</h5>
+					<h6>Annulation de l'operation en cours</h6>
+				</div>
+				<a href="{{ path('journal_paiement_facture')}}" class="btn btn-sm btn-ok">Ok</a>
+			{% else %}
+				<img src="{{ asset('images/triangle-exclamation.svg') }}" width="50" class="check-img" alt="">
+				<div class="message">
+					
+					<h6>{{ response.msg }}</h6>	
+				</div>
+				<a href="{{ path('journal_paiement_facture')}}" class="btn btn-sm btn-danger">Retour au journal de paiement de facture</a>
+			{% endif %}
+		</div>
+	</div>
+{% endblock %}

@@ -1,0 +1,25 @@
+<table id="id-boutique-liste" class="table">
+    <thead>
+        <tr>
+            <td>Nom du boutique</td>
+            <td>Identifiant</td>
+            <td>Contact</td>
+            <td>Email</td>
+            <td>Admin</td>
+            <td>Status</td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            {% set admin = boutique.user.createur %}
+            <td>{{boutique.nom}}</td>
+            <td>{{boutique.user.nom}}</td>
+            <td>{{boutique.user.tel}}</td>
+            <td>{{boutique.user.email}}</td>
+            <td>{{admin}}</td>
+            <td class="d-flex justify-content-center align-items-center">
+                <i data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{{ boutique.user.isActif ? 'actif' : 'inactif'}}" class="ti ti-hand-stop fs-5 {{ boutique.user.isActif ? 'text-success' : 'text-danger'}}"></i>
+            </td>
+        </tr>
+    </tbody>
+</table>

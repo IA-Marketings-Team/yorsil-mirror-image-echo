@@ -1,0 +1,92 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}Modification de percepteur{% endblock %}
+
+{% set menu_percepteur = true %}
+
+{% block body %}
+
+    <div class="card bg-light-info shadow-none position-relative overflow-hidden">
+        <div class="card-body px-4 py-3">
+          <div class="row align-items-center">
+            <div class="col-9">
+              <h4 class="fw-semibold mb-8">Percepteurs</h4>
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a class="text-muted" href="javascript:void(0)">Percepteur</a></li>
+                  <li class="breadcrumb-item"><a class="text-muted" href="{{ path('percepteur')}}">Liste</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Modification</li>
+                </ol>
+              </nav>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    {{ form_start(form, {'attr':{'id':'form-edit-percepteur'} })}}
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body p-4">
+                        <div class="row mb-4">
+                            <div class="col md-4">{{ form_row(form.nom) }}</div>
+                            <div class="col md-4">{{ form_row(form.prenom) }}</div>
+                        </div>
+                        <div class="row mb-4">
+                            <div class="col md-4">
+                                <div class="form-group">
+                                    <label for="percept_email" class="required">Email</label>
+                                    <input type="email" id="percept_email" value="{{percepteur.compte.email}}" name="percept[email]" required="required" placeholder="Email..." class="form-control">
+                                </div>
+                            </div>
+                            <div class="col md-4">{{ form_row(form.tele) }}</div>
+                        </div>
+                        <div class="row mb-4">
+                            <div class="col md-4">{{ form_row(form.ville) }}</div>
+                            <div class="col md-4">{{ form_row(form.pays) }}</div>
+                        </div>
+                        <!-- <div class="row mb-4">
+                            <div class="col md-4">
+                                <div class="form-group">
+                                    <label for="percept_password" class="required">Mot de passe</label>
+                                    <input type="password" id="percept_password" name="percept[password]" required="required" placeholder="Mot de passe..." class="form-control">
+                                </div>
+                            </div>
+                            <div class="col md-4">
+                                <div class="form-group">
+                                    <label for="percept_confirm_password" class="required">Confirmez le mot de passe</label>
+                                    <input type="password" id="percept_confirm_password" name="percept[confirm_password]" required="required" placeholder="Confirmez le mot de passe..." class="form-control">
+                                    <span id="percept_password_error" style="color: red; display: none;">Les mots de passe doivent être identiques.</span>
+                                </div>
+                            </div>
+                        </div> -->
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="d-flex align-items-center justify-content-end gap-3">
+                    <button class="btn btn-primary">Modifier</button>
+                    <a href="{{ path('percepteur')}}" class="btn btn-light-danger text-danger">Annuler</a>
+                </div>
+            </div>
+        </div>
+    {{ form_end(form) }}
+                    
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(document).on('submit', '#form-edit-percepteur', function(e) {
+            const password = $('#percept_password').val();
+            const confirmPassword = $('#percept_confirm_password').val();
+
+            if (password !== confirmPassword) {
+                e.preventDefault(); // Empêche la soumission du formulaire
+                $('#percept_password_error').show(); // Affiche le message d'erreur
+            } else {
+                $('#percept_password_error').hide(); // Masque le message d'erreur si les mots de passe sont identiques
+            }
+        });
+    </script>
+{% endblock %}

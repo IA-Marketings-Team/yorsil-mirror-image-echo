@@ -1,0 +1,11 @@
+{% set voyageTotal = 0 %}
+{% for trajet in trajets.trips %}
+    {% set voyageTotal = voyageTotal + trajet.items|length %}
+{% endfor %}
+<span>
+    {% if voyageTotal %}
+        {{voyageTotal}} résultat{{voyageTotal > 1 ? 's' : ''}}
+    {% else %}
+        Aucun trajet
+    {% endif %}
+</span>

@@ -1,0 +1,302 @@
+{% extends 'base_front.html.twig' %}
+
+{% set menu_billeteries = true %}
+
+{% block title %}gérér réservation{% endblock %}
+
+{% block stylesheets %} 
+    {{ parent() }}
+    <style type="text/css">
+     .header .img-background img{
+        width: 100%;
+        object-fit: contain;
+     }
+     form#checkReservation {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+    }
+    form#checkReservation .card-form{
+        position: absolute;
+        top: 0;
+        transform: translateY(-25%);
+        max-width: 666px;
+        padding: 24px;
+        box-shadow: 0px 6px 12px rgba(0, 0, 0, .06), 0px 3px 18px rgba(0, 0, 0, .06), 0px 3px 6px rgba(0, 0, 0, .18);
+    }
+    .card-reservation .card-reservation-title {
+        font-size: 15px;
+        font-weight: 900;
+    }
+    .trajet-info {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    .trajet-info .trajet {
+        display: flex;
+        flex-direction: column;
+    }
+    .trajet-info .trajet-ligne {
+        width: 5rem;
+        height: 2px;
+        position: relative;
+        background: gray;
+        display: flex;
+        align-items: center;
+    }
+    .trajet-info .trajet-ligne::before,
+    .trajet-info .trajet-ligne::after {
+        content: "";
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        border: 2px solid gray;
+        background: gray;
+    }
+    .trajet-info .trajet-ligne::before {
+        left: 0;
+        background: #fff;
+    }
+    .trajet-info .trajet-ligne::after {
+        right: 0;
+    }
+    .type-trajet {
+        font-weight: 500;
+    }
+    .card-body-reservation {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    #resultSearchReservations {
+        display: none;
+    }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <section class="header">
+        <div class="img-background">
+            <img src="{{ asset('modernize/images/billeterie/gererReservation.jpg') }}" alt="">
+        </div>
+        <form id="checkReservation">
+            <div class="card card-form">
+                <h2 class="text-center">Gérer ma réservation</h2>
+                <p class="text-center">Consultez les détails de votre réservation en renseignant les champs ci-dessous. Vous trouverez votre numéro de réservation dans votre e-mail de confirmation ou sur votre billet.</p>
+                <div class="mb-3 px-3">
+                    <label for="orderId" class="form-label">N° de réservation</label>
+                    <input type="number" name="orderId" class="form-control" id="orderId" required>
+                </div>
+                <div class="mb-3 px-3">
+                    <label for="emailOrTel" class="form-label">E-Mail ou numéro de téléphone</label>
+                    <input type="text" name="emailOrTel" class="form-control" id="emailOrTel" required>
+                </div>
+                <div class="mb-3 px-3">
+                    <input type="hidden" name="emailOrTel" class="form-control" id="erroReservation">
+                    <div class="invalid-feedback text-center">
+                        Nous n’avons pas trouvé de réservation avec les identifiants que vous avez saisis. Soit le numéro de réservation est erroné, soit il y a une faute de frappe dans le numéro de téléphone ou l’adresse e-mail.
+                    </div>
+                </div>
+                <div class="mb-3 px-3 text-center">
+                    <button class="btn btn-warning" id="submitSearchReservation">Retrouver la réservation</button>
+                </div>
+            </div>
+        </form>
+    </section>
+    <section id="resultSearchReservations" class="my-3"></section>
+    
+{% endblock %}
+
+{% block javascripts %}
+  {{ parent() }}
+<script>
+    $(document).ready(function() {
+        let $download_hash, $order_id;
+
+        function sendRequest(method = "POST", url, data = null) {
+            return new Promise((resolve, reject) => {
+                const request = $.ajax({
+                    type: method,
+                    url: url,
+                    data: data,
+                    beforeSend: function () {
+                        $('.loding-page').removeClass('d-none')
+                    }
+                });
+
+                request.done(function (response) {
+                    resolve(response);
+                });
+
+                request.fail(function (error) {
+                    reject(error);
+                });
+
+                request.always(function () {
+                    $('.loding-page').addClass('d-none')
+                });
+            });
+        }
+
+        function listPassagerValue(passager) {
+            const adulte = parseInt(passager.adult)
+            const enfant = parseInt(passager.children)
+            const velo = parseInt(passager.bike_slot)
+
+            let resultArray = [];
+
+            if (adulte > 0) {
+                resultArray.push(`${adulte} adulte${adulte > 1 ? 's' : ''}`);
+            }
+            if (enfant > 0) {
+                resultArray.push(`${enfant} enfant${enfant > 1 ? 's' : ''}`);
+            }
+            if (velo > 0) {
+                resultArray.push(`${velo} vélo${velo > 1 ? 's' : ''}`);
+            }
+
+            const resultText = resultArray.join(', ');
+
+            return resultText
+        }
+
+        function afficheReservationResult(reservations) {
+            const formSearch = $("#checkReservation")
+            const contentReservation = $("#resultSearchReservations")
+            $download_hash = reservations[0].description.download_hash ? reservations[0].description.download_hash : ''
+
+            contentReservation.empty()
+            
+            contentReservation.append(`
+                <button id="autreReservation" class="my-3 btn btn-sm btn-success"><i class="ti ti-rotate"></i> Autre</button>
+                ${reservations[0].description.download_hash ? `<button id="annulerReservation" data-id="${reservations[0].orderId}" data-hash="${reservations[0].description.download_hash}" class="my-3 btn btn-sm btn-danger"><i class="ti ti-trash"></i>Annuler</button>` : ''}
+                ${reservations[0].description.lien_rappel ? `<a href="${reservations[0].description.lien_rappel}" target="_blank" class="btn btn-sm btn-primary"><i class="ti ti-link"></i> Rappel</a>` : ''}
+            `)
+
+            $.each(reservations, function(index, reservation) {
+                console.log(reservation);
+                contentReservation.append(`
+                    <div class="card card-reservation p-3">
+                        <h2 class="card-reservation-title">N° de réservation : ${reservation.orderId} <span class="type-trajet">(${reservation.type.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase()})</span></h2>
+                        <div class="card-body-reservation">
+                            <div class="trajet-info">
+                                <div class="trajet depart">
+                                    <span>${reservation.dateDepart} <sup class="fw-bolder">| ${reservation.heureDepart}</sup></span>
+                                    <span>${reservation.stationDepart}</span>
+                                </div>
+                                <span class="trajet-ligne"></span>
+                                <div class="trajet arriver">
+                                    <span>${reservation.dateArriver} <sup class="fw-bolder">| ${reservation.heureArriver}</sup></span>
+                                    <span>${reservation.stationArriver}</span>
+                                </div>
+                            </div>
+                            <div class="passagere">
+                                <span>(${listPassagerValue(reservation.passager)})</span>
+                            </div>
+                            <div class="tarif">
+                                <span class="h5">Montant</span> <br>
+                                <span class="fw-bolder h5">${reservation.montant} €</span>
+                            </div>
+                            <div class="tarif">
+                                <span class="h5">Montant total</span> <br>
+                                <span class="fw-bolder h5">${reservation.montantTotal} €</span>
+                            </div>
+                        </div>
+                    </div>
+                `)
+            });
+
+            formSearch.fadeOut(400)
+            contentReservation.fadeIn(400)
+        }
+        
+        $(document).on('submit', '#checkReservation', async function (e) {
+            e.preventDefault();
+            $order_id = $("#orderId").val()
+
+
+            $("#submitSearchReservation").prepend('<span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>').addClass('disabled');
+
+            const dataSearch = {
+                orderId  : $("#orderId").val(),
+                emailOrTel : $("#emailOrTel").val()
+            }
+
+            try {
+                const response = await sendRequest("POST", "/search-gerer-reservation", dataSearch);
+                if (response.reservation) {
+                    $("#submitSearchReservation").removeClass('disabled');
+                    $(".spinner-border").remove()
+                    afficheReservationResult(response.reservation)
+                } else {
+                    $("#submitSearchReservation").removeClass('disabled');
+                    $(".spinner-border").remove()
+                    $("#erroReservation").addClass('is-invalid');
+                    notification('warning', "Nous n’avons pas trouvé de réservation avec les identifiants que vous avez saisis.")
+                    console.warn("Nous n’avons pas trouvé de réservation avec les identifiants que vous avez saisis.");
+                }
+            } catch (error) {
+                $("#submitSearchReservation").removeClass('disabled');
+                $(".spinner-border").remove()
+                notification('warning', "Erreur lors de la récupération de réservation.")
+                console.error("Erreur lors de la récupération de réservation :", error);
+            }
+        });
+
+        $(document).on('click', '#annulerReservation', function () {
+
+            swal({
+                title: "Annulation",
+                text: "Êtes-vous sûr de vouloir annuler votre réservation ?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Annuler",
+                cancelButtonText: "Non",
+                closeOnConfirm: false,
+                closeOnCancel: true },
+            async function (isConfirm) {
+                if (isConfirm) {
+                    swal("Annulation", "Une erreur est survenue lors de l'annulation.", "error");
+                    // const dataAnnulation = {
+                    //     orderId  : $order_id,
+                    //     downloadHash : $download_hash
+                    // }
+
+                    // try {
+                    //     const response = await sendRequest("POST", "/annuler-voyage", dataAnnulation);
+                    //     if (response) {
+                    //         console.log(response);
+                    //     } else {
+                    //         notification('warning', "Erreur lors d'annulation de réservation.")
+                    //         console.warn(response, "Erreur lors d'annulation de réservation.");
+                    //     }
+                    // } catch (error) {
+                    //     notification('warning', "Erreur lors d'annulation de réservation.")
+                    //     console.error("Erreur lors d'annulation de réservation: ", error);
+                    // }
+                } else {
+                    swal("Annulation", "Vous êtes retourner à votre session en cours.", "error");
+                }
+            });
+        });
+
+        $(document).on('input', '#orderId, #emailOrTel', function () {
+            $("#erroReservation").removeClass('is-invalid');
+        });
+
+        $(document).on('click', '#autreReservation', function () {
+            $("#resultSearchReservations").fadeOut(400)
+            $("#checkReservation").fadeIn(400)
+        });
+    });
+</script>
+        
+{% endblock %}

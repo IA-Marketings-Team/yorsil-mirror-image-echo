@@ -1,0 +1,91 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}Listes des rechargements{% endblock %}
+
+{% set menu_journal_recharge = true %}
+
+{% block body %}
+    <div class="card bg-light-info shadow-none position-relative overflow-hidden">
+        <div class="card-body px-4 py-3">
+            <div class="row align-items-center">
+                <div class="col-9">
+                    <h4 class="fw-semibold mb-8">Liste des rechargements</h4>
+                    <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item active" aria-current="page">Liste</li>
+                        <li class="breadcrumb-item"><a class="text-muted" href="{{ path('rechargement_du_compte') }}">Rechargement</a></li>
+                    </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <section>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center justify-content-end mb-2">
+                            <a id="faire_rechargement" href="{{ path('rechargement_du_compte') }}" class="btn btn-primary mb-2">
+                                <i class="ti ti-plus fs-4"></i> Faire un rechargement
+                            </a>
+                        </div>
+                        <div class="table-responsive">
+                            <table id="table" class="table table-light text-nowrap">
+                                <thead>
+                                    <tr>
+                                        <td>Date</td>
+                                        <td class="text-center">Ref</td>
+                                        <td class="text-center">Montant</td>
+                                        <td>Boutique</td>
+                                        <td>Note</td>
+                                        <td class="text-center">Validation</td>
+                                        <td></td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for rechargement in rechargements %}
+                                        <tr>
+                                            <td data-order="{{ rechargement.date | date('Y-m-d H:i') }}">{{ rechargement.date|date('d-m-Y') }}</td>
+                                            <td class="text-center">{{ rechargement.ref }}</td>
+                                            <td class="text-center"><b>{{ rechargement.montant }} &euro;</b></td>
+                                            <td>{{ rechargement.bout.nom }}</td>
+                                            <td>{{ rechargement.note ? rechargement.note : '--' }}</td>
+                                            <td class="text-center">
+                                                {% if rechargement.isvalid == 1  %}
+                                                    <i class = "ti ti-circle-check fs-5 text-success" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Validé"></i>
+                                                {% else %}
+                                                    {% if rechargement.isvalid is null %}
+                                                        <i class = "ti ti-clock fs-5 text-warning" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="En attente de validation"></i>
+                                                    {% else %}
+                                                         <i class = "ti ti-x fs-5 text-danger" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Rejeté"></i>
+                                                    {% endif %}
+                                                {% endif %}
+                                            </td>
+                                            <td class="text-center">
+                                                <a class="btn btn-info dim btn-sm {{ rechargement.isValid ? 'disabled' : '' }}" type="button" href="{{ path('rechargement_edit',{id:rechargement.id}) }}" aria-label="Modifier" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Modifier">
+                                                    <i class="ti ti-edit fs-3"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $('#table').DataTable({
+            language: { "url": global_utils.urls.datatable_fr },
+            "order": [[0, "desc"]],
+        });
+
+    </script>
+{% endblock %}

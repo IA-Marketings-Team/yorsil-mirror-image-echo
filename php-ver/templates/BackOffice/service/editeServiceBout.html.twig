@@ -1,0 +1,128 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}Disposition Service{% endblock %}
+
+{% set menu_services = true %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('modernize/libs/select2/dist/css/select2.min.css') }}">
+{% endblock %}
+
+{% block body %}
+    <div class="card bg-light-info shadow-none position-relative overflow-hidden">
+        <div class="card-body px-4 py-3">
+          <div class="row align-items-center">
+            <div class="col-9">
+              <h4 class="fw-semibold mb-8">Services</h4>
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a class="text-muted" href="{{ path('liste_services_bout')}}">Liste</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Modification</li>
+                </ol>
+              </nav>
+            </div>
+          </div>
+        </div>
+    </div>
+    
+    <form data-action="/modifier-services-boutique/{{serviceBout.id}}" id="disposition_services_form">
+        <div class="row justify-content-center">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body p-4">
+                        <div class="mb-3">
+                            <h4>{{boutique.nom}}</h4>
+                        </div>
+                        
+                        <div class="row">
+                            {% for service in services %}
+                                <div class="col-md-3 mb-3 border p-2">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input activer-service" data-id="{{service.id}}" value="{{service.nom}}" name="services[]" type="checkbox" id="service-{{service.id}}" {{service.status ? 'checked' : ''}}>
+                                        <label class="form-check-label" for="service-{{service.id}}">{{service.nom}}</label>
+                                    </div>
+                                    <div class="module-content-{{service.id}} px-4">
+                                        {% for idModule, module in service.modules %}
+                                            <div class="row" class="liste-service-module">
+                                                <div class="col-md-3">
+                                                    <div class="form-check form-switch">
+                                                        <input class="form-check-input success activer-module" data-id="id-{{service.id}}-{{idModule}}" value="{{module.nom}}" name="modules{{service.id}}[]" type="checkbox" id="module-{{service.id}}-{{idModule}}" {{module.status ? 'checked' : ''}}>
+                                                        <label class="form-check-label" for="module-{{service.id}}-{{idModule}}">{{module.nom}}</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="card-footer text-muted">
+                        <div class="d-flex align-items-center justify-content-end gap-3">
+                            <button class="btn btn-primary">Modifier</button>
+                            <a href="{{ path('liste_services_bout')}}" class="btn btn-light-danger text-danger">Annuler</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('modernize/libs/select2/dist/js/select2.full.min.js') }}"></script>
+    <script src="{{ asset('modernize/libs/select2/dist/js/select2.min.js') }}"></script>
+    <script>
+        $("#select-boutique").select2();
+        
+        $(document).on('submit', '#disposition_services_form', function(e) {
+            e.preventDefault()
+            const url = $(this).data('action')
+            
+            const service = [];
+
+            $("input[type=checkbox][name='services[]']").each(function () {
+                const inputService = $(this)
+                const idService = inputService.data('id')
+                
+                const modules = []
+
+                $(`input[type=checkbox][name='modules${idService}[]']`).each(function () {
+                    const inputModule = $(this)
+
+                    modules.push({
+                        nom: inputModule.val(),
+                        status: inputModule.is(":checked")
+                    });
+                });
+                
+                service.push({
+                    id: inputService.data('id'),
+                    nom: inputService.val(),
+                    status: inputService.is(":checked"),
+                    modules: modules
+                });
+            });
+
+            $.ajax({
+                url: url,
+                method: 'POST',
+                data: JSON.stringify({
+                    services: service
+                }),
+                contentType: "application/json",
+                success: function (response) {
+                    window.location.pathname = `/liste-services-boutique`;
+                },
+                error: function (error) {
+                    $('.loding-page').addClass('d-none')
+                    console.log(error);
+                }
+            })
+
+        })
+    </script>
+{% endblock %}

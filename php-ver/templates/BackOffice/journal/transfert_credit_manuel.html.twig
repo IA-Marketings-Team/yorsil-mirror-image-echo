@@ -1,0 +1,149 @@
+{% extends 'base_admin.html.twig' %}
+
+{% set menu_journal = true %}
+{% set menu_transfert_manuel = true %}
+
+{% block title %} Journal | Transfert de Crédit {% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .disabled-link {
+            pointer-events: none;  /* Désactive les interactions de la souris */
+            color: gray;           /* Optionnel : Changer la couleur pour indiquer que c'est désactivé */
+            text-decoration: none; /* Optionnel : Enlever le soulignement */
+            cursor: default;       /* Optionnel : Changer le curseur */
+        }
+        </style>
+{% endblock %}
+
+{% block body %}
+
+    <div class="card bg-light-info shadow-none position-relative overflow-hidden">
+        <div class="card-body px-4 py-3">
+            <div class="row align-items-center">
+                <div class="col-9">
+                    <h4 class="fw-semibold mb-8">Journal des transferts de crédit</h4>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                          <li class="breadcrumb-item"><a class="text-muted" href="javascript:void(0)">Transfert de crédit</a></li>
+                          <li class="breadcrumb-item active" aria-current="page">Liste</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+     <section>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-light"  id="id-transfert-manuel-liste">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th class="text-center">Boutique</th>
+                                        <th class="text-center">Numéro</th>
+                                        <th class="text-center">Montant</th>
+                                        <th class="text-center">Opérateur</th>
+                                        <th class="text-center">Pays</th>
+                                        <th class="text-center">Status</th>
+                						<th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                   {% for transfert in transferts %} 
+                                        <tr>
+                                            <td data-order="{{ transfert.date | date('Y-m-d H:i') }}">{{ transfert.date | date('d-m-Y') }}</td>
+                                            <td class="text-center">{{transfert.user.nom}}</td>
+                                            <td class="text-center">{{transfert.numero}}</td>
+                                            <td class="text-center"><b>{{transfert.montant|number_format(2, '.', '')}} &euro;</b></td>
+    										<td class="text-center">{{transfert.operateur.nom}}</td>
+                                            <td class="text-center">{{transfert.operateur.nompays}}</td>
+                                            <td class="text-center">
+                                                {% set status = (transfert.isvalid == true) ? 'success' : 'warning' %}
+                                                <span class="badge status-trx-{{transfert.id}} text-bg-{{status}} fs-1 rounded-4 py-1 px-2">{{transfert.isvalid == true ? "Validé" : "En attente"}}</span>
+                                            </td>
+                                            <td class="text-center">
+                                                {% if transfert.isvalid %}
+                                                    <a class="btn btn-success btn-sm " href="javascript:void(0)">
+                                                        <i class="ti ti-check fs-5" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Validé"></i>
+                                                    </a>
+                                                {% else %}
+                                                    <a class="btn btn-primary btn-sm valider-trx" data-id="{{transfert.id}}" data-href="{{ path('valider_transfert_manuel', {id: transfert.id}) }}">
+                                                        Valider
+                                                    </a>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %} 
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+                    
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+
+        $('#id-transfert-manuel-liste').DataTable({
+            language: { "url": global_utils.urls.datatable_fr },
+            "order": [[0, "desc"]],
+        });
+
+        $(document).on("click", ".valider-trx", function (){
+            const target_url = $(this).data('href');
+            const trx_id = $(this).data('id');
+            const btnValide = $(this)
+            const status = $(`.status-trx-${trx_id}`)
+            swal({
+                title: "Validation",
+                text: "Vous voulez vraiment valider ce transfert ?",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: "#0a7ea4",
+                confirmButtonText: "Oui",
+                cancelButtonText: "Non",
+                closeOnConfirm: false,
+                closeOnCancel: true },
+            function (isConfirm) {
+                if (isConfirm) {
+                    swal({
+                        title: "Validation en cours...",
+                        text: "...",
+                        type: 'warning',
+                        showCancelButton: false,
+                        confirmButtonColor: "#ffae1f",
+                        confirmButtonText: "Traitement...",
+                        closeOnConfirm: false
+                    })
+                    $.ajax({
+                        url: target_url,
+                        method: 'POST',
+                        success: function (response) {
+                            if(response.status){
+                                window.location.href = '/journal-diaspo-transfert';
+                                swal("Validation effectuée", "Transfert validé avec succès", "success");
+                                btnValide.removeClass('valider-trx btn-primary').addClass('btn-success').html(`
+                                    <i class="ti ti-check fs-5" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Validé"></i>
+                                `)
+                                status.removeClass('text-bg-warning').addClass('text-bg-success').text("Validé")
+                            } else {
+                                notification('warning', "Une erreur c'est produit lors de validation");
+                            }
+                        }
+                    })
+                }
+            });
+        });
+    </script>
+{% endblock %}

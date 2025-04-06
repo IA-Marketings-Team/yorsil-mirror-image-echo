@@ -1,0 +1,598 @@
+{% extends 'base_front.html.twig' %}
+
+{% set menu_billeteries = true %}
+
+{% block title %}billeteries{% endblock %}
+
+{% block stylesheets %} 
+    {{ parent() }}
+    <style type="text/css">
+        .card-blablacar {
+            position: relative;
+            border-radius: 10px;
+            width: 100%;
+            height: 300px;
+            margin-bottom: 160px;
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            padding: 1rem;
+        }
+        .card-blablacar .bg-img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: inherit;
+            z-index: 0;
+        }
+        .card-blablacar .bn-title {
+            color: #fff;
+            font-weight: 900;
+            z-index: 1;
+        }
+        #search-direx-form {
+            position: absolute;
+            bottom: 0;
+            transform: translateY(50%);
+            border-radius: inherit;
+            z-index: 1;
+            background: #054752cf;
+            backdrop-filter: blur(2px);
+            width: calc(100% - 2rem);
+            padding: 10px;
+        }
+        .controle-direx,
+        .control-passager {
+            width: 100%;
+            height: 40px;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            border-radius: 5px;
+            padding: 0 10px;
+        }
+        .controle-direx .filter-destination {
+            flex: 1 0 auto;
+            height: 100%;
+            border: none;
+            background: transparent;
+            color: #054752;
+            font-weight: 900;
+        }
+        .control-passager i.ti,
+        .controle-direx i.ti {
+            color: #054752;
+            font-size: 20px;
+        }
+        .controle-direx .filter-destination::placeholder {
+            color: #054752;
+        }
+        .control-passager,
+        .control-date {
+            cursor: pointer;
+        }
+        .liste-destination {
+            max-height: 180px;
+            overflow-y: auto;
+            border-radius: inherit;
+        }
+        .liste-destination .select-destination {
+            border-radius: inherit;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        .liste-destination .select-destination.mb-2:last-of-type {
+            margin-bottom: 0 !important;
+        }
+        .liste-destination .select-destination:hover {
+            background: #ededed;
+        }
+        .dropdown-menu.passager-drop-menu {
+            min-width: max-content;
+            width: 260px;
+        }
+        .form-touch-spin input {
+            flex: 1 0 60px;
+            width: 60px;
+        }
+        .spin-minus,
+        .spin-plus {
+            font-size: 20px;
+            cursor: pointer;
+            color: #00aff5;
+            transition: all 0.4s ease;
+        }
+        .spin-minus.disabled,
+        .spin-plus.disabled {
+            color: #dedede;
+        }
+        .control-date {
+            position: relative;
+        }
+        .control-date input[type="date"] {
+            position: absolute;
+            bottom: 0;
+            opacity: 0;
+            pointer-events: none;
+        }
+        .change-direx {
+            width: 100%;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #ff595a;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        .change-direx i.ti {
+            font-size: 25px;
+            color: #fff;
+        }
+        .btn-check:checked+.btn.label-check-direx, .btn.active, .btn.show, .btn:first-child:active, :not(.btn-check)+.btn:active {
+            background-color: #ff595a;
+            border-color: #fff;
+            color: #fff;
+        }
+        span.date-label {
+            color: #fff;
+            font-weight: 700;
+        }
+        #date-aller-retour {
+            display: none;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="card-blablacar">
+        <img src="{{asset('modernize/images/Blablabus/blablabus.svg')}}" class="bg-img" alt="">
+        <h1 class="bn-title">Vous avez vos plans, on a vos bons plans.</h1>
+        <form id="search-direx-form" method="POST">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="check-aller-retour mb-2 d-flex flex-wrap gap-1">
+                        <div class="check-aller">
+                            <input type="radio" name="check-aller-retour" value="1" class="btn-check" id="btn-check-aller" checked autocomplete="off" />
+                            <label class="btn btn-outline-light font-medium label-check-direx aller w-100" for="btn-check-aller">Aller-simple</label>
+                        </div>
+                        <div class="check-retour">
+                            <input type="radio" name="check-aller-retour" value="2" class="btn-check" id="btn-check-retour" autocomplete="off" />
+                            <label class="btn btn-outline-light font-medium label-check-direx retour w-100" for="btn-check-retour">Aller - retour</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-md-5">
+                    <div class="form-direction depart">
+                        <label class="controle-direx control-depart" for="input-depart" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="ti ti-playstation-circle"></i>
+                            <input type="text" class="filter-destination depart" name="depart" id="input-depart" placeholder="Départ">
+                        </label>
+                        <ul class="dropdown-menu p-2 liste-destination depart">
+                        
+                            {% for station in stations %}
+                                {% if station is defined and station.name is defined and station._u_i_c_station_code is defined %}
+                                    <li class="mb-2 select-destination depart" data-destination="{{station.name|split(' ')[0]|default(station.name)}}" data-pays="Allemagne" data-code="{{station._u_i_c_station_code}}">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="d-flex flex-column">
+                                                <p class="m-0 fw-bolder">{{station.name|split(' ')[0]|default(station.name) }}</p>
+                                                <span>
+                                                {% if station.meta_data is defined and station.meta_data is iterable and station.meta_data|length > 0 %}
+                                                    {% for data in station.meta_data|slice(0, 3) %}
+                                                        {{data.value}}
+                                                        {% if not loop.last %} - {% endif %}
+                                                    {% endfor %}
+                                                {% else %}
+                                                    {{station.timezone|split('/')|last|default(station.timezone)}}
+                                                {% endif %}
+                                                </span>
+                                            </div>
+                                            <i class="ti ti-chevron-right"></i>
+                                        </div>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="change-direx">
+                        <i class="ti ti-arrows-diff"></i>
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <div class="form-direction destination">
+                        <label class="controle-direx control-arriver" for="input-arriver" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="ti ti-playstation-circle"></i>
+                            <input type="text" class="filter-destination" name="arriver" id="input-arriver" placeholder="Destination">
+                        </label>
+                        <ul class="dropdown-menu p-2 liste-destination arriver">
+                            {% for station in stations %}
+                                {% if station.name is defined and station._u_i_c_station_code is defined %}
+                                    <li class="mb-2 select-destination" data-destination="{{station.name|split(' ')[0]|default(station.name)}}" data-pays="Allemagne" data-code="{{station._u_i_c_station_code}}">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="d-flex flex-column">
+                                                <p class="m-0 fw-bolder">{{station.name|split(' ')[0]|default(station.name) }}</p>
+                                                <span>
+                                                    {% if station.meta_data is defined and station.meta_data is iterable and station.meta_data|length > 0 %}
+                                                        {% for data in station.meta_data|slice(0, 3) %}
+                                                            {{data.value}}
+                                                            {% if not loop.last %} - {% endif %}
+                                                        {% endfor %}
+                                                    {% else %}
+                                                        {% set timezone_parts = station.timezone|split('/') %}
+                                                        {% if timezone_parts|length > 1 %}
+                                                            {{ timezone_parts[1] }}
+                                                        {% else %}
+                                                            {{ station.timezone }}
+                                                        {% endif %}
+                                                    {% endif %}
+                                                </span>
+                                            </div>
+                                            <i class="ti ti-chevron-right"></i>
+                                        </div>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-md-6">
+                    <div class="date-aller-simple">
+                        <span class="form-label date-label d-block">Date aller</span>
+                        <div class="controle-direx control-date d-flex align-items-center">
+                            <i class="ti ti-calendar-event"></i>
+                            <p class="fw-bolder m-0 date-label-format aller d-flex align-items-center">Aujourd'hui</p>
+                            <input type="date" class="dateDirex aller" name="dateDirexAller" id="dateDirexAller">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6" id="date-aller-retour">
+                    <div class="date-aller-retour">
+                        <span class="form-label date-label d-block">Date retour</span>
+                        <div class="controle-direx control-date d-flex align-items-center">
+                            <i class="ti ti-calendar-event"></i>
+                            <p class="fw-bolder m-0 date-label-format retour d-flex align-items-center">Aujourd'hui</p>
+                            <input type="date" class="dateDirex retour" name="dateDirexRetour" id="dateDirexRetour">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mt-3 d-flex align-items-end">
+                    <div class="btn-group w-100">
+                        <div class="control-passager" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">
+                            <i class="ti ti-user"></i>
+                            <span class="passager-infos fw-bolder"> 1 passager</span>
+                        </div>
+                        <div class="dropdown-menu passager-drop-menu px-3 py-2">
+                            <div class="d-flex flex-column align-items-center justify-content-between gap-2">
+                                <p class="fw-bolder m-0 passager-label mb-2">Passager</p>
+                                <div class="row align-items-center">
+                                    <div class="col-6">Adulte</div>
+                                    <div class="col-6">
+                                        <div class="form-touch-spin d-flex align-items-center justify-content-between">
+                                            <i class="ti ti-circle-minus spin-minus disabled"></i>
+                                            <input type="text" class="form-control bg-transparent border-0 text-center nbr-passager qty" id="nbr-adult" placeholder="" value="1" data-min="0" data-max="8"/>
+                                            <i class="ti ti-circle-plus spin-plus"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row align-items-center">
+                                    <div class="col-6">Jeune</div>
+                                    <div class="col-6">
+                                        <div class="form-touch-spin d-flex align-items-center justify-content-between">
+                                            <i class="ti ti-circle-minus spin-minus disabled"></i>
+                                            <input type="text" class="form-control bg-transparent border-0 text-center nbr-passager qty" id="nbr-young" placeholder="" value="0" data-min="0" data-max="8"/>
+                                            <i class="ti ti-circle-plus spin-plus"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row align-items-center">
+                                    <div class="col-6">Enfant</div>
+                                    <div class="col-6">
+                                        <div class="form-touch-spin d-flex align-items-center justify-content-between">
+                                            <i class="ti ti-circle-minus spin-minus disabled"></i>
+                                            <input type="text" class="form-control bg-transparent border-0 text-center nbr-passager qty" id="nbr-kid" placeholder="" value="0" data-min="0" data-max="8"/>
+                                            <i class="ti ti-circle-plus spin-plus"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row align-items-center">
+                                    <div class="col-6">Bébé</div>
+                                    <div class="col-6">
+                                        <div class="form-touch-spin d-flex align-items-center justify-content-between">
+                                            <i class="ti ti-circle-minus spin-minus disabled"></i>
+                                            <input type="text" class="form-control bg-transparent border-0 text-center nbr-passager qty" id="nbr-baby" placeholder="" value="0" data-min="0" data-max="8"/>
+                                            <i class="ti ti-circle-plus spin-plus"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 mt-3 d-flex align-items-center justify-content-center">
+                    <button class="btn btn-success">Rechercher</button>
+                </div>
+            </div>
+            
+        </form>
+    </div>
+    
+    <section class="card-infos-service mb-3">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card-infos">
+                    <i class="ti ti-books fs-10"></i>
+                    <h5 class="text-dark fw-bolder mt-2 mb-1">Vos trajets préférés à petits prix</h5>
+                    <span class="text-muted fw-bolder">Où que vous alliez, en bus ou en covoiturage, trouvez le trajet idéal parmi notre large choix de destinations à petits prix.</span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card-infos">
+                    <i class="ti ti-id fs-10"></i>
+                    <h5 class="text-dark fw-bolder mt-2 mb-1">Voyagez en toute confiance</h5>
+                    <span class="text-muted fw-bolder">Nous prenons le temps qu'il faut pour connaître nos membres et nos compagnies de bus partenaires. Nous vérifions les avis, les profils et les pièces d'identité. Vous savez donc avec qui vous allez voyager pour réserver en toute confiance sur notre plateforme sécurisée.</span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card-infos">
+                    <i class="ti ti-bolt fs-10"></i>
+                    <h5 class="text-dark fw-bolder mt-2 mb-1">Recherchez, cliquez et réservez !</h5>
+                    <span class="text-muted fw-bolder">Réserver un trajet devient encore plus simple ! Facile d'utilisation et dotée de technologies avancées, notre appli vous permet de réserver un trajet à proximité en un rien de temps.</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(document).ready(function(){
+            const $stations = {{ stations|json_encode|raw }};
+            let $origin = "",
+            $destination = "";
+
+            $(document).on("click", ".spin-minus, .spin-plus", function (e) {
+                let $btn = $(e.currentTarget),
+                    $qty = $btn.closest("div").find(".qty"),
+                    currentVal = parseInt($qty.val(), 10) || 0,
+                    step = $btn.data('step') || 1,
+                    min = $btn.data('min') ?? 0,  
+                    max = $btn.data('max') ?? 8,  
+                    isAdd = $btn.hasClass("spin-plus");
+
+                currentVal = isAdd ? Math.min(currentVal + step, max) : Math.max(currentVal - step, min);
+                $qty.val(currentVal).trigger("change");
+
+                $btn.closest("div").find(".spin-minus").toggleClass("disabled", currentVal <= min);
+                $btn.closest("div").find(".spin-plus").toggleClass("disabled", currentVal >= max);
+
+                sumPassager()
+
+            });
+
+            function sumPassager() {
+                let somme = 0;
+                $('.nbr-passager').each(function() {
+                    // Récupérez la valeur et convertissez-la en nombre
+                    let valeur = $(this).val();
+                    let nombre = parseFloat(valeur);
+
+                    if (!isNaN(nombre)) {
+                        somme += nombre;
+                    }
+                });
+
+                $(".passager-infos").text(`${somme} passager${somme > 1 ? 's' : ''}`);
+                $(".passager-label").text(`Passager${somme > 1 ? 's' : ''}`);
+            }
+
+            $(document).on("click", ".select-destination", function (e) {
+                let destination = $(this).data('destination'),
+                pays = $(this).data('pays'),
+                code = $(this).data('code'),
+                inputDepart = $('#input-depart'),
+                inputArriver = $('#input-arriver'),
+                isDepar = $(this).hasClass("depart");
+
+                if (isDepar) {
+                    $origin = code;
+                    inputDepart.attr('placeholder', destination).val('')
+                    $(".liste-destination.depart").find("li").show()
+                } else {
+                    $destination = code
+                    inputArriver.attr('placeholder', destination).val('')
+                    $(".liste-destination.arriver").find("li").show()
+                }
+            });
+
+            $(document).on("change", ".dateDirex", function (e) {
+                const date = new Date($(this).val()),
+                isAller = $(this).hasClass("aller");
+                $(`.date-label-format${isAller ? '.aller' : '.retour' }`).text(formatDate(date));
+            });
+
+            $(document).on("input", ".filter-destination", function (e) {
+                let value = $(this).val().toLowerCase().trim(),
+                listeFilter = $(this).hasClass("depart") ? ".liste-destination.depart" : ".liste-destination.arriver";
+
+                $(listeFilter).find("li").filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)    
+                });
+            });
+
+            $(document).on("click", ".control-date", function (event) {
+                const inputDate = $(this).find('input[type="date"]')[0]; 
+                if (inputDate) {
+                    inputDate.showPicker();
+                }
+            });
+
+            $(document).on("change", "input[name='check-aller-retour']", function (e) {
+                isRetour = $("#btn-check-retour").is(':checked')
+                if (isRetour) {
+                    $('#date-aller-retour').fadeIn(300)
+                    initDateRetour()
+                } else {
+                    $('#date-aller-retour').fadeOut(300)
+                }
+            });
+
+            $(document).on("change", "#dateDirexAller", function (e) {
+                isRetour = $("#btn-check-retour").is(':checked')
+                
+                if (isRetour) {
+                    initDateRetour()
+                }
+            });
+
+            $(document).on("submit", "#search-direx-form", function (e) {
+                e.preventDefault()
+                const depart = $("#input-depart"),
+                arriver = $("#input-arriver"),
+                dateDirexAller = $("#dateDirexAller").val(),
+                dateDirexRetour = $("#dateDirexRetour").val(),
+                isRetour = $("#btn-check-retour").is(':checked'),
+                nbrAdult = parseInt($('#nbr-adult').val()) || 0,
+                nbrYoung = parseInt($('#nbr-young').val()) || 0,
+                nbrKid = parseInt($('#nbr-kid').val()) || 0,
+                nbrBaby = parseInt($('#nbr-baby').val()) || 0,
+                data = {
+                    "currency": "EUR",
+                    "passengers": [],
+                    "travels": []
+                };
+
+                if ($origin == "") {
+                    depart.focus()
+                    $('.control-depart').dropdown('show');
+                    return
+                }
+
+                if ($destination == "") {
+                    arriver.focus()
+                    $('.control-arriver').dropdown('show');
+                    return
+                }
+
+                if (nbrAdult === 0 && nbrYoung === 0 && nbrKid === 0 && nbrBaby === 0) {
+                    $('.control-passager').dropdown('show');
+                    return
+                }
+                
+                // A (adult), Y (young), K (kid) or C (baby)
+                for (var i = 0; i < nbrAdult; i++) {
+                    data.passengers.push({ "type": "A" });
+                }
+                for (var i = 0; i < nbrYoung; i++) {
+                    data.passengers.push({ "type": "Y" });
+                }
+                for (var i = 0; i < nbrKid; i++) {
+                    data.passengers.push({ "type": "K" });
+                }
+                for (var i = 0; i < nbrBaby; i++) {
+                    data.passengers.push({ "type": "C" });
+                }
+
+                data.travels.push({
+                    "origin": $origin,
+                    "destination": $destination,
+                    "direction": "outbound",
+                    "departure": dateDirexAller
+                })
+
+                if(isRetour) {
+                    data.travels.push({
+                        "origin": $destination,
+                        "destination": $origin,
+                        "direction": "inbound",
+                        "departure": dateDirexRetour
+                    })
+                }
+                $(".loding-page").removeClass('d-none')
+
+                $.ajax({
+                    url: "/liste-trajets-blablacar",
+                    type: "POST",
+                    data: JSON.stringify(data),
+                    contentType: "application/json",
+                    success: function(response) {
+                        $(".loding-page").removeClass('d-none')
+                        if (response.trajets && response.trajets.data && response.trajets.data.offer && response.trajets.data.offer.travels) {
+                            let form = $('<form>', {
+                                'method': 'POST',
+                                'action': "/trajet-selected"
+                            });
+
+                            $('<input>').attr({'type': 'hidden','name': 'trajets','value': JSON.stringify(response.trajets.data)}).appendTo(form);
+
+                            form.appendTo('body').submit();
+                        } else {
+                            notification("warning", "Il n'y a pas de bus disponible entre ces villes")
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        $(".loding-page").removeClass('d-none')
+                        console.error("Erreur :", response.status);
+                    }
+                });
+
+            });
+
+            function initDateRetour() {
+                let dateDepart = $("#dateDirexAller").val(),
+                nextDay = new Date(dateDepart);
+                nextDay.setDate(nextDay.getDate() + 1);
+                todayISO = nextDay.toISOString().split('T')[0];
+
+                $('#dateDirexRetour').attr('min', todayISO);
+                $('#dateDirexRetour').val(todayISO);    
+                $(`.date-label-format.retour`).text(formatDate(nextDay));
+            }
+
+            function formatDate(date) {
+                const daysOfWeek = ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"];
+                const months = ["janv.", "févr.", "mars", "avr", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."];
+                
+                let today = new Date(),
+                    tomorrow = new Date(today);
+                
+                tomorrow.setDate(today.getDate() + 1);
+
+                const dayOfWeek = daysOfWeek[date.getDay()];
+                const dayOfMonth = date.getDate();
+                const month = months[date.getMonth()];
+                const year = date.getFullYear();
+
+                today.setHours(0, 0, 0, 0);
+                tomorrow.setHours(0, 0, 0, 0);
+                date.setHours(0, 0, 0, 0);
+
+                return date.getTime() === today.getTime() ? "Aujourd'hui" :
+                    date.getTime() === tomorrow.getTime() ? "Demain" :
+                    `${dayOfWeek}. ${dayOfMonth} ${month} ${date.getFullYear() !== today.getFullYear() ? year : '' }`;
+            }
+
+            setDateLimits()
+
+            function setDateLimits() {
+                var today = new Date();
+                var todayISO = today.toISOString().split('T')[0];
+                $('#dateDirexAller').attr('min', todayISO);
+                $('#dateDirexAller').val(todayISO); 
+            }
+
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,18 @@
+<div class="spinner text-center d-none" style="display: flex;align-items: center;justify-content: center;width: 100%;height: 100%;position: absolute;top: -4px;left: -4px;background-color:  rgb(247 247 249 / 47%);z-index: 999;">
+  <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+  </div>
+</div>
+
+<input type="hidden" name="api" id="id-hidden-api" value="{{api}}">
+{% for payss in pays %}
+  <div class="col-4">  
+    <div class="form-check form-switch">
+      {% set is_api = (payss.typeApi == api ) ? 1 : 0 %}
+      <label class="form-check-label" for="flexSwitchCheckDefault">{{payss.nom}}</label>
+      <input class="form-check-input kl-check" type="checkbox" data-id="{{payss.id}}" id="flexSwitchCheckDefault" name="is_api[]" {% if(payss.typeApi == api ) %} checked="checked" {% endif %} />
+      <input type="hidden"  class="kl-iso" name="iso[]" id="id-iso-{{payss.id}}" value="{{is_api}}" />
+      <input type="text" class="d-none" name="ids[]" id="id-is-{{payss.id}}" value="{{payss.id}}" />
+    </div>
+  </div>
+{% endfor %}

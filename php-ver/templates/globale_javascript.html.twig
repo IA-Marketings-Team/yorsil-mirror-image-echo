@@ -1,0 +1,64 @@
+<script>
+    var oldExportAction = function (self, e, dt, button, config) {
+        if (button[0].className.indexOf('buttons-excel') >= 0) {
+        if ($.fn.dataTable.ext.buttons.excelHtml5.available(dt, config)) {
+        $.fn.dataTable.ext.buttons.excelHtml5.action.call(self, e, dt, button, config);
+        }
+        else {
+        $.fn.dataTable.ext.buttons.excelFlash.action.call(self, e, dt, button, config);
+        }
+        } else if (button[0].className.indexOf('buttons-print') >= 0) {
+        $.fn.dataTable.ext.buttons.print.action(e, dt, button, config);
+        }
+    };
+    var newExportAction = function (e, dt, button, config) {
+        var self = this;
+        var oldStart = dt.settings()[0]._iDisplayStart;
+        dt.one('preXhr', function (e, s, data) {
+        //Just this once, load all data from the server...
+        data.start = 0;
+        data.length = 2147483647;
+        dt.one('preDraw', function (e, settings) {
+        //Call the original action function 
+        oldExportAction(self, e, dt, button, config);
+        dt.one('preXhr', function (e, s, data) {
+        //DataTables thinks the first item displayed is index 0, but we're not drawing that.
+        //Set the property to what it was before exporting.
+        settings._iDisplayStart = oldStart;
+        data.start = oldStart;
+        });
+        //Reload the grid with the original page. Otherwise, API functions like table.cell(this) don't work properly.
+        setTimeout(dt.ajax.reload, 0);
+        //Prevent rendering of the full data to the DOM
+        return false;
+        });
+        });
+        //Requery the server with the new one-time export settings
+        dt.ajax.reload();
+    };
+    
+    var global_utils = {
+        'urls': {
+            'datatable_fr': "{{ asset('backoffice/datatable.fr.json') }}",
+            'ajax_list_boutique': '{{ path('list_ajax_boutique') }}',
+            'ajax_ajout_credit': '{{ path('ajout_credit') }}',
+            'ajax_ajout_debit': '{{ path('ajout_debit') }}',
+            'ajax_ajout_geste': '{{ path('ajout_geste') }}',
+            'ajax_ajout_seuil': '{{ path('ajout_seuil') }}',
+            'ajax_ajout_seuil_billeterie': '{{ path('ajout_seuil_billeterie') }}',
+            'ajax_operateur_pays': '{{ path('operateur_pays') }}',
+            'ajax_ajout_transfert': '{{ path('ajout_transfert') }}',
+            'ajax_liste_percepteurs': '{{ path('perc_ajax') }}',
+            'ajax_liste_credit': '{{ path('liste_credit') }}',
+            'ajax_liste_debit': '{{ path('liste_debit') }}',
+            'ajax_liste_seuil': '{{ path('liste_seuil') }}',
+            'ajax_liste_geste': '{{ path('gestecom_ajax') }}',
+            'ajax_liste_transfert': '{{ path('liste_ajax_transfert') }}',
+            'ajax_liste_transaction': '{{ path('liste_ajax_transaction') }}',
+            'ajax_list_produit':'{{path('list_ajax_produit')}}',
+            'ajax_list_depot':'{{path('liste_ajax_depot')}}',
+            'ajax_ajout_seuil_percepteur' :'{{path('ajout_seuil_percepteur')}}'
+        },
+    }
+    
+</script>

@@ -1,0 +1,82 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}Liste des catégories{% endblock %}
+
+{% set menu_produit = true %}
+{% set menu_categorie = true %}
+
+{% block body %}
+
+    <div class="card bg-light-info shadow-none position-relative overflow-hidden">
+        <div class="card-body px-4 py-3">
+            <div class="row align-items-center">
+                <div class="col-9">
+                    <h4 class="fw-semibold mb-8">Liste des catégories</h4>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                          <li class="breadcrumb-item"><a class="text-muted" href="javascript:void(0)">Catégories</a></li>
+                          <li class="breadcrumb-item active" aria-current="page">Liste</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="mb-2">
+                            <a id="ajout_admin" href="{{ path('new_categorie') }}" class="btn btn-primary mb-2">
+                                <i class="ti ti-plus fs-4"></i> Ajouter une catégorie
+                            </a>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table"  id="id-categorie-liste">
+                                <thead>
+                                    <tr>
+                                        <td>Nom</td>
+                                        <td>Type</td>
+                                        <td>Description</td>
+                                        <td></td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for categorie in categories %}
+	                                    <tr>
+	                                        <td>{{ categorie.nom }}</td>
+                                            <td>
+                                                {% set type = (categorie.type) ? categorie.type : null %}
+                                                {% if(type != null) %}
+                                                    {{ (type == 1) ? 'Produit E-commerce' : 'Produit Physique'}}
+                                                {% else %}
+                                                    Produit E-commerce
+                                                {% endif %}
+                                            </td>
+                                            <td>{{ categorie.description }}</td>
+	                                        <td class="text-center">
+	                                            <a class="btn btn-info btn-sm "href="{{path('edit_categorie',{id:categorie.id}) }}">
+	                                                <i data-bs-toggle="tooltip" data-bs-title="Modifier" class="ti ti-edit text-white"></i>
+	                                            </a>
+	                                            <a class="btn btn-danger btn-sm delete" data-href="{{ path('delete_categorie', {id:categorie.id}) }}">
+	                                                <i data-bs-toggle="tooltip" data-bs-title="Supprimer" class="ti ti-trash text-white"></i>
+	                                            </a>
+	                                        </td>
+	                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}
+{% block javascripts %}
+	{{ parent() }}
+    <script src="{{ asset('backoffice/categorie/categorie.liste.js') }}"></script>
+{% endblock %}

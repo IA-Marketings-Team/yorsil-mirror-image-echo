@@ -1,0 +1,110 @@
+{% extends 'base_front.html.twig' %}
+
+{% block title %}Fawatir{% endblock %}
+
+{% block stylesheets %}
+	{{ parent() }}
+	<style>
+		.header-title {
+            box-shadow: 0px 1px 5px #ccc;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 1rem 0;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+        .header-title h2{
+            color: #0a7ea4;
+        }
+		.content-liste-creances{
+			display: flex;
+			align-items: center;
+			justify-content: flex-start;
+		}
+		.content-liste-creances label{
+			display: flex;
+			align-items: center;
+			justify-content: flex-start;
+			gap: 5px;
+			padding: 5px 10px;
+    		margin: 5px 0px;
+		}
+		.content-liste-creances label .check-img,
+		.content-liste-creances label .uncheck-img {
+			width: 20px;
+		}
+		.content-liste-creances label .check-img,
+		.content-liste-creances label .uncheck-img,
+		.content-liste-creances label {
+			cursor: pointer;
+		}
+		.content-liste-creances label .check-img {
+			display: none;
+		}
+		.content-liste-creances input[type="radio"]{
+			display: none;
+		}
+		.content-liste-creances input[type="radio"]:checked ~ label .check-img{
+			display: inline-block;
+		}
+		.content-liste-creances input[type="radio"]:checked ~ label .uncheck-img{
+			display: none;
+		}
+		.content-liste-creances input[type="radio"]:checked ~ label{
+			color: #63e6be;
+		}
+	</style>
+{% endblock %}
+	
+{% block body %}
+	<div class="container">
+		<div class="header-title">
+            <img src="{{ asset('images/fawatir.jpg') }}" width="60" class="img-fluid ${3|rounded-top,rounded-right,rounded-bottom,rounded-left,rounded-circle,|}" alt="">
+            <h2>Liste des créances</h2>
+        </div>
+
+		<div class="row">
+
+			<form action="{{ path('service')}}" method="POST">
+				<input type="hidden" name="creancier_id" value="{{creancierId}}">
+				<div>
+					{% if response.listeCreances.item is iterable %}
+					    {% for creance in response.listeCreances.item %}
+							<div class="content-liste-creances">
+								<input id="creance-{{creance.codeCreance}}" type="radio" name="creance_id" value="{{creance.codeCreance}}" required="">
+								<label for="creance-{{creance.codeCreance}}">
+									<img src="{{ asset('images/circle-check.svg') }}" class="check-img" alt="">
+									<img src="{{ asset('images/circle.svg') }}" class="uncheck-img" alt="">
+									{{creance.nomCreance}}
+								</label>
+							</div>
+					    {% endfor %}
+					{% else %}
+						<div class="content-liste-creances">
+							<input type="radio" id="creance-{{response.listeCreances.item.codeCreance}}" name="creance_id" value="{{response.listeCreances.item.codeCreance}}" required="">
+							<label for="creance-{{response.listeCreances.item.codeCreance}}">
+								<img src="{{ asset('images/circle-check.svg') }}" class="check-img" alt="">
+								<img src="{{ asset('images/circle.svg') }}" class="uncheck-img" alt="">
+								{{ response.listeCreances.item.nomCreance}}
+							</label>
+						</div>
+					{% endif %}
+				</div>
+				{# <div class="row mt-2">
+					<div class="col-sm-6">
+						<label>CIL</label>
+						<input type="text" name="cil" required="">
+					</div>
+				</div> #}
+				<div class="row mt-2">
+					<div class="col-sm-6">
+						<a class="btn btn-danger" href="{{ path('liste_creanciers')}}">Retour</a>
+						<input class="btn btn-primary" type="submit" value="Envoyer">
+					</div>
+				</div>
+			</form>
+		</div>
+		
+	</div>
+{% endblock %}

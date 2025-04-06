@@ -1,0 +1,1406 @@
+{% extends 'base_front.html.twig' %}
+
+{% set menu_billeteries = true %}
+
+{% block title %}checkout{% endblock %}
+
+{% block stylesheets %} 
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('modernize/libs/select2/dist/css/select2.min.css') }}">
+    <style type="text/css">
+       .card .title {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 20px;
+            font-weight: 900;
+        }
+        h3.sous-titre {
+            font-size: 18px;
+        }
+        .siege-card .card-body {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+        .siege-card .card-body .img {}
+        .siege-card .card-body .info-siege h2 {}
+        .siege-card .card-body .info-siege span {}
+        .siege-card .card-body .ti-chevron-right {
+            margin-left: auto;
+            font-size: 2rem;
+        }
+        .list-group-item.option ,
+        .list-group-item .option {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .list-group-item.option img,
+        .list-group-item .option img {
+            width: 50px;
+            border-radius: 5px;
+        }
+        .list-group-item.option img {
+            width: 50px;
+            background: #a2e53f;
+            border-radius: 5px;
+        }
+        .list-group-item.option .info,
+        .list-group-item .option .info {
+            line-height: 5px;
+        }
+        .list-group-item.option .info h2,
+        .list-group-item .option .info h2 {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .form-check-input.pay {
+            width: 25px;
+            height: 25px;
+        }
+        .list-group-pay .list-group-item:hover {
+            background: #f7f7f7;
+        }
+        .head-right {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .head-right #compteurSession {
+            border: 1px solid darkgray;
+            width: max-content;
+            padding: 4px;
+            border-radius: 10px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .base-timer {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 5px;
+        }
+
+        .base-timer__svg {
+            flex: 0 0 30px;
+            width: 30px;
+            height: 30px;
+            -webkit-transform: scaleX(-1);
+            transform: scaleX(-1);
+        }
+
+        .base-timer__circle {
+            fill: none;
+            stroke: none;
+        }
+
+        .base-timer__path-elapsed {
+            stroke-width: 10px;
+            stroke: #c8c8c8;
+        }
+
+        .base-timer__path-remaining {
+            stroke-width: 10px;
+            stroke-linecap: round;
+            -webkit-transform: rotate(90deg);
+                    transform: rotate(90deg);
+            -webkit-transform-origin: center;
+                    transform-origin: center;
+            -webkit-transition: 1s linear all;
+            transition: 1s linear all;
+            fill-rule: nonzero;
+            stroke: currentColor;
+        }
+
+        .base-timer__path-remaining.green {
+        color: #31a100;
+        }
+
+        .base-timer__path-remaining.orange {
+        color: orange;
+        }
+
+        .base-timer__path-remaining.red {
+            color: #9e9e9e26 ;
+        }
+
+        .base-timer__label {
+            flex: 0 0 60px;
+            width: 60px;
+            display: -webkit-box;
+            display: flex;
+            -webkit-box-align: center;
+            align-items: center;
+            -webkit-box-pack: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 900;
+        }
+        .head-right h2 {
+            font-size: 18px;
+            font-weight: 900;
+        }
+        .lign-trajet{
+            display: flex;
+            flex-direction: column;
+            left: 8px;
+            position: relative;
+        }
+        .lign-trajet span{
+            width: 13px;
+            height: 13px;
+            background: #646464;
+            border: 2px solid #646464;
+            border-radius: 50%;
+        }
+        .lign-trajet.depart span{
+            background: white;
+        }
+        .content-infos-commande{
+            position: relative;
+        }
+        .content-infos-commande::after {
+            content: "";
+            position: absolute;
+            width: 3px;
+            height: 145%;
+            background: #646464;
+            left: 25px;
+            top: 15px;
+        }
+        
+        .ville {
+            display: flex;
+            align-items: center;
+            font-weight: bold;
+        }
+        .nombre-passager .nombre-passager-items {
+            border-bottom: 1px solid;
+            padding: 5px 0px;
+            font-size: 17px;
+        }
+        .nombre-passager .nombre-passager-items:last-of-type {
+            border-bottom: none;
+        }
+        .cgv-check .form-check {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 5px;
+        }
+        .form-check-input[type=checkbox] {
+            flex: 0 0 30px;
+            width: 30px;
+            height: 30px;
+            border-radius: .25em;
+        }
+        .partenaire-contracte span {
+            font-size: 12px;
+            margin-bottom: 1rem;
+        }
+        .expirationIconFlix {
+            display: none;
+        }
+        .expirationIconFlix.open {
+            position: fixed;
+            top: 0;
+            right: 0;
+            background: #000000a1;
+            backdrop-filter: blur(2px);
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+        .expirationIconFlix .modal-expirationIconFlix{
+            border: 1px solid lightgray;
+            padding: 45px 20px 30px 20px;
+            position: relative;
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            border-radius: 10px;
+            box-shadow: 1px 1px 10px #ffffff57;
+        }
+        .expirationIconFlix .modal-expirationIconFlix img{
+            width: 80px;
+            position: absolute;
+            top: 0;
+            transform: translateY(-50%);
+        }
+        .expirationIconFlix .modal-expirationIconFlix .infos{
+            text-align: center;
+        }
+        .expirationIconFlix .modal-expirationIconFlix .infos h2{
+            font-weight: 900;
+        }
+        .expirationIconFlix .modal-expirationIconFlix .options{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .load-info-passager .sous-titre.load {
+            width: 125px;
+            height: 20px;
+            background: #d2d2d2;
+            border-radius: 5px;
+            animation: loadpassager 1s infinite linear;
+        }
+        .load-info-passager .form-label.load {
+            width: 100px;
+            height: 10px;
+            background: #aaaaaa;
+            border-radius: 5px;
+            animation: loadpassager 1s infinite linear;
+        }
+        .load-info-passager .form-control.load {
+            background: #f4f4f4;
+            animation: loadpassager 1s infinite linear;
+        }
+
+        .preload-check {
+            position: fixed;
+            top: 0;
+            left: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100vh;
+            background: #00000025;
+            z-index: 9999999999;
+        }
+        .preload-check .progress {
+            width: 500px;
+            height: 25px;
+        }
+        .preload-check .progress .progress-bar{
+            position: relative;
+            left: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .preload-check .progress .progress-bar .logo-fixed{
+            position: absolute;
+            left: 0;
+        }
+        .preload-check .progress .progress-bar .logo-progress{
+            position: absolute;
+            right: 0px;
+            transform: rotate(25deg);
+            top: 6px;
+            width: 25px;
+        }
+
+        @keyframes loadpassager {
+            to { opacity: 0.5; }
+        }
+
+        @media screen and (width < 912px){
+            .list-group-item.option img, .list-group-item .option img {
+                width: 40px;
+            }
+            .lign-trajet span,
+            .content-infos-commande::after {
+                display: none;
+            }
+        }
+        @media screen and (width < 501px){
+            .siege-card .card-body {
+                gap: 1rem;
+                padding: 5px;
+            }
+            .siege-card .card-body .info-siege h2 {
+                font-size: 16px;
+            }
+            .list-group-item.option .info, .list-group-item .option .info {
+                line-height: 1.5rem;
+            }
+            .list-group-item.option, .list-group-item .option {
+                align-items: flex-start;
+            }
+            .list-group-item.option img {
+                width: 40px;
+            }
+            .list-group-item.option img, .list-group-item .option img {
+                width: 40px;
+            }
+            .lign-trajet span,
+            .content-infos-commande::after {
+                display: none;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div id="expirationIconFlix" class="expirationIconFlix">
+        <div class="modal-expirationIconFlix">
+            <img src="{{asset('modernize/images/billeterie/expirationIconFlix.png')}}" alt="">
+            <div class="infos">
+                <h2>Vous êtes toujours là ?</h2>
+                <p>Votre panier vient d'expirer, mais vous pouvez réessayer de réserver les mêmes billets !</p>
+                <div class="options">
+                    <a href="{{path('flixBus')}}" class="btn btn-light">Retourner à la recherche</a>
+                    <button class="btn btn-warning" id="reessayer">Réessayer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <form class="col-md-8 form-commande" id="formCommande">
+            <div class="border border-1 card shadow-none p-3">
+                <h2 class="title">
+                    <span class="badge text-bg-success">1</span> Passagers
+                </h2>
+
+                <div class="infos mt-2" id="infosAdult"></div>
+                <div class="infos" id="infosEnfant"></div>
+
+            </div>
+            <div class="border border-1 card shadow-none p-3">
+                <h2 class="title">
+                    <span class="badge text-bg-success">2</span> Réservation de siège
+                </h2>
+                <div class="border border-1 card mb-0 shadow-none siege-card">
+                    <div class="card-body">
+                        <img src="{{asset('modernize/images/billeterie/siège.svg')}}" alt="">
+                        <div class="info-siege">
+                            <h2>Choisir les sièges</h2>
+                            <span>à partir de 2,59 €</span>
+                        </div>
+                        <i class="ti ti-chevron-right"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="border border-1 card shadow-none p-3">
+                <h2 class="title">
+                    <span class="badge text-bg-success">3</span> Options
+                </h2>
+                <div class="border border-1 card mb-0 shadow-none">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item option">
+                            <img src="{{asset('modernize/images/billeterie/inclupers.svg')}}" alt="">
+                            <div class="info">
+                                <h2>Inclus par personne</h2>
+                                <p>1 Bagage à main | 7 kg · 42x30x18 cm</p>
+                                <p>1 Bagage en soute | 20 kg · 80x50x30 cm</p>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="row">
+                                <div class="col-md-8 option">
+                                    <img src="{{asset('modernize/images/billeterie/module.svg')}}" alt="">
+                                    <div class="info">
+                                        <h2>Bagage supplémentaire</h2>
+                                        <p>20 kg - 80x50x30 cm</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 d-flex gap-2 align-items-center">
+                                    <span class="text-nowrap">+ 5,49 €</span>
+                                    <div class="input-group input-group-sm rounded">
+                                        <button class="btn minus min-width-40 py-0 border-end border-secondary fs-5 border-end-0 text-secondary" type="button" id="add1"><i class="ti ti-minus"></i></button>
+                                        <input type="text" class="min-width-40 flex-grow-0 border border-secondary text-secondary fs-4 fw-semibold form-control text-center qty" placeholder="" aria-label="Example text with button addon" aria-describedby="add1" value="1">
+                                        <button class="btn min-width-40 py-0 border border-secondary fs-5 border-start-0 text-secondary add" type="button" id="addo2"><i class="ti ti-plus"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border border-1 card shadow-none p-3">
+                <h2 class="title">
+                    <span class="badge text-bg-success">4</span> Contact
+                </h2>
+                <div class="infos mt-2">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="email" class="form-label">E-mail</label>
+                                <input type="email" class="form-control" id="email" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="tel" class="form-label">Numéro de téléphone</label>
+                                <input type="text" class="form-control" id="tel" placeholder="+33" required>
+                                <div class="form-text" id="basic-addon4">Utilisé uniquement pour vous contacter en cas de retards ou de changements d'itinéraires.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="addres-facultative py-3">
+                <button class="btn btn-md btn-light">
+                    <i class="ti ti-circle-plus"></i> Ajouter une adresse de facturation (facultatif)
+                </button>
+            </div>
+
+            <div class="partenaire-contracte">
+                <p class="fw-bolder">Partenaire contracté pour les services de transport :</p>
+                <span class="d-block">FlixBus DACH GmbH (Berne - Lyon Perrache), FLIXBUS PORTUGAL UNIPESSOAL Lda. (Lyon Perrache - Plateforme de Correspondance Internationale), FLIXBUS PORTUGAL UNIPESSOAL Lda. (Plateforme de Correspondance Internationale - Lisbonne Sete Rios (Jardim Zoológico) (IC))</span>
+                <a href="javascript:void(0)">Confidentialité des données</a>
+            </div>
+        </form>
+        <div class="col-md-4">
+            <div class="head-right pb-3">
+                <h2>Votre commande</h2>
+                <div id="compteurSession"></div>
+            </div>
+            <div id="infos-trajet-checkout"></div>
+            <div class="nombre-passager">
+                <div class="nombre-passager-items d-flex align-items-center justify-content-between">
+                    <div class="nombre">Frais de service <i class="ti ti-alert-circle"></i></div>
+                    <div class="prix fw-bolder" id="fraisService">0,99 €</div>
+                </div>
+                <div class="nombre-passager-items d-flex align-items-center justify-content-between">
+                    <div class="nombre fw-bolder">Total (TTC)</div>
+                    <div class="prix fw-bolder" id="prixTotal">130,45 €</div>
+                </div>
+            </div>
+            <div class="my-3">
+                {# <button class="btn btn-light btn-md"><i class="ti ti-ticket"></i> Saisir le bon d'achat <i class="ti ti-chevron-down"></i></button> #}
+                <div class="accordion accordion-flush" id="accordionFlushExample">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="flush-headingOne">
+                            <button class="accordion-button collapsed fs-6 p-2" type="button" data-bs-toggle="collapse" data-bs-target="#bonAchatForm" aria-expanded="false" aria-controls="bonAchatForm">
+                                <i class="ti ti-ticket fs-6 me-2"></i> Saisir le bon d'achat
+                            </button>
+                        </h2>
+                        <form id="bonAchatForm" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+                            <div class="accordion-body d-flex align-items-start justify-content-between gap-1">
+                               <div class="w-100">
+                                    <input type="text" class="form-control w-100" id="bon-achat-code" required>
+                                    <div class="invalid-feedback text-center">
+                                        Ce code promo n'est pas valide
+                                    </div>
+                               </div>
+                                <button class="btn btn-outline-success d-flex align-items-center justify-content-between gap-1" id="valid-bon-achat">Valider</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+            <div class="cgv-check my-3">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" form="formCommande" value="" id="cgv" required>
+                    <label class="form-check-label" for="cgv">
+                       Je déclare avoir lu la politique de confidentialité et accepter les conditions générales de vente et de transport.
+                    </label>
+                </div>
+            </div>
+            <div class="my-3">
+                <button type="submit" form="formCommande" class="btn btn-warning w-100" id="validPaysVoyage">Payer maintenant</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <img src="{{asset('modernize/images/billeterie/landscape-eu-flixbus-flixtrain.svg')}}" class="w-100" alt="">
+        <div class="c-right text-center p-2">
+            Connexion pour les partenairesConfidentialitéDroits des passagersMentions légalesModifier les paramètres des cookies © 2024 Flix SE
+        </div>
+    </div>
+
+    <div class="preload-check d-none">
+        <div class="progress">
+            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="12" aria-valuemin="0" aria-valuemax="100" style="width: 12%">
+                <img class="logo-fixed" src="{{ asset('modernize/images/logos/favicon.svg') }}" alt="" width="30">
+                <img class="logo-progress" src="{{ asset('modernize/images/logos/Fly.svg') }}" alt="" width="30">
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+  {{ parent() }}
+  <script src="{{ asset('modernize/libs/select2/dist/js/select2.full.min.js') }}"></script>
+  <script src="{{ asset('modernize/libs/select2/dist/js/select2.min.js') }}"></script>
+{# reservation #}
+<script>
+$(document).ready(function() {
+    const $reservation = {{ reservation|json_encode|raw }};
+    const $typeTrajet = {{ typeTrajet|json_encode|raw }};
+    const $passeport  = {{ passeport|json_encode|raw }};
+    const $countries  = {{ countries|json_encode|raw }};
+
+    console.log($countries);
+
+    const $keys = Object.keys($reservation.cart.items);
+
+    const $globalreservation = $reservation.cart.items[$keys[0]]
+
+    const $globalPassagers = {
+        adult       : $globalreservation.reserved.adult,
+        enfant      : $globalreservation.reserved.children,
+        velo        : $globalreservation.reserved.bike_slot
+    }
+
+    const $priceGlobal = {
+        fraisService    : $reservation.cart.price.service_fee,
+        total           : $reservation.cart.price.value
+    }
+
+    let $passagersDetail       = []
+    let $passagersDetailRetour = []
+
+    let $tiket = {}
+
+    $('#fraisService').text(`${parseFloat($priceGlobal.fraisService.toFixed(2))} €`)
+    $('#prixTotal').text(`${parseFloat($priceGlobal.total.toFixed(2))} €`)
+
+    for (let i = 0; i < $keys.length; i++) {
+        const $reservationInfo = $reservation.cart.items[$keys[i]]
+
+        const $departure = $reservationInfo.departure
+        const $arrival   = $reservationInfo.arrival
+
+        const $from = $reservationInfo.from.name
+        const $to   = $reservationInfo.to.name
+
+        const $type = $reservationInfo.trip.type
+        
+        const $price = {
+            passengersTotal : $reservationInfo.price.passengers_total,
+        }
+
+        const $passagers = {
+            adult       : $reservationInfo.reserved.adult,
+            enfant      : $reservationInfo.reserved.children,
+            velo        : $reservationInfo.reserved.bike_slot
+        }
+
+        const $descriptionPassager = descriptionPassager($passagers)
+
+        const timestampMs = $departure.timestamp * 1000;
+        const date = new Date(timestampMs);
+        const formattedDate = formatDate(date);
+
+        $('#infos-trajet-checkout').append(`
+            <div class="border border-1 mb-2 card shadow-none p-3">
+                <div class="flix-info-commande">
+                    <div class="date">
+                        <h2>${formattedDate}</h2>
+                    </div>
+                    <div class="row align-items-baseline content-infos-commande">
+                        <div class="col-md-2">
+                            <div class="lign-trajet depart">
+                                <span></span>
+                            </div>
+                        </div>
+                        <div class="col-md-7">
+                            <div class="ville">
+                                ${$from} <i class="ti ti-cart"></i>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="heure-depart text-nowrap">
+                                ${formatHeure($departure)}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row my-2 align-items-baseline content-infos-commande">
+                        <div class="col-md-2"></div>
+                        <div class="col-md-7">
+                            <div class="infos">1 Correspondance</div>
+                        </div>
+                        <div class="col-md-3"></div>
+                    </div>
+                    <div class="row align-items-baseline">
+                        <div class="col-md-2">
+                            <div class="lign-trajet">
+                                <span></span>
+                            </div>
+                        </div>
+                        <div class="col-md-7">
+                            <div class="ville">
+                                ${$to} <i class="ti ti-cart"></i>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="heure-arrive text-nowrap">
+                                ${formatHeure($arrival)}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="nombre-passager border-bottom mb-3">
+                <div class="nombre-passager-items d-flex align-items-center justify-content-between">
+                    <div class="nombre">${$descriptionPassager}</div>
+                    <div class="prix fw-bolder">${parseFloat($price.passengersTotal.toFixed(2))} €</div>
+                </div>
+            </div>
+        `)
+    }
+
+    function descriptionPassager(passagers) {
+        const adulte = passagers.adult
+        const enfant = passagers.enfant
+        const velo   = passagers.velo
+
+        let resultArray = [];
+
+        if (adulte > 0) {
+            resultArray.push(`${adulte} adulte${adulte > 1 ? 's' : ''}`);
+        }
+        if (enfant > 0) {
+            resultArray.push(`${enfant} enfant${enfant > 1 ? 's' : ''}`);
+        }
+        if (velo > 0) {
+            resultArray.push(`${velo} vélo${velo > 1 ? 's' : ''}`);
+        }
+
+        const resultText = resultArray.join(', ');
+
+        return resultText
+    }
+
+    function verifPasseport() {
+        return $passeport.depart == $passeport.arriver ? false : true
+    }
+
+    async function initInfosPassagers(passagers) {
+        $("#infosAdult")
+            .empty()
+            .addClass('load-info-passager')
+            .html(`
+                <h3 class="sous-titre load"></h3>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label load"></label>
+                            <input type="text" class="form-control load">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label load"></label>
+                            <input type="text" class="form-control load">
+                        </div>
+                    </div>
+                </div>
+            `)
+        $("#infosEnfant")
+            .empty()
+            .addClass('load-info-passager')
+            .html(`
+                <h3 class="sous-titre load"></h3>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label load"></label>
+                            <input type="text" class="form-control load">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label load"></label>
+                            <input type="text" class="form-control load">
+                        </div>
+                    </div>
+                </div>
+            `)
+
+        try {
+            const response = await sendRequest("POST", "/passagers-details");
+            if (response) {
+                console.log('passagers-details', response);
+
+                if(response.passagers.trips.length > 1) {
+                    let passagerRetour = response.passagers.trips[1].passengers
+
+                    for (let i = 0; i < passagerRetour.length; i++) {
+                    
+                        let passager = {}
+                        passager.type         = passagerRetour[i].type
+                        passager.reference_id = passagerRetour[i].reference_id
+
+                        $passagersDetailRetour.push(passager);
+                    }
+                }
+
+                let passagers = response.passagers.trips[0].passengers
+
+                let passagerDetails = []
+                $("#infosAdult").empty().removeClass('load-info-passager')
+                $("#infosEnfant").empty().removeClass('load-info-passager')
+
+                for (let i = 0; i < passagers.length; i++) {
+                    let passager = {}
+                    passager.type         = passagers[i].type
+                    passager.reference_id = passagers[i].reference_id
+
+                    $passagersDetail.push(passager);
+
+                    if (passagers[i].type == "adult") {
+                        const $container = $('#infosAdult');
+                        const adult = `${i + 1}. Adulte`
+                        const html = `
+                            <h3 class="sous-titre fw-bolder">${adult}</h3>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="prenomInfosAdult${i}" class="form-label">Prénom</label>
+                                        <input type="text" class="form-control" id="prenomInfosAdult${i}" value="${passagers[i].lastname}" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="nomInfosAdult${i}" class="form-label">Nom</label>
+                                        <input type="text" class="form-control" id="nomInfosAdult${i}" value="${passagers[i].firstname}" required>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        $container.append(html);
+                        if(verifPasseport()) {
+                            let listePays = '';
+                            $.each($countries, function(index, pays) {
+                                listePays += `
+                                    <option value="${pays.code}">${pays.nom}</option>
+                                `
+                            });
+
+                            const infoPasseport = `
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="identificationNumberAdult${i}" class="form-label">Numéro du document d'identité</label>
+                                            <input type="text" class="form-control" name="identificationNumberAdult${i}" id="identificationNumberAdult${i}" value="" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="citizenshipAdult${i}" class="form-label">Nationalité</label>
+                                            <input type="text" class="form-control" name="citizenshipAdult${i}" id="citizenshipAdult${i}" placeholder="ex: FRA, BR, ..." required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="sexeAdult${i}" class="form-label">Sexe</label>
+                                            <select class="form-select" name="genderAdult${i}" id="sexeAdult${i}" aria-label="sexe" required>
+                                                <option selected disabled>Sexe</option>
+                                                <option value="male">Male</option>
+                                                <option value="femelle ">Femelle</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="typeVisaAdult${i}" class="form-label">Type de visa ou permis</label>
+                                            <select class="form-select" name="typeVisaAdult${i}" id="typeVisaAdult${i}" aria-label="Type de visa ou permis" required>
+                                                <option selected disabled>Type de visa ou permis</option>
+                                                <option value="multiple_entry_visa">Visa à entrées multiples</option>
+                                                <option value="single_entry_visa ">Visa à entrée unique</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="identificationIssuingCountryAdult${i}" class="form-label">Pays émetteur du document d'identité</label>
+                                            <select class="form-select pays-select" name="identificationIssuingCountryAdult${i}" id="identificationIssuingCountryAdult${i}" aria-label="Pays émetteur du document d'identité" required>
+                                                ${listePays}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="identificationExpiryDateAdult${i}" class="form-label">Date d'expiration du document d'identité</label>
+                                            <input type="date" class="form-control" name="identificationExpiryDateAdult${i}" id="identificationExpiryDateAdult${i}" value="" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                            $container.append(infoPasseport);
+                            $container.find(".pays-select").select2();
+                        }
+                    } else if (passagers[i].type == "children") {
+                        const $container = $('#infosEnfant');
+                        const enfant = `${i + 1}. Enfant`
+                        const html = `
+                            <h3 class="sous-titre fw-bolder">${enfant}</h3>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="prenomInfosEnfant${i}" class="form-label">Prénom</label>
+                                        <input type="text" class="form-control" id="prenomInfosEnfant${i}" value="${passagers[i].lastname}" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="nomInfosEnfant${i}" class="form-label">Nom</label>
+                                        <input type="text" class="form-control" id="nomInfosEnfant${i}" value="${passagers[i].firstname}" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <label for="dateNaissance${i}" class="form-label">Date de naissance</label>
+                                    <input type="date" class="form-control dateNaissanceChildren" id="dateNaissance${i}" value="${dateFormat(passagers[i].birthdate, 'Y-m-d')}" required>
+                                    <div class="invalid-feedback">
+                                        Âge maximum : 15 ans.
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        $container.append(html);
+                        if(verifPasseport()) {
+                            let listePays = '';
+                            $.each($countries, function(index, pays) {
+                                listePays += `
+                                    <option value="${pays.code}">${pays.nom}</option>
+                                `
+                            });
+
+                            const infoPasseport = `
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="identificationNumberEnfant${i}" class="form-label">Numéro du document d'identité</label>
+                                            <input type="text" class="form-control" name="identificationNumberEnfant${i}" id="identificationNumberEnfant${i}" value="" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="citizenshipEnfant${i}" class="form-label">Nationalité</label>
+                                            <input type="text" class="form-control" name="citizenshipEnfant${i}" id="citizenshipEnfant${i}" value="" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="sexeEnfant${i}" class="form-label">Sexe</label>
+                                            <select class="form-select" name="genderEnfant${i}" id="sexeEnfant${i}" aria-label="sexe" required>
+                                                <option selected disabled>Sexe</option>
+                                                <option value="male">Male</option>
+                                                <option value="femelle ">Femelle</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="typeVisaEnfant${i}" class="form-label">Type de visa ou permis</label>
+                                            <select class="form-select" name="typeVisaEnfant${i}" id="typeVisaEnfant${i}" aria-label="Type de visa ou permis" required>
+                                                <option selected disabled>Type de visa ou permis</option>
+                                                <option value="multiple_entry_visa">Visa à entrées multiples</option>
+                                                <option value="single_entry_visa ">Visa à entrée unique</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="identificationIssuingCountryEnfant${i}" class="form-label">Pays émetteur du document d'identité</label>
+                                            <select class="form-select pays-select" name="identificationIssuingCountryEnfant${i}" id="identificationIssuingCountryEnfant${i}" aria-label="Pays émetteur du document d'identité" required>
+                                                ${listePays}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="identificationExpiryDateEnfant${i}" class="form-label">Date d'expiration du document d'identité</label>
+                                            <input type="date" class="form-control" name="identificationExpiryDateEnfant${i}" id="identificationExpiryDateEnfant${i}" value="" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                            $container.append(infoPasseport);
+                            $container.find(".pays-select").select2();
+                        }
+                    }
+                }
+                console.log(response, $passagersDetail);
+            } else {
+                window.location.href = '/flixBus'
+                console.warn("Erreur lors de la récupération details des passagers.");
+            }
+        } catch (error) {
+            window.location.href = '/flixBus'
+            notification('warning', "Erreur lors de la récupération details des passagers.")
+            console.error("Erreur lors de la récupération details des passagers :", error);
+        }
+    }
+
+    initInfosPassagers($globalPassagers)
+
+    function formatDate(date) {
+        const daysOfWeek = ["di", "lu", "ma", "me", "je", "ve", "sa"];
+        const months = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
+
+        const dayOfWeek = daysOfWeek[date.getDay()];
+        const dayOfMonth = date.getDate();
+        const month = months[date.getMonth()];
+
+        return `${dayOfWeek}, ${dayOfMonth} ${month}`;
+    }
+
+    function formatHeure(heure) {
+
+        const date = new Date(heure.timestamp * 1000);
+
+        const timezoneOffset = parseInt(heure.tz.replace('GMT+', '').replace(':00', ''), 10);
+
+        const hours = date.getUTCHours() + timezoneOffset; // GMT+02:00
+        const minutes = date.getUTCMinutes();
+
+        const formattedTime = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+
+        return formattedTime
+    }
+
+    const FULL_DASH_ARRAY = 283;
+    const WARNING_THRESHOLD = 10;
+    const ALERT_THRESHOLD = 5;
+
+    const COLOR_CODES = {
+        info: {
+            color: "green"
+        },
+        warning: {
+            color: "orange",
+            threshold: WARNING_THRESHOLD
+        },
+        alert: {
+            color: "red",
+            threshold: ALERT_THRESHOLD
+        }
+    };
+
+    const TIME_LIMIT = 600;
+    let timePassed = 0;
+    let timeLeft = TIME_LIMIT;
+    let timerInterval = null;
+    let remainingPathColor = COLOR_CODES.info.color;
+
+    document.getElementById("compteurSession").innerHTML = `
+        <div class="base-timer">
+        <svg class="base-timer__svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <g class="base-timer__circle">
+            <circle class="base-timer__path-elapsed" cx="50" cy="50" r="45"></circle>
+            <path
+                id="base-timer-path-remaining"
+                stroke-dasharray="283"
+                class="base-timer__path-remaining ${remainingPathColor}"
+                d="
+                M 50, 50
+                m -45, 0
+                a 45,45 0 1,0 90,0
+                a 45,45 0 1,0 -90,0
+                "
+            ></path>
+            </g>
+        </svg>
+        <span id="base-timer-label" class="base-timer__label">${formatTime(
+            timeLeft
+        )}</span>
+        </div>
+    `;
+
+    startTimer();
+
+    function onTimesUp() {
+        $('#expirationIconFlix').addClass('open')
+        clearInterval(timerInterval);
+    }
+
+    function startTimer() {
+        timerInterval = setInterval(() => {
+            timePassed = timePassed += 1;
+            timeLeft = TIME_LIMIT - timePassed;
+            document.getElementById("base-timer-label").innerHTML = formatTime(
+            timeLeft
+            );
+            setCircleDasharray();
+            setRemainingPathColor(timeLeft);
+
+            if (timeLeft === 0) {
+                onTimesUp();
+            }
+        }, 1000);
+    }
+
+    function formatTime(time) {
+        const minutes = Math.floor(time / 60);
+        let seconds = time % 60;
+
+        if (seconds < 10) {
+            seconds = `0${seconds}`;
+        }
+
+        return `${minutes}:${seconds}`;
+    }
+
+    function setRemainingPathColor(timeLeft) {
+        const { alert, warning, info } = COLOR_CODES;
+        if (timeLeft <= alert.threshold) {
+            document
+            .getElementById("base-timer-path-remaining")
+            .classList.remove(warning.color);
+            document
+            .getElementById("base-timer-path-remaining")
+            .classList.add(alert.color);
+        } else if (timeLeft <= warning.threshold) {
+            document
+            .getElementById("base-timer-path-remaining")
+            .classList.remove(info.color);
+            document
+            .getElementById("base-timer-path-remaining")
+            .classList.add(warning.color);
+        }
+    }
+
+    function calculateTimeFraction() {
+        const rawTimeFraction = timeLeft / TIME_LIMIT;
+        return rawTimeFraction - (1 / TIME_LIMIT) * (1 - rawTimeFraction);
+    }
+
+    function setCircleDasharray() {
+        const circleDasharray = `${(
+            calculateTimeFraction() * FULL_DASH_ARRAY
+        ).toFixed(0)} 283`;
+        document
+            .getElementById("base-timer-path-remaining")
+            .setAttribute("stroke-dasharray", circleDasharray);
+    }
+
+    /* send request */
+    function sendRequest(method = "POST", url, data = null) {
+        return new Promise((resolve, reject) => {
+            const request = $.ajax({
+                type: method,
+                url: url,
+                data: data,
+                // beforeSend: function () {
+                //     $('.direction-form').addClass("load")
+                // }
+            });
+
+            request.done(function (response) {
+                resolve(response);
+            });
+
+            request.fail(function (error) {
+                reject(error);
+            });
+
+            request.always(function () {
+                // $('.direction-form').removeClass("load")
+            });
+        });
+    }
+
+    function dateFormat(date, format) {
+        let dateParts;
+
+        if (date.includes('.')) {
+            dateParts = date.split('.');
+            date = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
+        }
+
+        let dateformated = new Date(date);
+        let Y = dateformated.getFullYear();
+        let m = ("0" + (dateformated.getMonth() + 1)).slice(-2);
+        let d = ("0" + dateformated.getDate()).slice(-2);
+        return format.replace('Y', Y).replace('m', m).replace('d', d);
+    }
+
+    $(document).on('click', '#reessayer', async function () {
+        //  /passagers-details
+        try {
+            const response = await sendRequest("POST", "/passagers-details");
+            if (response) {
+                notification('success', "Récupération des details des passagers.")
+                console.log(response);
+            } else {
+                console.warn("Erreur lors de la récupération details des passagers.");
+            }
+        } catch (error) {
+            notification('warning', "Erreur lors de la récupération details des passagers.")
+            console.error("Erreur lors de la récupération details des passagers :", error);
+        }
+    })
+
+
+
+    async function saveReservation() {
+        const dataTarif = { 
+            tarif: $priceGlobal.total.toFixed(2),
+            typeTrajet: $typeTrajet,
+            tickets: $tiket,
+            email: $('#email').val(),
+            tel: $('#tel').val(),
+        }
+
+        try {
+            const response = await sendRequest("POST", "/ajout-reservation-flix", dataTarif);
+            if (response) {
+                $('#solde-js').text(`${response.solde.toFixed(2)} €`)
+                window.location.href = '/flixBus'
+                notification('success', response.message)
+            } else {
+                console.warn(response, "Le paiement a échoué. Veuillez vérifier vos informations de paiement et réessayer.");
+                notification('warning', "Le paiement a échoué. Veuillez vérifier vos informations de paiement et réessayer.")
+            }
+        } catch (error) {
+            notification('warning', "Le paiement a échoué. Veuillez vérifier vos informations de paiement et réessayer.")
+            console.error("Erreur lors de la récupération details des passagers :", error);
+        }
+    }
+
+    async function finalisePaiement() {
+        try {
+            const response = await sendRequest("POST", "/finalisation-paiement");
+            if (response.paiement.result) {
+                console.log(response);
+                ticket()
+                notification('success', "Le paiement a été effectué avec succès !")
+            } else {
+                console.warn(response, "Le paiement a échoué. Veuillez vérifier vos informations de paiement et réessayer.");
+                notification('warning', "Le paiement a échoué. Veuillez vérifier vos informations de paiement et réessayer.")
+            }
+        } catch (error) {
+            notification('warning', "Le paiement a échoué. Veuillez vérifier vos informations de paiement et réessayer.")
+            console.error("Erreur lors de la récupération details des passagers :", error);
+        }
+    }
+
+    async function ticket() {
+        const emailPassager = {
+            email: $('#email').val()
+        }
+        try {
+            const response = await sendRequest("POST", "/tickets");
+            if (response.tickets.code == 200) {
+                $tiket.tickets = response.tickets
+            } else {
+                console.warn(response, "Erreur, lors de la récupération de ticket");
+            }
+            saveReservation()
+        } catch (error) {
+            notification('warning', "Erreur, lors de la récupération de ticket")
+            console.error("Erreur, lors de la récupération de ticket :", error);
+        }
+    }
+
+    async function ajouterPaiement() {
+        const emailPassager = {
+            email: $('#email').val()
+        }
+        try {
+            const response = await sendRequest("POST", "/ajout-paiement", emailPassager);
+            if (response) {
+                finalisePaiement()
+            } else {
+                console.warn("Le paiement a échoué. Veuillez vérifier vos informations de paiement et réessayer.");
+                notification('warning', "Le paiement a échoué. Veuillez vérifier vos informations de paiement et réessayer.")
+            }
+        } catch (error) {
+            notification('warning', "Le paiement a échoué. Veuillez vérifier vos informations de paiement et réessayer.")
+            console.error("Erreur lors de la récupération details des passagers :", error);
+        }
+    }
+
+    async function modifPassagerDetails() {
+        $('.loding-page').removeClass('d-none')
+        const detaisPassagers = {
+            details: $.merge($passagersDetail, $passagersDetailRetour)
+        }
+
+        try {
+            const response = await sendRequest("POST", "/modification-passagers-details", detaisPassagers);
+            if (response) {
+                ajouterPaiement()
+            } else {
+                console.warn("Le paiement a échoué. Veuillez vérifier vos informations de paiement et réessayer.");
+                notification('warning', "Le paiement a échoué. Veuillez vérifier vos informations de paiement et réessayer.")
+            }
+        } catch (error) {
+            notification('warning', "Le paiement a échoué. Veuillez vérifier vos informations de paiement et réessayer.")
+            console.error("Erreur lors de la récupération details des passagers :", error);
+        }
+    }
+
+    $(document).on('submit', '#formCommande', async function (e) {
+        e.preventDefault();
+
+        $("#validPaysVoyage").addClass('disabled')
+
+        const dataTarif = { tarif: $priceGlobal.total.toFixed(2) }
+
+        try {
+            const response = await sendRequest("POST", "/verif-sold-bout-flix", dataTarif);
+            console.log(response);
+            if (response.solde) {
+                if ($('.is-invalid').length) {
+                    $('html, body').animate({
+                        scrollTop: $('.is-invalid').first().offset().top - 100
+                    }, 1000);
+                } else {
+                    for (let i = 0; i < $passagersDetail.length; i++) {
+                        const passager = $passagersDetail[i];
+
+                        if(passager.type == "adult") {
+                            passager.firstname = $(`#nomInfosAdult${i}`).val()
+                            passager.lastname = $(`#prenomInfosAdult${i}`).val()
+                            passager.birthdate = ""
+                            passager.phone = $(`#tel`).val()
+                            if(verifPasseport()) {
+                                passager.identification_type = "international_passport"
+                                passager.identification_number = $(`#identificationNumberAdult${i}`).val()
+                                passager.citizenship = $(`#citizenshipAdult${i}`).val()
+                                passager.gender = $(`#sexeAdult${i}`).val()
+                                passager.visa_permit_type = $(`#typeVisaAdult${i}`).val()
+                                passager.identification_issuing_country = $(`#identificationIssuingCountryAdult${i}`).val()
+                                passager.identification_expiry_date = dateFormat($(`#identificationExpiryDateAdult${i}`).val(), 'd.m.Y')
+                            }
+                        } else if (passager.type == "children") {
+                            passager.firstname = $(`#nomInfosEnfant${i}`).val()
+                            passager.lastname = $(`#prenomInfosEnfant${i}`).val()
+                            passager.birthdate = dateFormat($(`#dateNaissance${i}`).val(), 'd.m.Y')
+                            passager.phone = $(`#tel`).val()
+                            if(verifPasseport()) {
+                                passager.identification_type = "international_passport"
+                                passager.identification_number = $(`#identificationNumberEnfant${i}`).val()
+                                passager.citizenship = $(`#citizenshipEnfant${i}`).val()
+                                passager.gender = $(`#sexeEnfant${i}`).val()
+                                passager.visa_permit_type = $(`#typeVisaEnfant${i}`).val()
+                                passager.identification_issuing_country = $(`#identificationIssuingCountryEnfant${i}`).val()
+                                passager.identification_expiry_date = dateFormat($(`#identificationExpiryDateEnfant${i}`).val(), 'd.m.Y')
+                            }
+                        }
+                    }
+
+                    if ($passagersDetailRetour.length) {
+                        for (let i = 0; i < $passagersDetailRetour.length; i++) {
+                            
+                            const passager = $passagersDetailRetour[i];
+    
+                            if(passager.type == "adult") {
+                                passager.firstname = $(`#nomInfosAdult${i}`).val()
+                                passager.lastname = $(`#prenomInfosAdult${i}`).val()
+                                passager.birthdate = ""
+                                passager.phone = $(`#tel`).val()
+                                if(verifPasseport()) {
+                                    passager.identification_type = "international_passport"
+                                    passager.identification_number = $(`#identificationNumberAdult${i}`).val()
+                                    passager.citizenship = $(`#citizenshipAdult${i}`).val()
+                                    passager.gender = $(`#sexeAdult${i}`).val()
+                                    passager.visa_permit_type = $(`#typeVisaAdult${i}`).val()
+                                    passager.identification_issuing_country = $(`#identificationIssuingCountryAdult${i}`).val()
+                                    passager.identification_expiry_date = dateFormat($(`#identificationExpiryDateAdult${i}`).val(), 'd.m.Y')
+                                }
+                            } else if (passager.type == "children") {
+                                passager.firstname = $(`#nomInfosEnfant${i}`).val()
+                                passager.lastname = $(`#prenomInfosEnfant${i}`).val()
+                                passager.birthdate = dateFormat($(`#dateNaissance${i}`).val(), 'd.m.Y')
+                                passager.phone = $(`#tel`).val()
+                                if(verifPasseport()) {
+                                    passager.identification_type = "international_passport"
+                                    passager.identification_number = $(`#identificationNumberEnfant${i}`).val()
+                                    passager.citizenship = $(`#citizenshipEnfant${i}`).val()
+                                    passager.gender = $(`#sexeEnfant${i}`).val()
+                                    passager.visa_permit_type = $(`#typeVisaEnfant${i}`).val()
+                                    passager.identification_issuing_country = $(`#identificationIssuingCountryEnfant${i}`).val()
+                                    passager.identification_expiry_date = dateFormat($(`#identificationExpiryDateEnfant${i}`).val(), 'd.m.Y')
+                                }
+                            }
+                        }
+                    }
+                    
+                    modifPassagerDetails()
+                }
+            } else {
+                $("#validPaysVoyage").removeClass('disabled')
+                console.warn("Le paiement a échoué. Veuillez vérifier vos informations de paiement et réessayer.");
+                notification('warning', "Le paiement a échoué. Veuillez vérifier vos informations de paiement et réessayer.")
+            }
+        } catch (error) {
+            $("#validPaysVoyage").removeClass('disabled')
+            notification('warning', "Le paiement a échoué. Veuillez vérifier vos informations de paiement et réessayer.")
+            console.error("Erreur lors de la récupération details des passagers :", error);
+        }
+
+    })
+
+    $(document).on('submit', '#bonAchatForm', async function (e) {
+        e.preventDefault();
+
+        $("#valid-bon-achat").prepend('<span class="spinner-border spinner-border-sm" aria-hidden="true"></span>').addClass('disabled')
+
+        const dataCode = { codeBon: $("#bon-achat-code").val() }
+
+        try {
+            const response = await sendRequest("POST", "/ajouter-un-bon", dataCode);
+            if (response.bon.vouchers) {
+                $("#bon-achat-code").addClass('is-valid').attr('disabled', 'disabled');
+                $('.spinner-border').remove()
+            } else {
+                $("#bon-achat-code").addClass('is-invalid');
+                $('.spinner-border').remove()
+                $("#valid-bon-achat").removeClass('disabled')
+            }
+        } catch (error) {
+            $("#bon-achat-code").addClass('is-invalid');
+            $('.spinner-border').remove()
+            $("#valid-bon-achat").removeClass('disabled')
+        }
+
+    })
+
+    $(document).on('input', '#bon-achat-code', function (e) {
+        e.preventDefault();
+        $("#bon-achat-code").removeClass('is-invalid');
+    })
+
+    $(document).on('change', '.dateNaissanceChildren', function() {
+
+        let inputDate = new Date($(this).val());
+        let today = new Date();
+        let age = today.getFullYear() - inputDate.getFullYear();
+        let monthDiff = today.getMonth() - inputDate.getMonth();
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < inputDate.getDate())) {
+            age--;
+        }
+
+        if (age > 15) {
+            $(this).addClass('is-invalid');
+        } else {
+            $(this).removeClass('is-invalid');
+        }
+    });
+
+    $(document).on('input', '#tel', function() {
+        const tel = $(this).val();
+        const prefixe = /^\+\d+/; // Vérifie que le numéro commence par un "+" suivi d'un ou plusieurs chiffres
+        
+        if (!prefixe.test(tel)) {
+            // Afficher un message d'erreur ou ajouter une classe pour montrer une erreur
+            $('#tel').addClass('is-invalid');
+            $('#basic-addon4').addClass('text-danger');
+            $('#basic-addon4').text("Veuillez ajouter un préfixe international (par ex. +33) avant le numéro.");
+        } else {
+            // Retirer le message d'erreur ou la classe si un préfixe est présent
+            $('#tel').removeClass('is-invalid');
+            $('#basic-addon4').removeClass('text-danger');
+            $('#basic-addon4').text("Utilisé uniquement pour vous contacter en cas de retards ou de changements d'itinéraires.");
+        }
+    });
+
+});
+</script>
+        
+{% endblock %}

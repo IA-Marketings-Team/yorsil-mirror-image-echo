@@ -1,0 +1,126 @@
+{% extends 'base_front.html.twig' %}
+
+{% block title %}Fawatir{% endblock %}
+
+{% block stylesheets %}
+	{{ parent() }}
+	<style type="text/css">
+        .header-title {
+            box-shadow: 0px 1px 5px #ccc;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 1rem 0;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+        .header-title h2{
+            color: #0a7ea4;
+        }
+		.article-listes {
+			display: flex;
+			align-items: center;
+			justify-content: flex-start;
+			flex-wrap: wrap;
+			padding: 5px 10px;
+			max-height: 60vh;
+			max-width: fit-content;
+			overflow: hidden;
+			overflow-y: auto;
+		}
+		.article-listes .form-check{
+			flex: 0 0 20%;
+			display: flex;
+			align-items: center;
+			justify-content: flex-start;
+			gap: 5px;
+			padding: 0px;
+    		padding-bottom: 10px;
+		}
+		.article-listes .form-check input[type="checkbox"]{
+			display: none;
+		}
+		.article-listes .form-check label{
+			cursor: pointer;
+		}
+		.article-listes .form-check input[type="checkbox"]:checked ~ label .facture-img,
+		.article-listes .form-check input[type="checkbox"] ~ label .check-facture-img{
+			display: none;
+		}
+		.article-listes .form-check input[type="checkbox"]:checked ~ label .check-facture-img{
+			display: inline-block;
+		}
+		.article-listes .form-check input[type="checkbox"]:checked ~ label{
+			color: #63e6be;
+    		font-weight: 500;
+		}
+    </style>
+{% endblock %}
+
+{% block body %}
+	<div class="container">
+	<div class="header-title">
+		<img src="{{ asset('images/fawatir.jpg') }}" width="60" class="img-fluid ${3|rounded-top,rounded-right,rounded-bottom,rounded-left,rounded-circle,|}" alt="">
+		<h2>Liste des impayés</h2>
+	</div>
+
+	{# {% for item in response %}
+	    <div class="facture">
+	        <p><strong>Date de Facture:</strong> {{ item.dateFacture }}</p>
+	        <p><strong>Description:</strong> {{ item.description }}</p>
+	        <p><strong>ID Article:</strong> {{ item.idArticle }}</p>
+	        <p><strong>Prix TTC:</strong> {{ item.prixTTC }}</p>
+	        <p><strong>Type Article:</strong> {{ item.typeArticle }}</p>
+	    </div>
+	{% endfor %} #}
+	{% if response %}
+		<div class="row">
+			<form action="{{path('confirmation')}}" id="form-confirmation" method="POST">
+				<input type="hidden" name="ref" value="{{refTxFatourati}}">
+				<input type="hidden" name="creancier_id" value="{{creancierId}}">
+				<input type="hidden" name="creance_id" value="{{creanceId}}">
+				<div class="article-listes mb-3">
+					{% for item in response %}
+						<div class="form-check mb-1">
+							<input class="form-check-input" name="article_id[]" type="checkbox" id="article-{{ item.idArticle }}" value="{{ item.idArticle }}/{{ item.prixTTC }}/{{ item.typeArticle }}">
+							<label class="form-check-label" for="article-{{ item.idArticle }}">
+								<img src="{{ asset('images/file-lines.svg') }}" width="15" class="facture-img" alt="">
+								<img src="{{ asset('images/file-circle-check.svg') }}" width="22" class="check-facture-img" alt="">
+								<span>Facture du {{item.dateFacture }}</span>
+							</label>
+						</div>
+					{% endfor %}
+				</div>
+				<div class="row mt-2">
+					<div class="col-sm-6">
+						<a class="btn btn-danger" href="{{ path('liste_creanciers')}}">Retour</a>
+						<input class="btn btn-primary" type="submit" value="Payer">
+					</div>
+				</div>
+			</form>
+		</div>
+	{% else %}
+		<div class="alert alert-warning d-flex align-items-center" role="alert">
+			<img src="{{ asset('images/triangle-exclamation.svg') }}" height="24" aria-label="Warning:" width="24" class="me-3 img-fluid ${3|rounded-top,rounded-right,rounded-bottom,rounded-left,rounded-circle,|}" alt="">
+			<div>
+				Pas de factures impayés
+			</div>
+		</div>
+		<a class="btn btn-sm btn-danger mt-3" href="{{ path('liste_creanciers')}}">Retour</a>
+		
+	{% endif %}
+	</div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+	<script>
+		$(document).on("submit", "#form-confirmation", function (e) {
+			if ($('.form-check-input:checked').length === 0) {
+				e.preventDefault()
+				notification('warning', "Veuillez sélectionner au moins un article.")
+			}
+		})
+	</script>
+{% endblock %}

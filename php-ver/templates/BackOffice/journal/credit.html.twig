@@ -1,0 +1,189 @@
+{% extends 'base_admin.html.twig' %}
+
+{% set menu_journal = true %}
+{% set menu_credit = true %}
+
+{% block title %} Journal de Rechargement{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .disabled-link {
+            pointer-events: none;  /* Désactive les interactions de la souris */
+            color: gray;           /* Optionnel : Changer la couleur pour indiquer que c'est désactivé */
+            text-decoration: none; /* Optionnel : Enlever le soulignement */
+            cursor: default;       /* Optionnel : Changer le curseur */
+        }
+
+        #imageModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        #modalImage {
+            max-width: 80%;
+            max-height: 80%;
+        }
+
+        #imageModal span {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 30px;
+            color: white;
+            cursor: pointer;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+
+    <div class="card bg-light-info shadow-none position-relative overflow-hidden">
+        <div class="card-body px-4 py-3">
+            <div class="row align-items-center">
+                <div class="col-9">
+                    <h4 class="fw-semibold mb-8">Liste rechargements par boutique</h4>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                          <li class="breadcrumb-item"><a class="text-muted" href="javascript:void(0)">Rechargement</a></li>
+                          <li class="breadcrumb-item active" aria-current="page">Liste</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-light"  id="id-credit-liste">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th class="text-center">Admin</th>
+                                        <th class="text-center">Boutique</th>
+                                        <th class="text-center">Ref</th>
+                                        <th class="text-center">Montant</th>
+                                        <th class="text-center">Type</th>
+                                        <th class="text-center">Percepteur</th>
+                                        <th class="text-center">Status</th>
+                                        <th class="text-center">Justificatif</th>
+                						<th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {# {% for credit in credits %}
+                                        {% set bout = credit.bout %}
+                                        {% set admin = credit.admin %}
+                                        {% if credit.percept %}
+                                            {% set percept = credit.percept.nom %}
+                                        {% else %}
+                                            {% set percept = "aucun" %}
+                                        {% endif %}
+                                    <tr>
+                                        <td>{{ admin.nom }}</td>
+                						<td>{{ bout.nom }}</td>
+                						<td>{{ credit.montant }}</td>
+                						<td>{{ percept }}</td>
+                						<td>{{ credit.date | date('d/m/Y') }}</td>
+                						<td>{{ credit.note }}</td>
+                						<td>
+                                        </td>
+                                    </tr>
+                                    {% endfor %} #}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="id-modal" tabindex="-1" aria-labelledby="modal-stock">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Validation d'un rechargement</h4>
+                        <button type="button" class="kl-close btn-close" data-bs-dismiss="modal" aria-label="Close"></button>                    
+                    </div>
+                    <div class="modal-body">
+                        <form action="{{path('validation_rechargement')}}" id="id-form-ajout" method="POST">
+                            <p class="kl-role-actuel mb-2"></p>
+                            <input type="hidden" name="rechargement_id" id="id-rechargement">
+                            <div class="row py-2">
+                                <div class="col-md-8 col-xl-9">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input primary" type="radio" name="validation" id="secondary-radio" value="oui" checked="">
+                                        <label class="form-check-label" for="secondary-radio">OUI</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input primary" type="radio" name="validation" id="secondary2-radio" value="non">
+                                        <label class="form-check-label" for="secondary2-radio">NON</label>
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">Confirmer</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Annuler</button>
+                    </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal pour afficher l'image -->
+        <div id="imageModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.8); justify-content:center; align-items:center;">
+            <span style="position:absolute; top:10px; right:20px; font-size:30px; cursor:pointer;" onclick="closeModal()">&times;</span>
+            <img id="modalImage" src="" alt="Image" style="max-width:80%; max-height:80%;">
+        </div>
+
+
+    </section>
+                    
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $('[data-toggle="tooltip"]').tooltip({
+            placement : 'top',
+        });
+        
+        var href_suppr_defaut = "{{ path('suppression_rechargement',{id:0}) }}";
+
+        // Fonction pour afficher l'image dans le modal
+        function showImageModal(imageUrl) {
+            // Récupère l'élément du modal et l'élément image
+            var modal = document.getElementById("imageModal");
+            var modalImage = document.getElementById("modalImage");
+
+            // Définit la source de l'image avec l'URL fournie
+            modalImage.src = imageUrl;
+
+            // Affiche le modal
+            modal.style.display = "flex";
+        }
+
+        // Fonction pour fermer le modal
+        function closeModal() {
+            var modal = document.getElementById("imageModal");
+            modal.style.display = "none";
+        }
+
+    </script>
+    <script src="{{ asset('backoffice/journal/credit.liste.js') }}"></script>
+
+{% endblock %}

@@ -1,0 +1,157 @@
+{% extends 'base_auth.html.twig' %}
+
+{% block title %}S'authentifier{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('modernize/libs/swiper/swiper-bundle.min.css') }}">
+    <style>
+        .swiper {
+        width: 100%;
+        padding-top: 50px;
+        padding-bottom: 50px;
+        }
+
+        .swiper-slide {
+            background: transparent;
+            background-position: center;
+            background-size: cover;
+            width: 300px;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .swiper-slide img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="position-relative overflow-hidden radial-gradient min-vh-100">
+        <div class="position-relative z-index-5">
+            <div class="row">
+                <div class="col-lg-6 col-xl-8 col-xxl-8 left-login-logo">
+                    <a href="javascript:void(0)" class="text-nowrap logo-img d-block px-4 py-9 pb-5 pb-xl-0 w-100">
+                        <img src="{{ asset('modernize/images/logos/largeicon.svg') }}" width="180" alt="">
+                    </a>
+                    <div class="slider-operateurs d-none d-lg-flex align-items-center justify-content-center px-4 py-9 px-5" style="height: calc(100vh - 80px);">
+                        <div class="swiper mySwiper">
+
+                            {% if sliders|length == 0 %}
+                                <div class="swiper-wrapper">
+                                    <div class="swiper-slide">
+                                        <img src="{{ asset('modernize/images/logos/fahana.svg') }}" />
+                                    </div>
+                                    <!-- <div class="swiper-slide">
+                                        <img src="{{ asset('modernize/images/service/fawatir.jpg') }}" />
+                                    </div> -->
+                                    <div class="swiper-slide">
+                                        <img src="{{ asset('images/allLogo.jpg') }}" />
+                                    </div>
+                                    <div class="swiper-slide">
+                                        <img src="{{ asset('images/Orange.png') }}" />
+                                    </div>
+                                    <div class="swiper-slide">
+                                        <img src="{{asset('modernize/images/billeterie/logoFixBus.png')}}" />
+                                    </div>
+                                    <div class="swiper-slide">
+                                        <img src="{{asset('modernize/images/billeterie/avion.jpg')}}" />
+                                    </div>
+                                    <div class="swiper-slide">
+                                        <img src="{{asset('modernize/images/billeterie/algerie-ferries.jpg')}}" />
+                                    </div>
+                                    <div class="swiper-slide">
+                                        <img src="{{ asset('images/ria.png') }}" />
+                                    </div>
+                                    <div class="swiper-slide">
+                                        <img src="{{ asset('images/sfr.png') }}" />
+                                    </div>
+                                    <div class="swiper-slide">
+                                        <img src="{{ asset('images/free.JPG') }}" />
+                                    </div>
+                                </div>
+                            {% else %}
+                                <div class="swiper-wrapper">
+                                    <div class="swiper-slide">
+                                        <img src="{{ asset('modernize/images/logos/fahana.svg') }}" />
+                                    </div>
+
+                                    {% for slider in sliders %}
+                                        <div class="swiper-slide">
+                                            <img src="{{ asset('uploads/images/slider/' ~ slider.image) }}" />
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
+                            <div class="swiper-pagination"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-xl-4 col-xxl-4">
+                    <div class="card mb-0 shadow-none rounded-0 min-vh-100 h-100">
+                        <div class="d-flex align-items-center w-100 h-100">
+                            <div class="card-body px-xxl-5">
+                                <h2 class="mb-3 fs-7 fw-bolder text-center">Bienvenue sur  Yorsil</h2>
+                                <div class="position-relative text-center my-4">
+                                    <p class="mb-0 fs-4 px-3 d-inline-block bg-body text-dark z-index-5 position-relative">connectez-vous avec</p>
+                                    <span class="border-top w-100 position-absolute top-50 start-50 translate-middle"></span>
+                                </div>
+                                <form method="post">
+                                    <div class="mb-3">
+                                        <label for="inputEmail" class="form-label">Email</label>
+                                        <input type="email" class="form-control" id="inputEmail" value="{{ last_username }}" name="email" autocomplete="email" required autofocus placeholder="Email" aria-describedby="emailHelp">
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="inputPassword" class="form-label">Mot de passe</label>
+                                        <input type="password" class="form-control" name="password" id="inputPassword" placeholder="Mot de passe" required>
+                                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                                    </div>
+                                    <button class="btn btn-primary w-100 py-8 mb-4 rounded-2">S'identifier</button>
+
+                                    <a href="{{ path('forgot_password')}}" class="btn btn-light-primary text-primary w-100 py-8">Mot de passe oublié</a>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('modernize/libs/swiper/swiper-bundle.min.js') }}"></script>
+    <script>
+        sliders = {{sliders|json_encode|raw }};
+        var swiper = new Swiper(".mySwiper", {
+        effect: "coverflow",
+        grabCursor: true,
+        centeredSlides: true,
+        slidesPerView: "auto",
+        loop: sliders.length >= 3,
+        loopAdditionalSlides: 3,
+        autoplay: {
+            delay: 2500,
+            disableOnInteraction: false,
+        },
+        coverflowEffect: {
+            rotate: 50,
+            stretch: 0,
+            depth: 100,
+            modifier: 1,
+            slideShadows: true,
+        },
+        pagination: {
+            el: ".swiper-pagination",
+        },
+        });
+    </script>
+{% endblock %}

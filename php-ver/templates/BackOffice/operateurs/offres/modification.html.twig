@@ -1,0 +1,96 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}Modification d'une offre{% endblock %}
+
+{% set menu_type_offres = true %}
+
+{% block body %}
+
+    <div class="card bg-light-info shadow-none position-relative overflow-hidden">
+        <div class="card-body px-4 py-3">
+          <div class="row align-items-center">
+            <div class="col-9">
+              <h4 class="fw-semibold mb-8">Offre</h4>
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a class="text-muted" href="javascript:void(0)">Offres</a></li>
+                  <li class="breadcrumb-item"><a class="text-muted" href="{{ path('offres')}}">Liste</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Modification</li>
+                </ol>
+              </nav>
+            </div>
+          </div>
+        </div>
+    </div>
+
+
+    {{ form_start(form) }}
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body p-4">
+                        <div class="row mb-4">
+                          <div class="col md-6">{{ form_row(form.operateur) }}</div>
+                          <div class="col md-6">
+                            <label>Type d'offres</label>
+                            <select id="offres_type_offres" name="type_offres" required="required" class="select2-type form-control">
+                                {% for type_offre in type_offres %}
+                                    <option value="{{ type_offre.id }}" {{offres.typeOffres.id == type_offre.id ? "selected" : ""}}>{{ type_offre.nom }} ({{ type_offre.operateur.nom }})</option>
+                                {% endfor %}
+                            </select>
+                          </div>
+                        </div>
+                        <div class="row mb-4">
+                          <div class="col md-4">{{ form_row(form.nom) }}</div>
+                          <div class="col md-4">{{ form_row(form.montant) }}</div>
+                          <div class="col md-4">{{ form_row(form.devise) }}</div>
+                        </div>
+                        <div class="row mb-4">
+                          <div class="col md-4">{{ form_row(form.description) }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="d-flex align-items-center justify-content-end gap-3">
+                    <button class="btn btn-primary">Modifier</button>
+                    <a href="{{ path('offres')}}" class="btn btn-danger">Annuler</a>
+                </div>
+            </div>
+        </div>
+    {{ form_end(form) }}
+                   
+{% endblock %}
+
+{% block javascripts %}
+  {{ parent() }}
+  <script>
+
+    $(document).ready(function() {
+      $('.select2-operateur').select2();
+      $('.select2-type').select2({
+        placeholder: 'Sélectionner un type d\'offre', 
+      });
+
+      $('.select2-operateur').on('change', function() {
+          var id = $(this).val();
+          $.ajax({
+              url: '/'+id+'/liste-type-offres-operateur',  // endpoint à créer
+              type: 'GET',
+              success: function(data) {
+                  var $typeSelect = $('.select2-type');
+                  $typeSelect.empty();
+                  
+                  $.each(data.type_offres, function(key, type_offre) {
+                      $typeSelect.append('<option value="' + type_offre.id + '">' + type_offre.nom + '</option>');
+                  });
+
+                  $typeSelect.trigger('change');  // Recharger Select2
+              }
+          });
+      });
+  });
+
+  </script>
+{% endblock %}
+

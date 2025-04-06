@@ -1,0 +1,176 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}Liste des gencodes{% endblock %}
+
+{% block stylesheets %} 
+    {{ parent() }}
+    <style>
+        #import-excel {
+            display: flex;
+            align-items: center;
+            margin: 15px 0px;
+            gap: 5px;
+        }
+        #import-excel #excel_upload_excelFile{
+            display: none;
+        }
+        #import-excel label{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            border: 1px solid #1ead58;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.4s ease;
+        }
+        #import-excel label:hover{
+            background: #1ead58;
+        }
+        #import-excel label i{
+            color: #1ead58;
+            font-weight: 900;
+            font-size: 16px;
+            transition: 0.4s ease;
+        }
+        #import-excel label span{
+            font-size: 16px;
+            color: #1ead58;
+            font-weight: 700;
+            transition: 0.4s ease;
+        }
+        #import-excel label:hover i,
+        #import-excel label:hover span{
+            color: #fff;
+        }
+        #import-excel #preview-import-excel{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+        #import-excel #preview-import-excel i,
+        #import-excel #preview-import-excel span{
+            color: #1ead58;
+            font-size: 16px;
+        }
+        #import-excel #preview-import-excel i{
+            font-size: 25px;
+        }
+        #import-excel #preview-import-excel .validation-icon{
+            cursor: pointer;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+
+    <div class="card bg-light-info shadow-none position-relative overflow-hidden">
+        <div class="card-body px-4 py-3">
+            <div class="row align-items-center">
+                <div class="col-9">
+                    <h4 class="fw-semibold mb-8">Liste des gencodes</h4>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                          <li class="breadcrumb-item"><a class="text-muted" href="{{path('produit_physique')}}">Produits viruels</a></li>
+                          <li class="breadcrumb-item active" aria-current="page">Liste</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="import-excel">
+        {{ form_start(form) }}
+            {{ form_row(form.excelFile) }}
+            {# <input type="file" name="exportExcel" id="excel_upload_excelFile"> #}
+            <label for="excel_upload_excelFile">
+                <i class="ti ti-download"></i>
+                <span>Importer</span>
+            </label>
+            <div id="preview-import-excel" class="d-none">
+                <i class="ti ti-file-text"></i>
+                <span>FICHIER.exl</span>
+                <i class="ti ti-xbox-x text-danger validation-icon annuler" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Annuler"></i>
+                <button type="submit" class="btn btn-inline-success btn-sm"><i class="ti ti-check text-success validation-icon valider" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Valider"></i></button>
+            </div>
+        {{ form_end(form) }}
+    </div>
+
+    <section>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table"  id="id-liste-gencode">
+                                <thead>
+                                    <tr>
+                                        <td>Operateur</td>
+                                        <td>Gencode</td> 
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>ORANGE</td>
+                                        <td>
+                                            123456789
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>SFR</td>
+                                        <td>
+                                            987654321
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+{% endblock %}
+{% block javascripts %}
+	{{ parent() }}
+    <script>
+        $(document).ready(function () {
+            $('.custom-file-label').addClass('d-none');
+            var datatable = $('#id-liste-gencode').DataTable({
+                "aaSorting": [],
+                "bProcessing": true,
+                "bFilter": true,
+                // "bServerSide": true,
+                "iDisplayLength": 10,
+                "drawCallback": function (settings) {
+                    if (settings.aiDisplay.length == 0)
+                        $(".paginate_button.next").addClass('disabled');
+                    $('[data-toggle="tooltip"]').tooltip();
+                },
+                language: {"url": global_utils.urls.datatable_fr}        
+            });
+
+            $(document).on("change", "#excel_upload_excelFile", function() {
+                let file = this.files[0];
+                if (file) {
+                    let fileURL = URL.createObjectURL(file);
+                    $("#preview-import-excel").removeClass("d-none")
+                    $("#preview-import-excel span").html(file.name)
+                } else {
+                    $("#preview-import-excel").addClass("d-none")
+                }
+            });
+
+            $(document).on("click", ".validation-icon.annuler", function() {
+                console.log('annuler');
+                $('#excel_upload_excelFile').val('');
+                $("#preview-import-excel").addClass("d-none")
+            });
+        });
+    </script>
+{% endblock %}

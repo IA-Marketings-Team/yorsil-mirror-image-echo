@@ -1,0 +1,296 @@
+{% extends 'base_front.html.twig' %}
+
+{% set menu_transfert_argent = true %}
+
+{% block title %}Facture{% endblock %}
+
+{% block stylesheets %} 
+    {{ parent() }}
+    <style>
+        .container-fluid {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        /* Style de la page A4 */
+        .page {
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 210mm;
+            height: 297mm; /* Hauteur de la page A4 */
+            padding: 10mm; /* Ajustez l'espacement intérieur pour éviter le débordement */
+            box-sizing: border-box;
+            page-break-after: always; /* Saut de page après chaque section */
+        }
+
+        /* Dernière page sans saut de page */
+        .page:last-child {
+            page-break-after: auto;
+        }
+
+        .page .facture {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            box-shadow: 1px 1px 5px #333;
+            height: 100%;
+            width: 59mm;
+            background: #fff;
+        }
+
+        .page .logo {
+            width: 20mm;
+        }
+
+        .page section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            text-align: center;
+            width: 100%;
+            padding: 1mm;
+            padding-bottom: 3mm;
+            border-bottom: 2px solid #9e9e9e;
+        }
+
+        .page section:last-of-type {
+            border-bottom: none;
+        }
+
+        .page section p {
+            margin: 0;
+        }
+
+        .page .hr {
+            margin: 5px 0;
+            border-bottom: 2px dotted #ccc;
+            width: 100%;
+        }
+
+        .page table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .page th, td {
+            text-align: left;
+        }
+
+        .page th {
+            background-color: #ccc;
+            font-weight: bold;
+        }
+
+        .page tr td:first-of-type {
+            text-align: start;
+        }
+
+        .page tr td:last-of-type {
+            text-align: end;
+        }
+
+        /* Style pour le SVG */
+        .page svg {
+            width: 100%; /* Le SVG prend 100% de la largeur du conteneur */
+            height: auto; /* Hauteur automatique pour conserver les proportions */
+        }
+
+        @media print {
+            @page {
+                size: A4;
+                margin: 0; /* Ajustez les marges selon vos besoins */
+            }
+
+            .page {
+                break-after: always; /* Saut de page après chaque section lors de l'impression */
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="page">
+        <div class="facture">
+            <section>
+                <img src="{{ dataProduit.image }}" class="logo" alt="logo">
+            </section>
+            <section>
+                <div class="container">
+                    <p>{{ dataProduit.operateur }}</p>
+                    <p></p>
+                </div>
+                <div class="hr"></div>
+                <div class="hr"></div>
+                <div class="container">
+                    <p>{{ dataProduit.off }}</p>
+                    <p>(appels gratuits)</p>
+                    <p>Entrez ces 14 chiffres:</p>
+                    <p>PINT EST</p>
+                </div>
+            </section>
+            <section>
+                <div class="container">
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td>Crédit de communication:</td>
+                                <td>2h/SMS illimité/20 Mo</td>
+                            </tr>
+                            <tr>
+                                <td>Prix de vente:</td>
+                                <td>5.0 EUR</td>
+                            </tr>
+                            <tr>
+                                <td>Validité du crédit:</td>
+                                <td>7 jours</td>
+                            </tr>
+                            <tr>
+                                <td>A activer avant:</td>
+                                <td>01/01/2025</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="hr"></div>
+                <div class="container">
+                    <p>Durée de validité de la ligne au-delà de la validité de la recharge : 1 mois</p>
+                    <p>Attention, il existe un risque d'effacement du ticket.</p>
+                    <p>Ticket ni repris, ni échangé.</p>
+                </div>
+            </section>
+            <section>
+                <div class="container">
+                    <p>ORANGE</p>
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td>TERMINAL :</td>
+                                <td>YORSIL</td>
+                            </tr>
+                            <tr>
+                                <td>VENDEUR :</td>
+                                <td>131041</td>
+                            </tr>
+                            <tr>
+                                <td>DATE :</td>
+                                <td>27/09/24</td>
+                            </tr>
+                            <tr>
+                                <td>HEURE :</td>
+                                <td>12:13:36</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="hr"></div>
+                <div class="container">
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td>Code :</td>
+                                <td>PINTEST</td>
+                            </tr>
+                            <tr>
+                                <td>No série :</td>
+                                <td>2301161330061000693</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="hr"></div>
+                <div class="container">
+                    <p>Pour toute assistance, contactez votre service clients Orange au 3900.</p>
+                    <p>+ d'infos sur www.orange.fr</p>
+                </div>
+            </section>
+        </div>
+    </div>
+    <div class="page">
+        <div class="facture">
+            <section>
+                <img src="{{ asset('images/Orange.png') }}" class="logo" alt="logo">
+            </section>
+            <section>
+                <div class="container">
+                    <p>Mobicarte</p>
+                    <p>Recharge</p>
+                    <p>Orange Max 5€</p>
+                    <p>CONTRE-MARQUE</p>
+                </div>
+            </section>
+            <section>
+                <div class="container">
+                    <p>ORANGE</p>
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td>TERMINAL :</td>
+                                <td>YORSIL</td>
+                            </tr>
+                            <tr>
+                                <td>VENDEUR :</td>
+                                <td>131041</td>
+                            </tr>
+                            <tr>
+                                <td>DATE :</td>
+                                <td>27/09/24</td>
+                            </tr>
+                            <tr>
+                                <td>HEURE :</td>
+                                <td>12:13:36</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="hr"></div>
+                <div class="container">
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td>No série :</td>
+                                <td>2301161330061000693</td>
+                            </tr>
+                            <tr>
+                                <td>A activer avant :</td>
+                                <td>01/01/2025</td>
+                            </tr>
+                            <tr>
+                                <td>Crédit de communication:</td>
+                                <td>2h/SMS</td>
+                            </tr>
+                            <tr>
+                                <td>Prix de vente :</td>
+                                <td>5.00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="bar-code">
+                        <svg id="barcode" data-code="123456789012"></svg>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('modernize/js/JsBarcode.all.min.js') }}"></script>
+    <script>
+        const barcode = document.getElementById("barcode")
+        const code = barcode.dataset.code
+        // Générer un code-barres
+        JsBarcode("#barcode", code, {
+            format: "CODE39", // Format du code-barres
+            lineColor: "#000", // Couleur des lignes
+            width: 2, // Largeur des barres
+            height: 100, // Hauteur du code-barres
+            displayValue: true // Afficher la valeur en dessous
+        });
+    </script>
+{% endblock %}
+    

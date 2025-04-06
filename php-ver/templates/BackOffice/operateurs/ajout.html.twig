@@ -1,0 +1,119 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}Ajout d'un nouveau opérateur{% endblock %}
+
+{% set menu_operateurs = true %}
+
+{% block body %}
+
+    <div class="card bg-light-info shadow-none position-relative overflow-hidden">
+        <div class="card-body px-4 py-3">
+          <div class="row align-items-center">
+            <div class="col-9">
+              <h4 class="fw-semibold mb-8">Opérateur</h4>
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a class="text-muted" href="javascript:void(0)">Opérateurs</a></li>
+                  <li class="breadcrumb-item"><a class="text-muted" href="{{ path('operateurs')}}">Liste</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Ajout</li>
+                </ol>
+              </nav>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    {{ form_start(form) }}
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body p-4">
+                        <div class="form">
+                            {{ form_start(form,{attr:{'enctype':'multipart/form-data'}}) }}
+                                <div class="row align-items-center">
+                                    <div class="col-sm-3">
+                                        <p class="card-subtitle mb-4">Ajouter le logo de l'opérateur à partir d'ici</p>
+                                        <div class="text-center">
+                                            <img id="img_prev" src="{{ asset('modernize/images/logos/uploadFile.png') }}" alt="" class="img-fluid" width="120" height="120">  
+                                            <div class="d-flex align-items-left justify-content-left my-4 gap-3">
+                                                {{ form_row(form.logo, {'attr':{'class':'form-control'} }) }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mb-4">
+                                    <div class="col-sm-6">{{ form_row(form.nom) }}</div>
+                                    <div class="col-sm-6">{{ form_row(form.id_pays, {'attr': {'class': 'kl-select'} }) }}</div>
+                                </div>
+                                <div class="row mb-4">
+                                    <div class="col-sm-6">
+                                        {{ form_row(form.type, {'attr': {'list': 'datalist_operateur_type'} }) }}
+                                        
+                                        <datalist id="datalist_operateur_type">
+                                            <option value="Bouygues"></option>
+                                            <option value="Delta"></option>
+                                            <option value="Ding"></option>
+                                            <option value="La poste"></option>
+                                            <option value="Lebara"></option>
+                                            <option value="Libon"></option>
+                                            <option value="Lyca"></option>
+                                            <option value="Manet"></option>
+                                            <option value="Mobiho"></option>
+                                            <option value="Orange"></option>
+                                            <option value="sfr"></option>
+                                            <option value="Syma"></option>
+                                        </datalist>
+                                    </div>
+                                    <div class="col-sm-6">{{ form_row(form.longueur_code) }}</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="id-is-active" name="is_active">
+                                            <label class="form-check-label" for="id-is-active">
+                                                Activer ?
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="d-flex align-items-center justify-content-end gap-3">
+                    <button class="btn btn-success">Ajouter</button>
+                    <a href="{{ path('categorie')}}" class="btn btn-danger">Annuler</a>
+                </div>
+            </div>
+        </div>
+    {{ form_end(form) }}
+                   
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent()}}
+    <script>
+
+        const inptProduit = document.getElementById("operateur_logo");
+        const img_prev = document.getElementById("img_prev");
+        const imgSrc = img_prev.getAttribute("src");
+
+        inptProduit.addEventListener('change', function(){
+            const fichier_categorie = this.files[0];
+            if (fichier_categorie) {
+                const read_file_cate = new FileReader();
+
+                read_file_cate.addEventListener("load", function(){
+                    img_prev.setAttribute("src", this.result);
+                });
+
+                read_file_cate.readAsDataURL(fichier_categorie);
+            } else {
+                img_prev.setAttribute("src", imgSrc);
+            }
+        });
+
+    </script>
+{% endblock %}

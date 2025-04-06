@@ -1,0 +1,1903 @@
+{% extends 'base_front.html.twig' %}
+
+{% set menu_billeteries = true %}
+
+{% block title %}listes des trajets{% endblock %}
+
+{% block stylesheets %} 
+    {{ parent() }}
+    <style type="text/css">
+        html.load {
+            pointer-events: none !important;
+        }
+        #billeterie input:focus {
+            color: #FFC107;
+        }
+        #billeterie .header {
+            width: 100%;
+            position: relative;
+            margin-bottom: 2rem;
+            transition: 0.3s;
+        }
+        #billeterie .header .img-background{
+            width: 100%;
+            height: 265px;
+            overflow: hidden;
+            border-radius: 5px;
+        }
+        #billeterie .header .img-background img{
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        #billeterie .header .form-destination {
+            margin: 0 1rem;
+            position: relative;
+            width: calc(100% - 2rem);
+            box-shadow: 2px 2px 5px #0000007d;
+            background: #464242b5;
+            backdrop-filter: blur(3px);
+            border-radius: 5px;
+            z-index: 9;
+        }
+        #billeterie .header .form-destination h2{
+            position: absolute;
+            top: -30px;
+            color: #fff;
+            text-shadow: 1px 1px 1px BLACK;
+            font-size: 1.5rem;
+        }
+        .form-check.destination {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .form-check-input.green {
+            width: 2em;
+            height: 2em;
+        }
+        .form-check-input.green:checked {
+            background-color: #31a100;
+            border-color: #31a100;
+        }
+        .direction-form {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            transition: 0.4s;
+        }
+        .direction-form.aller-retour{
+            align-items: flex-start;
+        }
+
+        .direction-form.aller-retour .date-container:first-of-type {
+            margin-bottom: 30px;
+        }
+
+        .direction-control {
+            flex: 1 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #fff;
+            border-radius: 6px;
+            position: relative;
+            padding: 2px 0px;
+        }
+        .direction-control::before {
+            content: "";
+            position: absolute;
+            width: 1px;
+            height: 100%;
+            background: #fff;
+        }
+        .direction-control .dropdown{
+            flex: 1 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            position: relative;
+            padding: 0 0px 0px 5px;
+        }
+        .dropdown .form-direction{
+            flex: 1 0 auto;
+            color: #fff;
+            background: transparent;
+            border: 1px solid transparent;
+            padding:  5px 5px 5px 0px;
+            width: 140px;
+        }
+        .direction-control .dropdown label,
+        .date-container label,
+        #passager-control #drop-control label{
+            position: absolute;
+            top: -25px;
+            left: 0;
+            color: #fff;
+        }
+        .direction-control #inversed {
+            border: 1px solid #fff;
+            width: 27px;
+            height: 27px;
+            min-width: 27px;
+            min-height: 27px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: #fff;
+            cursor: pointer;
+        }
+        .direction-control #inversed i {
+            font-size: 20px;
+            color: #0a7ea4;
+            transform: rotate(0deg);
+            padding: 0px 0px 2px 0px;
+            transition: transform 0.4s;
+        }
+        .direction-control #inversed.change i{
+            transform: rotate(360deg);
+        }
+        .dropdown-menu {
+            padding: 0 !important;
+        }
+        .dropdown-menu ul{
+            max-height: 220px;
+            overflow: hidden;
+            overflow-y: auto;
+            margin: 5px 0;
+        }
+        .direction-control .dropdown .dropdown-menu .head{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f7f7f7;
+            padding: 5px 0;
+            border-top-right-radius: inherit;
+            border-top-left-radius: inherit;
+            color: #595858;
+            font-weight: bold;
+            font-size: 15px;
+            gap: 5px;
+        }
+        .direction-control .dropdown .dropdown-menu .head i{
+            font-size: 20px;
+        }
+        .dropdown-menu ul .dropdown-item {
+            padding: 3px 5px;
+        }
+        .dropdown-menu ul .dropdown-item span:first-of-type {
+            display: flex;
+            font-size: 14px;
+            align-items: center;
+            gap: 5px;
+        }
+        .dropdown-menu ul .dropdown-item span {
+            display: block;
+            font-size: 11px;
+            color: black;
+        }
+
+        .dropdown-menu ul .dropdown-item span i {
+            font-size: 20px;
+        }
+        
+        .dropdown .form-direction::placeholder{
+            color: #fff;
+        }
+        
+        .dropdown .form-direction:focus::placeholder{
+            font-style: italic;
+        }
+
+        #dropdown-menu-arrive.cities li:has(.dropdown-item.stations) {
+            display: none !important;
+        }
+
+        #dropdown-menu-arrive.stations li:has(.dropdown-item.cities) {
+            display: none !important;
+        }
+
+        .input-group-prepend,
+        .input-group-append {
+            cursor: pointer;
+        }
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            display: none;
+        }
+        .date-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #fff;
+            border-radius: 6px;
+        }
+        .date-container.retour {
+            display: none;
+        }
+        .direction-form.aller-retour .date-container.retour {
+            display: flex;
+        }
+        .dateInput {
+            position: absolute;
+            top: 0;
+            left: 20px;
+            opacity: 0;
+            pointer-events: none;
+            z-index: -1;
+        }
+        .date-container i{
+            color: #fff;
+            font-size: 25px;
+        }
+        .date-container .formattedDate{
+            color: #fff;
+            width: 160px;
+            border: none;
+        }
+        .date-container .prevDay,
+        .date-container .nextDay{
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.4s ease;
+        }
+        .date-container .prevDay:hover,
+        .date-container .nextDay:hover{
+            background: #8080806e;
+        }
+        .date-container .nextDay{
+            margin-right: 2px;
+        }
+        #passager-control {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        #passager-control #drop-control {
+            display: flex;
+            align-items: center;
+            border: 1px solid #fff;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        #passager-control #drop-control input {
+            border: none;
+            color: #fff;
+        }
+        #passager-control #drop-control input::placeholder {
+            color: red;
+            font-size: 12px;
+        }
+        #passager-control #drop-control i.ti-chevron-down{
+            color: #fff;
+            margin-left: auto;
+            margin-right: 5px;
+        }
+        #passager-control .drop {
+            position: absolute;
+            top: 50%;
+            right: 100%;
+            opacity: 0;
+            pointer-events: none;
+            transform: translate(50%, 2px);
+            width: 380px;
+            background: #fff;
+            z-index: 9;
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 1px 1px 5px #0000003d;
+            transition: 0.3s ease-in-out;
+        }
+        #passager-control.open .drop {
+            top: 100%;
+            opacity: 1;
+            pointer-events: all;
+        }
+        #passager-control .drop .drop-option {
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #ccc;
+            padding: 10px 5px;
+        }
+        #passager-control .drop .drop-option:last-of-type {
+            border-bottom: none;
+        }
+        #passager-control .drop .drop-option label {
+            font-weight: bold;
+            flex: 1 1 220px;
+            overflow: hidden;
+            position: relative;
+            top: auto;
+            left: auto;
+            color: black;
+        }
+        #passager-control .drop .drop-option label span{
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: #616161;
+        }
+        #passager-control .drop .drop-option .controls {
+            flex: 1 1 160px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            height: 35px;
+        }
+        #passager-control .drop .drop-option .controls button {
+            color: black;
+            font-size: 20px;
+            border: 1px solid #8b8b8b;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            background: transparent;
+            justify-content: center;
+            padding: 0 0px;
+            border-radius: 10px 0px 0 10px;
+        }
+        #passager-control .drop .drop-option .controls button:disabled {
+            background: #8b8b8b17;
+            border-color: #8b8b8b;
+            color: #8b8b8b;
+        }
+        #passager-control .drop .drop-option .controls button.ctrl-minus {
+            border-radius: 10px 0px 0 10px;
+            border-right: none;
+        }
+        #passager-control .drop .drop-option .controls button.ctrl-plus {
+            border-radius: 0px 10px 10px 0px;
+            border-left: none;
+        }
+        #passager-control .drop .drop-option .controls input {
+            border: 1px solid black;
+            width: 60px;
+            height: 35px;
+            color: black;
+            font-size: 20px;
+            text-align: center;
+        }
+        
+        .loadCity{
+            display: none;
+        }
+        
+        .direction-form.load {
+            pointer-events: none;
+        }
+        .direction-form.load .direction-control,
+        .direction-form.load .date-depart,
+        .direction-form.load #passager-control {
+            background: #d5d5d5;
+            animation: loadCity 1s cubic-bezier(0.445, 0.05, 0.55, 0.95) alternate infinite;
+        }
+
+        .card-load-trajet .card-body h2 {
+            width: 100px;
+            height: 21px;
+            background: #a8a8a8;
+            border-radius: 5px;
+            animation: loadCity 1s ease-in-out infinite forwards; 
+        }
+        .card-load-trajet .card-body span{
+            display: block;
+            width: 100%;
+            height: 50px;
+            background: #d2d2d2;
+            border-radius: 5px;
+            animation: loadCity 1s ease-in-out infinite forwards;
+        }
+        .card-load-trajet .card-body .content-load {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 5px;
+            animation: loadCity 1s ease-in-out infinite forwards;
+        }
+        .card-load-trajet .card-body .content-load span {
+            flex: 1 0 auto;
+            width: calc(50% - 1rem);
+            height: 20px;
+            background: #e2e2e2;
+            border-radius: 5px;
+            animation: loadCity 1s ease-in-out infinite forwards;
+        }
+
+        @keyframes loadCity {
+            from {
+                opacity: 0.3;
+            }
+        }
+
+        section#liste-trajet {
+            padding: 0 5rem;
+        }
+        #date-options {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #date-options .checkDateOption {
+            flex: 1 0 auto;
+            text-align: center;
+            padding: 10px 5px;
+            border: 1px solid;
+            position: relative;
+            cursor: pointer;
+            transition: 0.4s;
+        }
+        #date-options .checkDateOption:nth-child(1) {
+            border-right: none;
+            border-radius: 10px 0 0 10px;
+        }
+        #date-options .checkDateOption:nth-child(3) {
+            border-left: none;
+            border-radius: 0px 10px 10px 0px;
+        }
+
+        #date-options .checkDateOption.active::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 2px;
+            background: #31a100;
+        }
+        #date-options .checkDateOption:not(.active):hover {
+            background: #dcdcdc54;
+        }
+
+        #date-options .checkDateOption h2{
+            margin: 0;
+            font-size: 15px;
+        }
+        #filtre-trajet {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 1rem 0px;
+        }
+        #filtre-trajet button {
+            background: #fff;
+            border: 1px solid #c8c8c8;
+            padding: 5px 10px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+        #filtre-trajet button i{
+            font-size: 16px;
+        }
+        #alert-frais-service {
+            border: 1px solid;
+        }
+        #alert-frais-service i {
+            font-size: 25px;
+            padding-right: 1rem;
+        }
+        #alert-frais-service .prix{
+            margin: 0;
+            margin-left: auto;
+            font-size: 18px;
+            font-weight: 900;
+        }
+        #listes-trajet-cards .card-trx-list {
+            background: #fff;
+            border: 1px solid #cecece;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+        }
+        #listes-trajet-cards .card-trx-info {
+
+        }
+        #listes-trajet-cards .card-trx-info .operated_by{
+
+        }
+        #listes-trajet-cards .card-trx-info .operated_by span{
+            background: #b2ffb2;
+            padding: 2px 5px;
+            border-radius: 5px;
+            color: black;
+            margin: 0px 3px;
+        }
+        #listes-trajet-cards .card-trx-info .trx-heur .heur-depart,
+        #listes-trajet-cards .card-trx-info .trx-heur .heur-arrive,
+        #listes-trajet-cards .card-trx-info .trx-heur .heur-itineraire {
+            font-size: 17px;
+            font-weight: 900;
+        }
+        #listes-trajet-cards .card-trx-info .trx-heur .heur-combin{
+            display: flex;
+            align-items: center;
+        }
+        #listes-trajet-cards .card-trx-info .trx-heur .heur-depart{
+
+        }
+        #listes-trajet-cards .card-trx-info .trx-heur .heur-itineraire{
+            color: #a8a6a6;
+            position: relative;
+            flex: 1 0 auto;
+            text-align: center;
+            padding-left: calc(var(--bs-gutter-x)* .5);
+        }
+        #listes-trajet-cards .card-trx-info .trx-heur .heur-arrive sup{
+            font-weight: 400;
+        }
+        #listes-trajet-cards .card-trx-info .trx-heur .heur-itineraire span{
+            position: relative;
+            background: #fff;
+            padding: 0px 5px;
+        }
+        #listes-trajet-cards .card-trx-info .trx-heur .heur-itineraire::before{
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: #a8a6a6;
+            padding-left: calc(var(--bs-gutter-x)* .5);
+            left: calc(var(--bs-gutter-x)* .5);
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        #listes-trajet-cards .card-trx-info .trx-heur .heur-arrive{
+
+        }
+        #listes-trajet-cards .card-trx-info .trx-lieux h2{
+            font-size: 17px;
+        }
+        #listes-trajet-cards .tarif-trx {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 900;
+            color: #0b3340;
+        }
+        .sieges-disponibles {
+            display: flex;
+        }
+
+        .sieges-disponibles span {
+            margin-left: auto;
+        }
+        .trx-infos {
+            display: flex;
+            align-items: center;
+        }
+        .trx-infos .pill {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            border: 1px solid;
+            padding: 2px 10px;
+            border-radius: 20px;
+        }
+        .trx-infos .pill i{
+            font-size: 20px;
+        }
+        .trx-infos .pill span{
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+        }
+        .trx-infos .pill span.corresp{
+            border-left: 1px solid #c4c4c4;
+            padding-left: 5px;
+        }
+        .trx-infos .Services {
+            padding: 0 5px;
+        }
+        .trx-infos .Services i{
+            font-size: 25px;
+        }
+        .continuer.btn.btn-success {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .continuer[disabled] {
+            pointer-events: none;
+            opacity: 0.5;
+        }
+        .empty-voyage {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 5px 10px;
+            gap: 10px;
+        }
+        .empty-voyage img {
+            width: 100px;
+        }
+        @media screen and (width < 1308px){
+            #billeterie .header,
+            #billeterie .header.aller-retour {
+                margin: 0;
+            }
+            #billeterie .header .form-destination {
+                margin: 1rem 0;
+                position: relative;
+                bottom: auto;
+                transform: translateY(0%);
+                width: 100%;
+            }
+            #billeterie .header .form-destination h2 {
+                position: relative;
+                top: auto;
+            }
+        }
+        @media screen and (width < 1186px){
+            .direction-control {
+                order: 1;
+                flex: 1 0 45%;
+            }
+            #passager-control {
+                order: 2;
+                flex: 1 0 45%;
+            }
+            #passager-control #drop-control {
+                width: 100%;
+            }
+            .date-depart {
+                order: 3;
+                display: flex;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 10px;
+                margin-top: 20px;
+                width: 100%;
+            }
+            .date-container {
+                flex: 1 0 45%;
+                max-width: 50%;
+            }
+            .direction-form.aller-retour .date-container:first-of-type {
+                margin: 0;
+            }
+        }
+        @media screen and (width >= 992px){
+            #billeterie .header .img-background img.bg-md,
+            #billeterie .header .img-background img.bg-sm{
+                display: none;
+            }
+        }
+        @media screen and (width < 812px){
+            .direction-control .dropdown {
+                white-space: nowrap;
+            }
+        }
+        @media screen and (768px < width < 992px){
+            #billeterie .header .img-background img.bg-lg,
+            #billeterie .header .img-background img.bg-sm{
+                display: none;
+            }
+        }
+        @media screen and (width < 768px){
+            #billeterie .header .img-background img.bg-lg,
+            #billeterie .header .img-background img.bg-md{
+                display: none;
+            }
+            .service-menu .row {
+                gap: .5rem;
+            }
+        }
+        @media screen and (width < 748px){
+            .direction-control {
+                flex: 1 0 100%;
+            }
+            .direction-control .dropdown {
+                width: 100%;
+            }
+            .dropdown .form-direction {
+                width: 100%;
+            }
+            #passager-control {
+                margin-top: 20px;
+            }
+        }
+        @media screen and (width < 721px){
+            section#liste-trajet {
+                padding: 0 0rem;
+            }
+            .direction-control .dropdown {
+                flex: 1 0;
+            }
+        }
+        @media screen and (width < 579px){
+            .date-container {
+                max-width: 100%;
+            }
+            .date-container:last-of-type {
+                margin-top: 20px;
+            }
+            #alert-frais-service {
+                padding: 5px;
+            }
+            #alert-frais-service i {
+                padding-right: 5px;
+            }
+            #alert-frais-service .prix {
+                font-size: 15px;
+                white-space: nowrap;
+            }
+            #listes-trajet-cards .card-trx-info .trx-heur .heur-itineraire span {
+                font-size: 15px;
+            }
+            #listes-trajet-cards .card-trx-info .trx-heur .heur-depart, #listes-trajet-cards .card-trx-info .trx-heur .heur-arrive, #listes-trajet-cards .card-trx-info .trx-heur .heur-itineraire {
+                font-size: 15px;
+            }
+            #listes-trajet-cards .card-trx-info .trx-lieux h2 {
+                font-size: 14px;
+            }
+            .trx-infos {
+                flex-direction: column;
+                gap: 5px;
+            }
+            .trx-infos .pill {
+                width: 100%;
+                justify-content: space-evenly;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+
+  <section id="billeterie">
+    <div class="header">
+        <div class="form-destination p-3">
+            <div class="row mb-3">
+                <div class="col-md-12 d-flex align-items-center gap-3">
+                    <div class="form-check destination">
+                        <input class="form-check-input green cursor-pointer" type="radio" name="checkDirection" id="allerSimple" checked>
+                        <label class="form-check-label cursor-pointer fw-bolder text-white" for="allerSimple">
+                            Aller simple
+                        </label>
+                    </div>
+                    <div class="form-check destination">
+                        <input class="form-check-input green cursor-pointer" type="radio" name="checkDirection" id="allerRetour" {{dataTrajet.date.retour ? 'checked' : ''}}>
+                        <label class="form-check-label cursor-pointer fw-bolder text-white" for="allerRetour">
+                            Aller-retour
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <form class="direction-form pt-3">
+                <div class="direction-control">
+                    <div class="dropdown">
+                        <label for="direx-depart">De</label>
+                        <i class="ti ti-map-pin text-white"></i>
+                        <input type="text" class="form-direction" id="direx-depart" placeholder="Paris" data-bs-toggle="dropdown" data-liste="#dropdown-menu-depart" aria-expanded="false">
+                        <input type="hidden" id="direx-depart-result" required>
+                        <div class="dropdown-menu">
+                            <div class="head">
+                                <i class="ti ti-building-skyscraper"></i> Lieux populaires
+                            </div>
+                            <ul class="dropdown-menu-all" id="dropdown-menu-depart"></ul>
+                        </div>
+                    </div>
+                    <div id="inversed">
+                        <i class="ti ti-arrows-left-right"></i>
+                    </div>
+                    <div class="dropdown">
+                        <label for="direx-arrive">À</label>
+                        <i class="ti ti-map-pin text-white"></i>
+                        <input type="text" class="form-direction" id="direx-arrive" placeholder="Lyon" data-bs-toggle="dropdown" data-liste="#dropdown-menu-arrive" aria-expanded="false">
+                        <input type="hidden" id="direx-arrive-result" required>
+                        <div class="dropdown-menu">
+                            <div class="head">
+                                <i class="ti ti-building-skyscraper"></i> Lieux populaires
+                            </div>
+                            <ul class="dropdown-menu-all" id="dropdown-menu-arrive"></ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="date-depart">
+                    <div class="date-container" data-date="#dateInputDepart">
+                        <label for="formattedDateDepart">Départ</label>
+                        <i class="ti ti-calendar-event"></i>
+                        <input type="text" class="form-control formattedDate" id="formattedDateDepart" readonly required>
+                        <i class="ti ti-chevron-left prevDay prevDayDepart"></i>
+                        <i class="ti ti-chevron-right nextDay nextDayDepart"></i>
+                        <input type="date" class="form-control dateInput" id="dateInputDepart">
+                    </div>
+                    <div class="date-container retour" data-date="#dateInputRetour">
+                        <label for="formattedRetour">Retour</label>
+                        <i class="ti ti-calendar-event"></i>
+                        <input type="text" class="form-control formattedDate" id="formattedRetour" readonly>
+                        <i class="ti ti-chevron-left prevDay prevDayRetour"></i>
+                        <i class="ti ti-chevron-right nextDay nextDayRetour"></i>
+                        <input type="date" class="form-control dateInput" id="dateInputRetour">
+                    </div>
+                </div>
+                <div id="passager-control">
+                    <div id="drop-control">
+                        <label for="passager">Passagers</label>
+                        <input type="text" value="1 adulte" placeholder="Veuillez ajouter des passagers" class="form-control" id="passager" required readonly>
+                        <i class="ti ti-chevron-down"></i>
+                    </div>
+                    <div class="drop" id="drop-modal">
+                        <div class="drop-option">
+                            <label for="adultes">Adultes</label>
+                            <div class="controls">
+                                <button type="button" class="ctrl-passager ctrl-minus" id="ctrl-minus-adult" data-input="#adultes" data-control="minus">
+                                    <i class="ti ti-minus"></i>
+                                </button>
+                                <input type="text" class="inputControlPassager" value="{{dataTrajet.passager.adulte}}" id="adultes" data-ctrlminus="#ctrl-minus-adult" data-ctrlplus="#ctrl-plus-adult">
+                                <button type="button" class="ctrl-passager ctrl-plus" id="ctrl-plus-adult" data-input="#adultes" data-control="plus">
+                                    <i class="ti ti-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="drop-option">
+                            <label for="adultes">Enfants <span>de 0 à 15 ans</span></label>
+                            <div class="controls">
+                                <button type="button" class="ctrl-passager ctrl-minus" id="ctrl-minus-enfant" data-input="#enfant" data-control="minus">
+                                    <i class="ti ti-minus"></i>
+                                </button>
+                                <input type="text" class="inputControlPassager" value="{{dataTrajet.passager.enfant}}" id="enfant" data-ctrlminus="#ctrl-minus-enfant" data-ctrlplus="#ctrl-plus-enfant">
+                                <button type="button" class="ctrl-passager ctrl-plus" id="ctrl-plus-enfant" data-input="#enfant" data-control="plus">
+                                    <i class="ti ti-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="drop-option">
+                            <label for="adultes">Vélos <span>Les trottinettes et vélos électriques ne sont pas autorisés dans les bus.</span></label>
+                            <div class="controls">
+                                <button type="button" class="ctrl-passager ctrl-minus" id="ctrl-minus-velo" data-input="#velo" data-control="minus">
+                                    <i class="ti ti-minus"></i>
+                                </button>
+                                <input type="text" class="inputControlPassager" value="{{dataTrajet.passager.velo}}" id="velo" data-ctrlminus="#ctrl-minus-velo" data-ctrlplus="#ctrl-plus-velo">
+                                <button type="button" class="ctrl-passager ctrl-plus" id="ctrl-minus-velo" data-input="#velo" data-control="plus">
+                                    <i class="ti ti-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+  </section>
+
+
+  <section id="liste-trajet">
+      <div id="trajetDepartSelect" class="card py-2 px-3 d-none"></div>
+      
+      <div id="date-options">
+        <div class="checkDateOption">
+            <h2 id="switch-date-prev">lun, 19 août</h2>
+            <input type="hidden" data-date="" class="check-date-input">
+        </div>
+        <div class="checkDateOption active">
+            <h2 id="switch-date-select">lun, 20 août</h2>
+            <input type="hidden" data-date="" class="check-date-input">
+        </div>
+        <div class="checkDateOption">
+            <h2 id="switch-date-next">lun, 21 août</h2>
+            <input type="hidden" data-date="" class="check-date-input">
+        </div>
+      </div>
+
+      <div id="titleTrajetSelect" class="px-0 pt-2 {{dataTrajet.date.retour ? '' : 'd-none'}}">
+        <h4 class="m-0 fw-bolder">Voyage aller</h4>
+      </div>
+
+      <div id="filtre-trajet">
+        <button><i class="ti ti-adjustments-horizontal"></i> Filtres</button>
+        <div class="direction">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="directUniquement">
+                <label class="form-check-label" for="directUniquement">
+                    Direct uniquement
+                </label>
+            </div>
+        </div>
+        <div class="nombre-trajet">
+            {{ include('FrontOffice/billeteries/NombreTrajet.html.twig', trajets) }}
+        </div>
+      </div>
+
+    {% if trajets.global_platform_fees is defined and trajets.global_platform_fees[0] is defined %}
+        {% set globalPlatformFees = trajets.global_platform_fees[0] %}
+        <div class="alert alert-primary d-flex align-items-center" role="alert" id="alert-frais-service">
+            <i class="ti ti-alert-circle"></i>
+            <div>Des frais de service seront ajoutés à chaque réservation.</div>
+            <h2 class="prix">{{globalPlatformFees.fee_amount}} €</h2>
+        </div>
+    {% endif %}
+
+    <div id="listes-trajet-cards">
+        {{ include('FrontOffice/billeteries/listesTrajetCards.html.twig', {trajets, suggest}) }}
+    </div>
+  </section>
+{% endblock %}
+
+{% block javascripts %}
+  {{ parent() }}
+
+    <script>
+        $(document).ready(function() {
+            const $cities     = {{ cities|json_encode|raw }};
+            const $stations   = {{ stations|json_encode|raw }};
+            let $dataTrajet   = {{ dataTrajet|json_encode|raw }};
+            const $passeport  = {{ passeport|json_encode|raw }};
+            const $suggest    = {{ suggest|json_encode|raw }};
+
+            let $type = "cities" // stations
+
+            console.log("passeport requis: ", $passeport);
+            console.log("suggestion: ", $suggest);
+
+            const pays = [
+                {afghanistan:"af"},{albania:"al"},{algeria:"dz"},{andorra:"ad"},{angola:"ao"},{argentina:"ar"},{armenia:"am"},{australia:"au"},{austria:"at"},{azerbaijan:"az"},{bahamas:"bs"},{bahrain:"bh"},{bangladesh:"bd"},{barbados:"bb"},{belarus:"by"},{belgium:"be"},{belize:"bz"},{benin:"bj"},{bhutan:"bt"},{bolivia:"bo"},{bosnia_and_herzegovina:"ba"},{botswana:"bw"},{brazil:"br"},{brunei:"bn"},{bulgaria:"bg"},{burkina_faso:"bf"},{burundi:"bi"},{cabo_verde:"cv"},{cambodia:"kh"},{cameroon:"cm"},{canada:"ca"},{central_african_republic:"cf"},{chad:"td"},{chile:"cl"},{china:"cn"},{colombia:"co"},{comoros:"km"},{congo_democratic_republic:"cd"},{congo_republic:"cg"},{costa_rica:"cr"},{cote_d_ivoire:"ci"},{croatia:"hr"},{cuba:"cu"},{cyprus:"cy"},{czech_republic:"cz"},{denmark:"dk"},{djibouti:"dj"},{dominica:"dm"},{dominican_republic:"do"},{east_timor:"tl"},{ecuador:"ec"},{egypt:"eg"},{el_salvador:"sv"},{equatorial_guinea:"gq"},{eritrea:"er"},{estonia:"ee"},{eswatini:"sz"},{ethiopia:"et"},{fiji:"fj"},{finland:"fi"},{france:"fr"},{gabon:"ga"},{gambia:"gm"},{georgia:"ge"},{germany:"de"},{ghana:"gh"},{greece:"gr"},{grenada:"gd"},{guatemala:"gt"},{guinea:"gn"},{guinea_bissau:"gw"},{guyana:"gy"},{haiti:"ht"},{honduras:"hn"},{hungary:"hu"},{iceland:"is"},{india:"in"},{indonesia:"id"},{iran:"ir"},{iraq:"iq"},{ireland:"ie"},{israel:"il"},{italy:"it"},{jamaica:"jm"},{japan:"jp"},{jordan:"jo"},{kazakhstan:"kz"},{kenya:"ke"},{kiribati:"ki"},{korea_north:"kp"},{korea_south:"kr"},{kosovo:"xk"},{kuwait:"kw"},{kyrgyzstan:"kg"},{laos:"la"},{latvia:"lv"},{lebanon:"lb"},{lesotho:"ls"},{liberia:"lr"},{libya:"ly"},{liechtenstein:"li"},{lithuania:"lt"},{luxembourg:"lu"},{madagascar:"mg"},{malawi:"mw"},{malaysia:"my"},{maldives:"mv"},{mali:"ml"},{malta:"mt"},{marshall_islands:"mh"},{mauritania:"mr"},{mauritius:"mu"},{mexico:"mx"},{micronesia:"fm"},{moldova:"md"},{monaco:"mc"},{mongolia:"mn"},{montenegro:"me"},{morocco:"ma"},{mozambique:"mz"},{myanmar:"mm"},{namibia:"na"},{nauru:"nr"},{nepal:"np"},{netherlands:"nl"},{new_zealand:"nz"},{nicaragua:"ni"},{niger:"ne"},{nigeria:"ng"},{north_macedonia:"mk"},{norway:"no"},{oman:"om"},{pakistan:"pk"},{palau:"pw"},{panama:"pa"},{papua_new_guinea:"pg"},{paraguay:"py"},{peru:"pe"},{philippines:"ph"},{poland:"pl"},{portugal:"pt"},{qatar:"qa"},{romania:"ro"},{russia:"ru"},{rwanda:"rw"},{saint_kitts_and_nevis:"kn"},{saint_lucia:"lc"},{saint_vincent_and_the_grenadines:"vc"},{samoa:"ws"},{san_marino:"sm"},{sao_tome_and_principe:"st"},{saudi_arabia:"sa"},{senegal:"sn"},{serbia:"rs"},{seychelles:"sc"},{sierra_leone:"sl"},{singapore:"sg"},{slovakia:"sk"},{slovenia:"si"},{solomon_islands:"sb"},{somalia:"so"},{south_africa:"za"},{south_sudan:"ss"},{spain:"es"},{sri_lanka:"lk"},{sudan:"sd"},{suriname:"sr"},{sweden:"se"},{switzerland:"ch"},{syria:"sy"},{taiwan:"tw"},{tajikistan:"tj"},{tanzania:"tz"},{thailand:"th"},{timor_leste:"tl"},{togo:"tg"},{tonga:"to"},{trinidad_and_tobago:"tt"},{tunisia:"tn"},{turkey:"tr"},{turkmenistan:"tm"},{tuvalu:"tv"},{uganda:"ug"},{ukraine:"ua"},{united_arab_emirates:"ae"},{united_kingdom:"gb"},{united_states:"us"},{uruguay:"uy"},{uzbekistan:"uz"},{vanuatu:"vu"},{vatican_city:"va"},{venezuela:"ve"},{vietnam:"vn"},{yemen:"ye"},{zambia:"zm"},{zimbabwe:"z"}
+            ];
+
+            const $initBest = ["Paris", "Lyon", "Marseille", "Lille", "Strasbourg", "Berlin", "Munich", "Milan"]
+            const $initCity = ["Paris", "Lyon"]
+            let $bestLieux;
+
+            let isRequestInProgress = false;
+
+            let $trajetType = "direct"
+
+            function nomPays(code) {
+                let nomPays = "";
+                $.each(pays, function (index, obj) {
+                    if (Object.values(obj).includes(code.toLowerCase())) {
+                        nomPays = Object.keys(obj)[0];
+                        return false;
+                    }
+                });
+                return nomPays;
+            }
+
+            function codePays(nom) {
+                let code = "";
+                $.each(pays, function (index, obj) {
+                    if (Object.keys(obj).includes(nom)) {
+                        code = obj[nom];
+                        return false;
+                    }
+                });
+                return code;
+            }
+
+            function initInputCitie(){
+                console.log("dataTrajet", $dataTrajet);
+
+                $("#direx-depart").attr('placeholder', $dataTrajet.city.depart.name)
+                $("#direx-depart-result").val($dataTrajet.city.depart.name)
+                $('#direx-depart-result').data("id", $dataTrajet.city.depart.id)
+                $('#direx-depart-result').data("type", 'city')
+                $('#direx-depart-result').data("name", $dataTrajet.city.depart.name)
+
+                $("#direx-arrive").attr('placeholder', $dataTrajet.city.arrive.name)
+                $("#direx-arrive-result").val($dataTrajet.city.arrive.name)
+                $('#direx-arrive-result').data("id", $dataTrajet.city.arrive.id)
+                $('#direx-arrive-result').data("type", 'citie')
+                $('#direx-arrive-result').data("name", $dataTrajet.city.arrive.name)
+            }
+
+            // datepicker
+            function formatDate(date) {
+                const daysOfWeek = ["di", "lu", "ma", "me", "je", "ve", "sa"];
+                const months = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
+
+                const dayOfWeek = daysOfWeek[date.getDay()];
+                const dayOfMonth = date.getDate();
+                const month = months[date.getMonth()];
+
+                return `${dayOfWeek}, ${dayOfMonth} ${month}`;
+            }
+
+            function setDateLimits() {
+                var today = new Date();
+                var todayISO = today.toISOString().split('T')[0];
+
+                var setDateAller = dateFormat($dataTrajet.date.aller, 'Y-m-d')
+                var setDateAller = new Date(setDateAller);
+                var setdayISOAller = setDateAller.toISOString().split('T')[0];
+                $('#dateInputDepart').attr('min', todayISO);
+                $('#dateInputDepart').val(setdayISOAller); 
+                $('#formattedDateDepart').val(formatDate(setDateAller));
+                $('#switch-date-select').text(formatDate(setDateAller))
+
+                var nextDay = new Date(setDateAller);
+                    nextDay.setDate(setDateAller.getDate() + 1);
+
+                var prevDay = new Date(setDateAller);
+                    prevDay.setDate(setDateAller.getDate() - 1);
+
+                if($dataTrajet.date.retour) {
+                    var setDateRetour = dateFormat($dataTrajet.date.retour, 'Y-m-d')
+                    var setDateRetour = new Date(setDateRetour);
+                    var setdayISORetour = setDateRetour.toISOString().split('T')[0];
+                    $('#dateInputRetour').attr('min', todayISO);
+                    $('#dateInputRetour').val(setdayISORetour); 
+                    $('#formattedRetour').val(formatDate(setDateRetour));
+                } else {
+                    $('#dateInputRetour').attr('min', todayISO);
+                    $('#dateInputRetour').val(nextDay.toISOString().split('T')[0]);
+                    $('#formattedRetour').val(formatDate(nextDay));
+                }
+
+                $('#switch-date-prev').text(formatDate(prevDay));
+                $('#switch-date-next').text(formatDate(nextDay));
+                
+            }
+
+            function updateSwitchDate() {
+                const newDate = new Date($('#dateInputDepart').val())
+                
+                const newNextDay = new Date(newDate);
+                newNextDay.setDate(newNextDay.getDate() + 1);
+                
+                const newPrevDay = new Date(newDate);
+                newPrevDay.setDate(newPrevDay.getDate() - 1);
+
+                $('#switch-date-select').text(formatDate(newDate))
+                $('#switch-date-prev').text(formatDate(newPrevDay));
+                $('#switch-date-next').text(formatDate(newNextDay));
+            }
+
+            function adjustDate(days, inputId, formattedId) {
+                var dateValue = $(`#${inputId}`).val();
+                var minDate = new Date($(`#${inputId}`).attr('min'));
+
+                if (dateValue) {
+                    var currentDate = new Date(dateValue);
+                    if (!isNaN(currentDate.getTime())) { 
+                        currentDate.setDate(currentDate.getDate() + days);
+
+                        if (currentDate < minDate) {
+                            currentDate = minDate; 
+                        }
+
+                        $(`#${inputId}`).val(currentDate.toISOString().split('T')[0]);
+                        $(`#${formattedId}`).val(formatDate(currentDate));
+                    } else {
+                        $(`#${inputId}`).val(minDate.toISOString().split('T')[0]);
+                        $(`#${formattedId}`).val(formatDate(minDate));
+                    }
+                } else {
+                    $(`#${inputId}`).val(minDate.toISOString().split('T')[0]);
+                    $(`#${formattedId}`).val(formatDate(minDate));
+                }
+
+                if (inputId === 'dateInputDepart') {
+                    updateRetourMinDate(currentDate);
+                }
+                checkNewListeTrajet()
+            }
+
+            function updateRetourMinDate(departDate) {
+                var retourMinDate = new Date(departDate);
+                retourMinDate.setDate(retourMinDate.getDate() + 1);
+                $('#dateInputRetour').attr('min', retourMinDate.toISOString().split('T')[0]);
+
+                var retourDate = new Date($('#dateInputRetour').val());
+                if (retourDate < retourMinDate) {
+                    $('#dateInputRetour').val(retourMinDate.toISOString().split('T')[0]);
+                    $('#formattedRetour').val(formatDate(retourMinDate));
+                }
+            }
+
+            function updateFormattedDate(inputId, formattedId) {
+                var dateValue = $(`#${inputId}`).val();
+                if (dateValue) {
+                    var selectedDate = new Date(dateValue);
+                    if (!isNaN(selectedDate.getTime())) { 
+                        $(`#${formattedId}`).val(formatDate(selectedDate));
+                    } else {
+                        $(`#${formattedId}`).val(""); 
+                    }
+                } else {
+                    $(`#${formattedId}`).val(""); 
+                }
+            }
+
+            function findBestLieux(tableau, motsCles) {
+                let regex = new RegExp(`^(${motsCles.join('|')})$`, 'i');
+                return $(tableau).filter(function() {
+                    return regex.test(this.name);
+                }).get();
+            }
+
+            function filterLieux(query, ...arrays) {
+                let regex = new RegExp(query, 'i'); // Expression régulière insensible à la casse
+                let combinedResults = [];
+
+                arrays.forEach(array => {
+                    array.forEach(item => {
+                        if (regex.test(item.name) && !combinedResults.some(result => result.name === item.name)) {
+                            combinedResults.push(item);
+                        }
+                    });
+                });
+
+                return combinedResults.slice(0, 20);
+            }
+
+            function filterListeLieux(search, cities, stations) {
+                let regex = new RegExp(search, 'i'); // Expression régulière insensible à la casse
+                const limit = 20;
+                const limitPerArray = limit / 2;
+
+                let filteredCities = cities.filter(citie => regex.test(citie.name));
+                let filteredStations = stations.filter(station => regex.test(station.name));
+
+                // Limiter les résultats à 10 par tableau
+                let citiesLimit = Math.min(filteredCities.length, limitPerArray);
+                let stationsLimit = Math.min(filteredStations.length, limitPerArray);
+
+                // Ajuster la limite pour compléter jusqu'à 20 résultats au total si possible
+                if (citiesLimit < limitPerArray) {
+                    stationsLimit = Math.min(filteredStations.length, limit - citiesLimit);
+                } else if (stationsLimit < limitPerArray) {
+                    citiesLimit = Math.min(filteredCities.length, limit - stationsLimit);
+                }
+
+                // Extraire les résultats filtrés avec la limite ajustée
+                filteredCities = filteredCities.slice(0, citiesLimit);
+                filteredStations = filteredStations.slice(0, stationsLimit);
+
+                return {
+                    cities: filteredCities,
+                    stations: filteredStations
+                };
+            }
+
+            function updateResults(content, cities, stations) {
+                let $resultsContainer = $(content);
+
+                $resultsContainer.empty(); // Vider les résultats précédents
+
+                cities.forEach(citie => {
+                    $resultsContainer.append(`
+                    <li>
+                        <a class="dropdown-item cities" data-code="${citie.country.alpha2_code}" data-id="${citie.id}" data-type="cities" data-name="${citie.name}" href="javascript:void(0)">
+                            <span>${citie.name}</span>
+                            <span>${nomPays(citie.country.alpha2_code)}</span>
+                        </a>
+                    </li>`);
+                });
+
+                stations.forEach(station => {
+                    $resultsContainer.append(`
+                    <li>
+                        <a class="dropdown-item stations px-3" data-code="${station.country.alpha2_code}" data-id="${station.id}" data-type="stations" data-name="${station.name}" href="javascript:void(0)">
+                            <span><i class="ti ti-${station.train_station ? 'train' : 'bus'}"></i> ${station.name}</span>
+                        </a>
+                    </li>`);
+                });
+            }
+
+            // Fonction à exécuter lors de l'événement keyup
+            function handleKeyup(event) {
+                let search       = $(this).val();
+                let contentListe = $(this).data('liste');
+
+                $('.lieuxPopulaire').html('<i class="ti ti-building-skyscraper"></i>Recherche lieux')
+                
+                let filteredResults = filterListeLieux(search, $cities, $stations);
+                updateResults(contentListe, filteredResults.cities, filteredResults.stations);
+            }
+
+            function dateFormat(date, format) {
+                let dateParts;
+
+                if (date.includes('.')) {
+                    dateParts = date.split('.');
+                    date = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
+                }
+
+                let dateformated = new Date(date);
+                let Y = dateformated.getFullYear();
+                let m = ("0" + (dateformated.getMonth() + 1)).slice(-2);
+                let d = ("0" + dateformated.getDate()).slice(-2);
+                return format.replace('Y', Y).replace('m', m).replace('d', d);
+            }
+
+            function verifDirex(direx, val) {
+                const valDe = $("#direx-depart").attr('placeholder')
+                const valDa = $("#direx-arrive").attr('placeholder')
+                
+                let newVal;
+
+                if (direx === "direx-depart") {
+                    if (val === valDa) {
+                        do {
+                            newVal = $bestLieux[Math.floor(Math.random() * $bestLieux.length)];
+                        } while (newVal === val);
+                        $("#direx-arrive").attr('placeholder', newVal.name)
+                        $('direx-arrive-result').val(newVal.name)
+                        $('direx-arrive-result').data("id", newVal.id)
+                        $('direx-arrive-result').data("type", 'cities')
+                        $('direx-arrive-result').data("name", newVal.name)
+                    }
+                } else {
+                    if (val === valDe) {
+                        do {
+                            newVal = $bestLieux[Math.floor(Math.random() * $bestLieux.length)];
+                        } while (newVal === val);
+                        $("#direx-depart").attr('placeholder', newVal.name)
+                        $('#direx-depart-result').val(newVal.name)
+                        $('#direx-depart-result').data("id", newVal.id)
+                        $('#direx-depart-result').data("type", 'cities')
+                        $('#direx-depart-result').data("name", newVal.name)
+                    }
+                }
+                checkNewListeTrajet()
+            }
+
+            function inverseDirection() {
+                const placeholderDirexDe = $("#direx-depart").attr('placeholder')
+                const direxDe = $("#direx-depart-result").val()
+                const idDe    = $('#direx-depart-result').data("id")
+                const typeDe  = $('#direx-depart-result').data("type")
+                const nameDe  = $('#direx-depart-result').data("name")
+                
+                const placeholderDirexA = $("#direx-arrive").attr('placeholder')
+                const direxA = $("#direx-arrive-result").val()
+                const idA    = $('#direx-arrive-result').data("id")
+                const typeA  = $('#direx-arrive-result').data("type")
+                const nameA  = $('#direx-arrive-result').data("name")
+
+                $("#direx-depart").attr('placeholder', placeholderDirexA)
+                $("#direx-depart-result").val(direxA)
+                $('#direx-depart-result').data("id", idA)
+                $('#direx-depart-result').data("type", typeA)
+                $('#direx-depart-result').data("name", nameA)
+
+                $("#direx-arrive").attr('placeholder', placeholderDirexDe)
+                $("#direx-arrive-result").val(direxDe)
+                $('#direx-arrive-result').data("id", idDe)
+                $('#direx-arrive-result').data("type", typeDe)
+                $('#direx-arrive-result').data("name", nameDe)
+            }
+
+            function checkPassager() {
+                $('.inputControlPassager').each(function(){
+                    const value = parseInt($(this).val());
+                    const controlMinus = $(this).data('ctrlminus');
+                    $(controlMinus).prop('disabled', value <= 0);
+                });
+                listPassagerValue()
+            }
+
+            function listPassagerValue() {
+                const adulte = parseInt($("#adultes").val())
+                const enfant = parseInt($("#enfant").val())
+                const velo = parseInt($("#velo").val())
+
+                let resultArray = [];
+
+                if (adulte > 0) {
+                    resultArray.push(`${adulte} adulte${adulte > 1 ? 's' : ''}`);
+                }
+                if (enfant > 0) {
+                    resultArray.push(`${enfant} enfant${enfant > 1 ? 's' : ''}`);
+                }
+                if (velo > 0) {
+                    resultArray.push(`${velo} vélo${velo > 1 ? 's' : ''}`);
+                }
+
+                const resultText = resultArray.join(', ');
+
+                $("#passager").val(resultText);
+            }
+
+            /* send request */
+            function sendRequest(method = "POST", url, data = null) {
+                return new Promise((resolve, reject) => {
+                    const request = $.ajax({
+                        type: method,
+                        url: url,
+                        data: data,
+                        // beforeSend: function () {
+                        //     $('.direction-form').addClass("load")
+                        // }
+                    });
+
+                    request.done(function (response) {
+                        resolve(response);
+                    });
+
+                    request.fail(function (error) {
+                        reject(error);
+                    });
+
+                    request.always(function () {
+                        // $('.direction-form').removeClass("load")
+                    });
+                });
+            }
+
+            function redirectToReservation(url, reservation) {
+                // Créer un formulaire temporaire
+                var form = $('<form>', {
+                    'method': 'POST',
+                    'action': url
+                });
+
+                $('<input>').attr({'type': 'hidden','name': 'reservation','value': JSON.stringify(reservation)}).appendTo(form);
+                $('<input>').attr({'type': 'hidden','name': 'typeTrajet','value': $trajetType}).appendTo(form);
+                $('<input>').attr({'type': 'hidden','name': 'passeport','value': JSON.stringify($passeport)}).appendTo(form);
+
+                form.appendTo('body').submit();
+            }
+
+            function checkNewListeTrajet() {
+                $('.direction-form').submit();
+                $('html').addClass('load')
+                updateSwitchDate()
+            }
+
+            function formatHeure(heure) {
+
+                const date = new Date(heure.timestamp * 1000);
+
+                const timezoneOffset = parseInt(heure.tz.replace('GMT+', '').replace(':00', ''), 10);
+
+                const hours = date.getUTCHours() + timezoneOffset; // GMT+02:00
+                const minutes = date.getUTCMinutes();
+
+                const formattedTime = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+
+                return formattedTime
+            }
+
+            (async function() {
+                $bestLieux = findBestLieux($cities, $initBest);
+
+                initInputCitie()
+
+                $.each($bestLieux, function(index, best) {
+                    $('.dropdown-menu-all').append(`
+                    <li>
+                        <a class="dropdown-item" data-code="${best.country.alpha2_code}" data-id="${best.id}" data-type="cities" data-name="${best.name}" href="javascript:void(0)">
+                            <span>${best.name}</span>
+                            <span>${nomPays(best.country.alpha2_code)}</span>
+                        </a>
+                    </li>`);
+                });
+
+                if($('#allerRetour').is(':checked')) {
+                    $trajetType = "allerRetour"
+                    $('.direction-form, .header').addClass('aller-retour')
+                } else {
+                    $trajetType = "direct"
+                    $('.direction-form, .header').removeClass('aller-retour')
+                }
+            })();
+
+            /* get liste villes */
+            async function getListeville() {
+                try {
+                    const response = await sendRequest("POST", "/liste-villes");
+                    if (response) {
+                        $('.loadCity').hide()
+                        return response.villes
+                    } else {
+                        notification('warning', "Erreur lors de la récupération des listes des villes.")
+                        console.warn("Erreur lors de la récupération des listes des villes.");
+                    }
+                } catch (error) {
+                    notification('warning', "Erreur lors de la récupération des listes des villes.")
+                    console.error("Erreur lors de la récupération des listes des villes :", error);
+                }
+            }
+
+            /* get liste station par villes */
+            async function getListeStationParVilles() {
+                try {
+                    const response = await sendRequest("POST", "/liste-station-par-villes");
+                    if (response) {
+                        console.log(response);
+                        return response.stations
+                    } else {
+                        notification('warning', "Erreur lors de la récupération des listes des stations par villes.")
+                        console.warn("Erreur lors de la récupération des listes des stations par villes.");
+                    }
+                } catch (error) {
+                    notification('warning', "Erreur lors de la récupération des listes des stations par villes.")
+                    console.error("Erreur lors de la récupération des listes des stations par villes :", error);
+                }
+            }
+
+            /* get liste station par villes */
+            async function getListeStationParVilles() {
+                try {
+                    const response = await sendRequest("POST", "/liste-station-par-villes");
+                    if (response) {
+                        console.log(response);
+                        return response.stations
+                    } else {
+                        notification('warning', "Erreur lors de la récupération des listes des stations par villes.")
+                        console.warn("Erreur lors de la récupération des listes des stations par villes.");
+                    }
+                } catch (error) {
+                    notification('warning', "Erreur lors de la récupération des listes des stations par villes.")
+                    console.error("Erreur lors de la récupération des listes des stations par villes :", error);
+                }
+            }
+
+            /* get trajet */
+            async function getTrajet(infoTrajet) {
+                $('.direction-form').addClass("load")
+
+                let dataTrajet = {
+                    type       : infoTrajet.type,
+                    depart     : infoTrajet.city.depart.id,
+                    arrive     : infoTrajet.city.arrive.id,
+                    dateDepart : infoTrajet.date.aller,
+                    dateArrive : infoTrajet.date.retour,
+                    nbrAdult   : infoTrajet.passager.adulte,
+                    nbrChild   : infoTrajet.passager.enfant,
+                    nbrBike    : infoTrajet.passager.velo
+                }
+
+                try {
+                    const response = await sendRequest("POST", "/liste-recherche-voyage", dataTrajet);
+                    if (response.voyages) {
+                        redirectWithData("/listes-trajet", infoTrajet, response.voyages)
+                        if(dataTrajet.dateArrive) {
+                            getTrajetRetour(dataTrajet)
+                        }
+                    } else {
+                        $('.direction-form').removeClass("load")
+                        notification('warning', "Erreur lors de la récupération des listes des trajets.")
+                        console.warn("Erreur lors de la récupération des listes des trajets.");
+                    }
+                } catch (error) {
+                    $('.direction-form').removeClass("load")
+                    notification('warning', "Erreur lors de la récupération des listes des trajets.")
+                    console.error("Erreur lors de la récupération des listes des trajets :", error);
+                }
+            }
+            /* get trajet */
+            async function getTrajetRetour(infoTrajet) {
+                console.log('get trajet retour');
+                $('.direction-form').addClass("load")
+
+                let dataTrajet = {
+                    type       : infoTrajet.type,
+                    depart     : infoTrajet.city.arrive.id,
+                    arrive     : infoTrajet.city.depart.id,
+                    dateDepart : infoTrajet.date.retour,
+                    dateArrive : "",
+                    nbrAdult   : infoTrajet.passager.adulte,
+                    nbrChild   : infoTrajet.passager.enfant,
+                    nbrBike    : infoTrajet.passager.velo
+                }
+
+                try {
+                    const response = await sendRequest("POST", "/liste-recherche-voyage", dataTrajet);
+                    if (response.voyages) {
+                        console.log('voyage retour:', response.voyages);
+                        // redirectWithDataRetour("/listes-trajet", infoTrajet, response.voyages)
+                    } else {
+                        $('.direction-form').removeClass("load")
+                        notification('warning', "Erreur lors de la récupération des listes des trajets retour.")
+                        console.warn("Erreur lors de la récupération des listes des trajets retour.");
+                    }
+                } catch (error) {
+                    $('.direction-form').removeClass("load")
+                    notification('warning', "Erreur lors de la récupération des listes des trajets retour.")
+                    console.error("Erreur lors de la récupération des listes des trajets retour :", error);
+                }
+            }
+            /* get trajet */
+            async function initTrajetRetour(infoTrajet) {
+                console.log('get trajet retour');
+
+                let dataTrajet = {
+                    type       : infoTrajet.type,
+                    depart     : infoTrajet.city.arrive.id,
+                    arrive     : infoTrajet.city.depart.id,
+                    dateDepart : infoTrajet.date.retour,
+                    dateArrive : "",
+                    nbrAdult   : infoTrajet.passager.adulte,
+                    nbrChild   : infoTrajet.passager.enfant,
+                    nbrBike    : infoTrajet.passager.velo
+                }
+
+                let newData = {
+                    type : infoTrajet.cities,
+                    city : {
+                        depart: infoTrajet.city.arrive,
+                        arrive: infoTrajet.city.depart
+                    },
+                    date : {
+                        aller  : infoTrajet.date.retour,
+                        retour : ""
+                    },
+                    passager : infoTrajet.passager
+                }
+
+                try {
+                    const response = await sendRequest("POST", "/liste-recherche-voyage", dataTrajet);
+                    if (response.voyages) {
+                        redirectWithDataRetour("/listes-trajet-retour", newData, response.voyages)
+                    } else {
+                        $('.direction-form').removeClass("load")
+                        notification('warning', "Erreur lors de la récupération des listes des trajets retour.")
+                        console.warn("Erreur lors de la récupération des listes des trajets retour.");
+                    }
+                } catch (error) {
+                    $('.direction-form').removeClass("load")
+                    notification('warning', "Erreur lors de la récupération des listes des trajets retour.")
+                    console.error("Erreur lors de la récupération des listes des trajets retour :", error);
+                }
+            }
+
+            /* ajout réservation retour */
+            async function addReservationRetour(uid) {
+                $('.direction-form').addClass("load")
+
+                const dataReservation = {
+                    uid : uid
+                }
+
+                try {
+                    const response = await sendRequest("POST", "/ajout-retour-reservation", dataReservation);
+                    if (response) {
+                        $('.direction-form').removeClass("load")
+                        $('.continuer').removeAttr('disabled')
+                        $('.spinner-border').remove()
+                        redirectToReservation('/checkout', response.reservation)
+                    } else {
+                        $('.direction-form').removeClass("load")
+                        notification('warning', "Erreur lors de la reservation.")
+                        console.warn("Erreur lors de la reservation.");
+                    }
+                } catch (error) {
+                    $('.direction-form').removeClass("load")
+                    notification('warning', "Erreur lors de la reservation.")
+                    console.error("Erreur lors de la reservation :", error);
+                }
+            }
+
+            /* ajout réservation */
+            async function addReservation(uid) {
+                $('.direction-form').addClass("load")
+
+                const dataReservation = {
+                    uid : uid
+                }
+
+                try {
+                    const response = await sendRequest("POST", "/ajout-reservation", dataReservation);
+                    if (response) {
+                        if($dataTrajet.date.retour) {
+                            const keys = Object.keys(response.reservation.cart.items);
+                            const reservationInfo = response.reservation.cart.items[keys[0]]
+                            const departure = reservationInfo.departure
+                            const arrival   = reservationInfo.arrival
+
+                            const heureDepart = formatHeure(departure)
+                            const heureArrive = formatHeure(arrival)
+
+                            const from = reservationInfo.from.name
+                            const to   = reservationInfo.to.name
+                            
+                            const timestampMs = departure.timestamp * 1000;
+                            const date = new Date(timestampMs);
+                            const dateDepart = formatDate(date);
+
+                            $('#trajetDepartSelect').removeClass('d-none').empty().html(`
+                                <h4>Trajet de départ sélectionné</h4>
+                                <p class="mb-1">${dateDepart} | ${heureDepart} — ${heureArrive}</p>
+                                <p class="mb-1">${from} <i class="ti ti-arrow-right"></i> ${to}</p>
+                            `)
+
+                            $('#titleTrajetSelect').removeClass('d-none').empty().html(`
+                                <h4 class="m-0 fw-bolder">Trajet du retour</h4>
+                            `)
+
+                            initTrajetRetour($dataTrajet)
+
+                            $("#listes-trajet-cards").html(`
+                                <div class="card card-load-trajet">
+                                    <div class="card-body">
+                                        <h2></h2>
+                                        <span></span>
+                                        <div class="content-load">
+                                            <span></span>
+                                            <span></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            `)
+
+                            notification('success', "Le Trajet de départ a été enregistré avec succès. Veuillez maintenant sélectionner le Trajet du retour.")
+                        } else {
+                            redirectToReservation('/checkout', response.reservation)
+                        }
+                    } else {
+                        $('.direction-form').removeClass("load")
+                        notification('warning', "Erreur lors de la reservation.")
+                        console.warn("Erreur lors de la reservation.");
+                    }
+                } catch (error) {
+                    $('.direction-form').removeClass("load")
+                    notification('warning', "Erreur lors de la reservation.")
+                    console.error("Erreur lors de la reservation :", error);
+                }
+            }
+
+            async function redirectWithData(url, data, trajet) {
+                const dataListeTrajet = {
+                    data   : JSON.stringify(data),
+                    trajet : JSON.stringify(trajet)
+                }
+                try {
+                    const response = await sendRequest("POST", url, dataListeTrajet);
+                    if (response) {
+                        $dataTrajet = response.dataTrajet
+                        if($dataTrajet.date.retour) {
+                            $('.direction-form').removeClass("load")
+                            $('#titleTrajetSelect').removeClass('d-none').empty().html(`
+                                <h4 class="m-0 fw-bolder">Voyage aller</h4>
+                            `)
+                        } else {
+                            $('#titleTrajetSelect').addClass('d-none')
+                        }
+                        $('.direction-form').removeClass("load")
+                        $('html').removeClass('load');
+                        $(".nombre-trajet").html(response.nombreTrajet)
+                        $("#listes-trajet-cards").html(response.listesTrajetCards)
+                    } else {
+                        $('.direction-form').removeClass("load")
+                        $('html').removeClass('load');
+                        notification('warning', "Erreur lors de la récupération des listes des stations par villes.")
+                        console.warn("Erreur lors de la récupération des listes des stations par villes.");
+                    }
+                } catch (error) {
+                    $('.direction-form').removeClass("load")
+                    $('html').removeClass('load');
+                    notification('warning', "Erreur lors de la récupération des listes des stations par villes.")
+                    console.error("Erreur lors de la récupération des listes des stations par villes :", error);
+                }
+            }
+
+            async function redirectWithDataRetour(url, data, trajet) {
+                const dataListeTrajet = {
+                    data   : JSON.stringify(data),
+                    trajet : JSON.stringify(trajet)
+                }
+
+                try {
+                    const response = await sendRequest("POST", url, dataListeTrajet);
+                    if (response) {
+                        $(".nombre-trajet").html(response.nombreTrajet)
+                        $("#listes-trajet-cards").html(response.listesTrajetCards)
+                    } else {
+                        $('.direction-form').removeClass("load")
+                        notification('warning', "Erreur lors de la récupération des listes des trajets du retour.")
+                        console.warn("Erreur lors de la récupération des listes des trajets du retour.");
+                    }
+                } catch (error) {
+                    notification('warning', "Erreur lors de la récupération des listes des trajets du retour.")
+                    console.error("Erreur lors de la récupération des listes des trajets du retour :", error);
+                }
+            }
+
+            setDateLimits();
+
+            checkPassager();
+
+            $('.inputControlPassager').on('blur', function () {
+                if($.isNumeric($(this).val())) {
+                    checkPassager()
+                } else {
+                    $(this).val(0)
+                }
+            })
+
+            $('.inputControlPassager').on('input', function () {
+                checkPassager()
+            })
+
+            // select direction
+            $('#allerSimple, #allerRetour').change(function() {
+                if ($('#allerRetour').is(':checked')) {
+                    $trajetType = "allerRetour"
+                    $('.direction-form, .header').addClass('aller-retour')
+                } else {
+                    $trajetType = "direct"
+                    $('.direction-form, .header').removeClass('aller-retour')
+                }
+                checkNewListeTrajet()
+            });
+
+            $('#dateInputDepart').change(function() {
+                updateFormattedDate('dateInputDepart', 'formattedDateDepart');
+                updateRetourMinDate(new Date($(this).val()));
+                checkNewListeTrajet()
+            });
+
+            $('#dateInputRetour').change(function() {
+                updateFormattedDate('dateInputRetour', 'formattedRetour');
+                checkNewListeTrajet()
+            });
+
+            $('#direx-depart').on('keyup', handleKeyup);
+
+            $('#direx-arrive').on('keyup', handleKeyup);
+
+            $('.prevDayDepart, #switch-date-prev').click(function() {
+                adjustDate(-1, 'dateInputDepart', 'formattedDateDepart');
+            });
+
+            $('.nextDayDepart, #switch-date-next').click(function() {
+                adjustDate(1, 'dateInputDepart', 'formattedDateDepart');
+            });
+
+            $('.prevDayRetour').click(function() {
+                adjustDate(-1, 'dateInputRetour', 'formattedRetour');
+            });
+
+            $('.nextDayRetour').click(function() {
+                adjustDate(1, 'dateInputRetour', 'formattedRetour');
+            });
+
+            $('.date-container').click(function() {
+                const date = $(this).data('date')
+                $(date)[0].showPicker();
+            });
+
+            // direction
+            $('#inversed').click(function() {
+                $(this).toggleClass('change');
+                inverseDirection()
+            });
+
+            $(document).on('click', '#dropdown-menu-depart .dropdown-item', function() {
+                const direx = $(this).data('name');
+                const id = $(this).data('id');
+                const type = $(this).data('type');
+                const name = $(this).data('name');
+                const code = $(this).data('code');
+
+                $passeport.depart = code;
+
+                $('#direx-depart').val("")
+                $('#direx-depart').attr('placeholder', direx);
+
+                $('#direx-depart-result').val(direx)
+                $('#direx-depart-result').data("id", id)
+                $('#direx-depart-result').data("type", type)
+                $('#direx-depart-result').data("name", name)
+
+                verifType(type)
+                verifDirex("direx-depart", direx)
+            });
+            
+            $(document).on('click', '#dropdown-menu-arrive .dropdown-item', function() {
+                const direx = $(this).data('name');
+                const id = $(this).data('id');
+                const type = $(this).data('type');
+                const name = $(this).data('name');
+                const code = $(this).data('code');
+
+                $passeport.arriver = code;
+                
+                $('#direx-arrive').val("")
+                $('#direx-arrive').attr('placeholder', direx);
+
+                $('#direx-arrive-result').val(direx)
+                $('#direx-arrive-result').data("id", id)
+                $('#direx-arrive-result').data("type", type)
+                $('#direx-arrive-result').data("name", name)
+
+                verifDirex("direx-arrive", direx)
+            });
+
+            function verifType(type) {
+                $type = type
+                if (type === "cities") {
+                    $(`#dropdown-menu-arrive`).addClass(`${type}`);
+                    $(`#dropdown-menu-arrive`).removeClass(`stations`);
+                }
+
+                if (type === "stations") {
+                    $(`#dropdown-menu-arrive`).addClass(`${type}`);
+                    $(`#dropdown-menu-arrive`).removeClass(`cities`);
+                }
+            }
+
+            $('#direx-depart, #direx-arrive').on('click', function() {
+                $(this).dropdown('show');
+            });
+            
+            // passager
+            $('#drop-control').click(function(e) {
+                $('#passager-control').toggleClass('open');
+                e.stopPropagation();
+            });
+
+            $('.ctrl-passager').click(function() {
+                const input = $(this).data('input');
+                const control = $(this).data('control');
+                const passager = parseInt($(input).val());
+                if(control == "plus") {
+                    $(input).val(passager + 1);
+                    checkPassager();
+                } else  {
+                    if (passager > 0) {
+                        $(input).val(passager - 1);
+                    }
+                    checkPassager();
+                }
+                checkNewListeTrajet()
+            });
+
+            $(document).on('click', function(event) {
+                if (!$(event.target).closest('#drop-modal').length) {
+                    $('#passager-control').removeClass('open');
+                }
+            });
+
+            $(document).on('submit', '.direction-form', function (e) {
+                e.preventDefault();
+
+                const dataTrajet = {
+                    type : $type,
+                    city : {
+                        depart: {
+                            id   : $('#direx-depart-result').data("id"),
+                            name : $('#direx-depart-result').data("name"),
+                        },
+                        arrive: {
+                            id   : $('#direx-arrive-result').data("id"),
+                            name : $('#direx-arrive-result').data("name"),
+                        },
+                    },
+                    date : {
+                        aller  : dateFormat($('#dateInputDepart').val(), 'd.m.Y'),
+                        retour : $('#allerRetour').is(':checked') ? dateFormat($('#dateInputRetour').val(), 'd.m.Y') : ""
+                    },
+                    passager : {
+                        adulte : $('#adultes').val(),
+                        enfant : $('#enfant').val(),
+                        velo   : $('#velo').val()
+                    }
+                }
+                getTrajet(dataTrajet)
+            })
+
+            $(document).on('click', '.continue-to-checkout', function (e) {
+                $('.continuer').attr('disabled', 'disabled');
+                $(this).prepend('<span class="spinner-border spinner-border-sm" aria-hidden="true"></span>');
+
+                const uid = $(this).data('uid')
+                addReservation(uid)
+            })
+
+            $(document).on('click', '.continue-retour-checkout', function (e) {
+                $('.continuer').attr('disabled', 'disabled');
+                $(this).prepend('<span class="spinner-border spinner-border-sm" aria-hidden="true"></span>');
+
+                const uid = $(this).data('uid')
+                addReservationRetour(uid)
+            })
+        });
+
+    </script>
+{% endblock %}

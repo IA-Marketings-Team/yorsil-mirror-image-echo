@@ -1,0 +1,104 @@
+{% extends 'base_admin.html.twig' %}
+
+{% set menu_journal = true %}
+{% set menu_recharge = true %}
+
+{% block title %} Journal | Recharge {% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .disabled-link {
+            pointer-events: none;  /* Désactive les interactions de la souris */
+            color: gray;           /* Optionnel : Changer la couleur pour indiquer que c'est désactivé */
+            text-decoration: none; /* Optionnel : Enlever le soulignement */
+            cursor: default;       /* Optionnel : Changer le curseur */
+        }
+        .table-responsive::-webkit-scrollbar {
+            width: 5px;
+        }
+        .table-responsive::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        .table-responsive p-1::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 10px;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+
+    <div class="card bg-light-info shadow-none position-relative overflow-hidden">
+        <div class="card-body px-4 py-3">
+            <div class="row align-items-center">
+                <div class="col-9">
+                    <h4 class="fw-semibold mb-8">Journal des recharges</h4>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                          <li class="breadcrumb-item"><a class="text-muted" href="javascript:void(0)">Recharge</a></li>
+                          <li class="breadcrumb-item active" aria-current="page">Liste</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+     <section>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive p-1">
+                            <table class="table table-light"  id="id-reservation-liste">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Boutique</th>
+                                        <th>Montant</th>
+                                        <th class="text-center">Operateur</th>
+                                        <th>Description</th>
+                                        <th class="text-center">Quantité</th>
+                                        <th class="text-center">Process state</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for recharge in recharges %}
+                                        <tr>
+                                            <td><small class="fs-1 text-nowrap">{{ recharge.saleDate | date('d-m-Y') }} <sup class="fs-1"> | {{ recharge.saleDate | date('H:m') }}</sup></small></td>
+                                            <td><small class="fs-1">{{ recharge.boutique.nom }}</td>
+                                            <td class="text-end">{{ recharge.montant }} €</td>
+                                            <td class="text-center fs-1">{{ recharge.productInformations.productInformations.operator }}</td>
+                                            <td class="fs-1">{{ recharge.productInformations.productInformations.description }}</td>
+                                            <td class="text-center">{{ recharge.qty }}</td>
+                                            <td class="text-center">{{ recharge.processState }}</td>
+                                            <td class="text-end">
+                                                <div class="d-flex align-items-center gap-1">
+                                                    <a title="Télécharger" href="data:application/pdf;base64,{{ recharge.voucher.voucher.base64Content }}" target="_blank" download="recharche_{{recharge.saleRef}}.pdf"><i class="ti ti-download fs-4"></i></a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+                    
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $('#id-reservation-liste').DataTable({
+            language: { "url": global_utils.urls.datatable_fr }
+        });
+    </script>
+{% endblock %}

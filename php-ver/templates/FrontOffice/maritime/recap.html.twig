@@ -1,0 +1,278 @@
+{% extends 'base_front.html.twig' %}
+
+{% set menu_billeteries = true %}
+
+{% block title %}Récapitulatif{% endblock %}
+
+{% block stylesheets %} 
+    {{ parent() }}
+    <style type="text/css">
+        .card.more-info {
+            margin-bottom: 15px;
+        }
+        .items-liste .item-icon {
+            font-size: 25px;
+            width: 25px;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="row mt-3">
+        <div class="col-md-7 infos-left">
+            <div class="title-trajet text-center mb-4">
+                <h1 class="text-success d-flex align-items-center justify-content-center gap-2">
+                    <span>TUNISIE</span>
+                    <i class="ti ti-ship"></i>
+                    <span>PALERMO</span>
+                </h1>
+                <span class="fw-bolder text-gray">Cabine / Sièges / Espace Pont (obligatoire) :</span>
+            </div>
+            <div class="card more-info w-100 bg-primary shadow-none p-2">
+                <div class="row align-items-center">
+                    <div class="col-8">
+                        <label class="items-liste m-0 d-flex gap-2 text-white align-items-center form-label h6" for="listefauteil">
+                            <i class="ti ti-armchair-2 item-icon"></i>
+                            <span>1*FAUTEUIL PULLMAN</span>
+                        </label>
+                    </div>
+                    <div class="col-4">
+                        <select class="form-select bg-white" name="listefauteil" id="listefauteil">
+                            <option value="">Aucun</option>
+                            <option value="1">1 (€0.3)</option>
+                            <option value="2">2 (€0.6)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="card more-info w-100 bg-primary shadow-none p-2">
+                <div class="row align-items-center">
+                    <div class="col-8">
+                        <label class="items-liste m-0 d-flex text-white gap-2 align-items-center form-label h6" for="listefauteil">
+                            <i class="ti ti-sofa item-icon"></i>
+                            <span>1*SUITE FAMILIALE</span>
+                        </label>
+                    </div>
+                    <div class="col-4">
+                        <select class="form-select bg-white" name="listefauteil" id="listefauteil">
+                            <option value="">Aucun</option>
+                            <option value="1">1 (€0.3)</option>
+                            <option value="2">2 (€0.6)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="card more-info w-100 bg-primary shadow-none p-2">
+                <div class="row align-items-center">
+                    <div class="col-8">
+                        <label class="items-liste m-0 d-flex text-white gap-2 align-items-center form-label h6" for="listefauteil">
+                            <i class="ti ti-armchair-2 item-icon"></i>
+                            <span>1*SUITE MATRIMONIALE</span>
+                        </label>
+                    </div>
+                    <div class="col-4">
+                        <select class="form-select bg-white" name="listefauteil" id="listefauteil">
+                            <option value="">Aucun</option>
+                            <option value="1">1 (€0.3)</option>
+                            <option value="2">2 (€0.6)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="card more-info w-100 bg-primary shadow-none p-2">
+                <div class="row align-items-center">
+                    <div class="col-8">
+                        <label class="items-liste m-0 d-flex text-white gap-2 align-items-center form-label h6" for="listefauteil">
+                            <img src="{{asset('modernize/images/billeterie/double-bed.svg')}}" class="item-icon" alt="item-icon">
+                            <span>3*3LITS VUE MER ANIMAUX LATECHECKOUT</span>
+                        </label>
+                    </div>
+                    <div class="col-4">
+                        <select class="form-select bg-white" name="listefauteil" id="listefauteil">
+                            <option value="">Aucun</option>
+                            <option value="1">1 (€0.3)</option>
+                            <option value="2">2 (€0.6)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="card more-info w-100 bg-primary shadow-none p-2">
+                <div class="row align-items-center">
+                    <div class="col-8">
+                        <label class="items-liste m-0 d-flex text-white gap-2 align-items-center form-label h6" for="listefauteil">
+                            <img src="{{asset('modernize/images/billeterie/double-bed.svg')}}" class="item-icon" alt="item-icon">
+                            <span>1*CABINE TRIPLE AVEC VUE SUR LA MER</span>
+                        </label>
+                    </div>
+                    <div class="col-4">
+                        <select class="form-select bg-white" name="listefauteil" id="listefauteil">
+                            <option value="">Aucun</option>
+                            <option value="1">1 (€0.3)</option>
+                            <option value="2">2 (€0.6)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="card more-info w-100 bg-primary shadow-none p-2">
+                <div class="row align-items-center">
+                    <div class="col-8">
+                        <label class="items-liste m-0 d-flex text-white gap-2 align-items-center form-label h6" for="listefauteil">
+                            <img src="{{asset('modernize/images/billeterie/double-bed.svg')}}" class="item-icon" alt="item-icon">
+                            <span>1*QUADRUPLE INTERIEURE</span>
+                        </label>
+                    </div>
+                    <div class="col-4">
+                        <select class="form-select bg-white" name="listefauteil" id="listefauteil">
+                            <option value="">Aucun</option>
+                            <option value="1">1 (€0.3)</option>
+                            <option value="2">2 (€0.6)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="card more-info w-100 bg-primary shadow-none p-2">
+                <div class="row align-items-center">
+                    <div class="col-8">
+                        <label class="items-liste m-0 d-flex text-white gap-2 align-items-center form-label h6" for="listefauteil">
+                            <img src="{{asset('modernize/images/billeterie/double-bed.svg')}}" class="item-icon" alt="item-icon">
+                            <span>1*LIT FEMME DANS UN QUADRUPLE INTERIEURE</span>
+                        </label>
+                    </div>
+                    <div class="col-4">
+                        <select class="form-select bg-white" name="listefauteil" id="listefauteil">
+                            <option value="">Aucun</option>
+                            <option value="1">1 (€0.3)</option>
+                            <option value="2">2 (€0.6)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="card more-info w-100 bg-primary shadow-none p-2">
+                <div class="row align-items-center">
+                    <div class="col-8">
+                        <label class="items-liste m-0 d-flex text-white gap-2 align-items-center form-label h6" for="listefauteil">
+                            <img src="{{asset('modernize/images/billeterie/double-bed.svg')}}" class="item-icon" alt="item-icon">
+                            <span>1*LIT HOMME DANS UNE QUADRUPLE INTERIEURE</span>
+                        </label>
+                    </div>
+                    <div class="col-4">
+                        <select class="form-select bg-white" name="listefauteil" id="listefauteil">
+                            <option value="">Aucun</option>
+                            <option value="1">1 (€0.3)</option>
+                            <option value="2">2 (€0.6)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="alert customize-alert alert-dismissible border-success text-success fade show remove-close-icon" role="alert">
+                <div class="d-flex align-items-center font-medium me-3 me-md-0">
+                    <i class="ti ti-info-circle fs-5 me-2 text-success"></i>
+                    Veuillez noter: les enfants ( âge 0 - 4 ans) n’ont pas besoin d’être affectés à une cabine ou à un siège
+                </div>
+            </div>
+
+            <span class="text-muted fw-bolder">Repas : pré-réservez tous les repas des passagers et économisez :</span>
+            
+            <div class="card more-info w-100 bg-primary shadow-none p-2 mt-2">
+                <div class="row align-items-center">
+                    <div class="col-8">
+                        <label class="items-liste m-0 d-flex text-white gap-2 align-items-center form-label h6" for="listefauteil">
+                            <span>FOOD PASS : 26.90 € par personne</span>
+                        </label>
+                    </div>
+                    <div class="col-4">
+                        <select class="form-select bg-white" name="listefauteil" id="listefauteil">
+                            <option value="">Aucun</option>
+                            <option value="1">1 (€26.90)</option>
+                            <option value="2">2 (€53.80)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="card more-info w-100 bg-primary shadow-none p-2">
+                <div class="row align-items-center">
+                    <div class="col-8">
+                        <label class="items-liste m-0 d-flex text-white gap-2 align-items-center form-label h6" for="listefauteil">
+                            <span>MAXI FOOD PASS : 42.90 € par personne</span>
+                        </label>
+                    </div>
+                    <div class="col-4">
+                        <select class="form-select bg-white" name="listefauteil" id="listefauteil">
+                            <option value="">Aucun</option>
+                            <option value="1">1 (€42.90)</option>
+                            <option value="2">2 (€85.80)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="card more-info w-100 bg-primary shadow-none p-2">
+                <div class="row align-items-center">
+                    <div class="col-8">
+                        <label class="items-liste m-0 d-flex text-white gap-2 align-items-center form-label h6" for="listefauteil">
+                            <span>SUPER FOOD PASS : 79.90 € par personne</span>
+                        </label>
+                    </div>
+                    <div class="col-4">
+                        <select class="form-select bg-white" name="listefauteil" id="listefauteil">
+                            <option value="">Aucun</option>
+                            <option value="1">1 (€79.90)</option>
+                            <option value="2">2 (€159.80)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="card">
+                <div class="card-header bg-danger">
+                    <h5 class="card-title text-white m-0">Récapitulatif de la réservation</h5>
+                </div>
+                <div class="card-body">
+                    <div class="recap-aller">
+                        <img src="{{asset('modernize/images/billeterie/ShortGNV.svg')}}" width="50px" class="logo-station" alt="item-icon">
+                        <h5 class="card-title text-primary">TUNISIE - PALERMO</h5>
+                        <p class="card-text">
+                            <span class="fw-bolder">Départ : </span>15/02/2025 23:59
+                        </p>
+                        <p class="card-text">
+                            <span class="fw-bolder">Destination : </span>16/02/2025 15:00
+                        </p>
+                        <p class="card-text">Informations relatives au passager :</p>
+                        <p class="card-text">
+                            <span class="fw-bolder">2 Passagers </span> (2 Adulte) (0 Enfant)
+                        </p>
+                    </div>
+
+                    <hr>
+
+                    <div class="recap-retour">
+                        <img src="{{asset('modernize/images/billeterie/ShortGNV.svg')}}" width="50px" class="logo-station" alt="item-icon">
+                        <h5 class="card-title text-primary">PALERMO - TUNISIE</h5>
+                        <p class="card-text">
+                            <span class="fw-bolder">Départ : </span>22/02/2025 12:30
+                        </p>
+                        <p class="card-text">
+                            <span class="fw-bolder">Destination : </span>22/02/2025 23:30
+                        </p>
+                        <p class="card-text">Informations relatives au passager :</p>
+                        <p class="card-text">
+                            <span class="fw-bolder">2 Passagers </span> (2 Adulte) (0 Enfant)
+                        </p>
+                    </div>
+                </div>
+                <div class="card-footer text-muted">
+                    <h5 class="card-title text-primary m-0">Prix total : <span class="p-total fw-bolder">195.06 €</span></h5>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(document).ready(function(){
+        });
+    </script>
+{% endblock %}

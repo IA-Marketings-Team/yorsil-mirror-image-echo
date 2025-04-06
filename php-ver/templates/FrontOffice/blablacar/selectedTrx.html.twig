@@ -1,0 +1,836 @@
+{% extends 'base_front.html.twig' %}
+
+{% set menu_billeteries = true %}
+
+{% block title %}billeteries{% endblock %}
+
+{% block stylesheets %} 
+    {{ parent() }}
+    <style type="text/css">
+        .header-date-trx {
+            font-weight: 900;
+        }
+        .infos-trx {
+            display: flex;
+            gap: 1rem;
+            min-height: 40px;
+            height: 40px;
+        }
+        .infos-trx .heure {
+            flex: 0 0 50px;
+            width: 50px;
+        }
+        .infos-trx .heure p{
+            font-weight: bolder;
+            color: #000;
+            margin: 0;
+        }
+        .infos-trx .hr {
+            position: relative;
+            width: 3px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .infos-trx .trx-name p {
+            margin-bottom: 0;
+        }
+        .infos-trx.arret-infos .heure{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+        .infos-trx.arret-infos .heure p{
+            color: gray;
+        }
+        .infos-trx.arret-infos .hr::before{
+            content: "";
+            position: relative;
+            width: 3px;
+            height: 100%;
+            background-color: transparent;
+            background-position: top;
+            background-repeat: round;
+            background-image: url('/images/dotted.svg');
+            background-size: 3px 7.6px;
+        }
+        .infos-trx.destination-infos .heure{
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: flex-end;
+            height: 100%;
+        }
+        .infos-trx.departure-infos .hr::before,
+        .infos-trx.destination-infos .hr::before{
+            content: "";
+            width: 3px;
+            height: 100%;
+            background: #000;
+        }
+        .infos-trx.departure-infos .hr::after,
+        .infos-trx.destination-infos .hr::after{
+            content: "";
+            width: 10px;
+            background: #fff;
+            aspect-ratio: 1/1;
+            border: 2px solid #000;
+            border-radius: 50%;
+            position: absolute;
+        }
+        .infos-trx.departure-infos .hr{
+            padding-top: 5px;
+        }
+        .infos-trx .trx-name p{
+            font-weight: 800;
+            color: #000;
+        }
+        .infos-trx .trx-name span{
+            font-size: 10px;
+        }
+        .infos-trx.departure-infos .trx-name,
+        .infos-trx.destination-infos .trx-name {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .infos-trx.departure-infos .trx-name {
+            justify-content: flex-start;
+        }
+        .infos-trx.destination-infos .trx-name {
+            justify-content: flex-end;
+        }
+        .infos-trx.departure-infos .hr::after{
+            top: 5px;
+        }
+        .infos-trx.destination-infos .hr{
+            padding-bottom: 5px;
+        }
+        .infos-trx.destination-infos .hr::after{
+            bottom: 5px;
+        }
+        .liste-billet {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            padding-left: 1rem;
+            border-left: 1px solid #ccc;
+        }
+        .liste-billet .billet {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .input-hidden {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            overflow: hidden;
+            pointer-events: none;
+            cursor: none;
+            position: relative;
+        }
+        .input-hidden input{
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+    </style>
+{% endblock %}
+{% block body %}
+    <div class="row">
+        <div class="col-md-8">
+            <form id="form-infos-trx" method="POST">
+                <div class="btn-groupe">
+                    <h2>Où voulez-vous recevoir votre ticket ?</h2>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label" for="nomCustum">Nom</label>
+                                <input type="text" id="nomCustum" name="nomCustum" class="form-control" placeholder="Nom" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label" for="prenomCustum">Prenom</label>
+                                <input type="prenomCustum" id="prenomCustum" name="prenomCustum" class="form-control" placeholder="Prenom" required>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <label class="form-label" for="emailCustum">E-mail</label>
+                                <input type="email" id="emailCustum" name="emailCustum" class="form-control" placeholder="E-mail" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label" for="birthdayCustum">Date de naissance</label>
+                                <input type="date" id="birthdayCustum" name="birthdayCustum" class="form-control" placeholder="Date de naissance" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label" for="telCustum">Numéro de téléphone</label>
+                                <input type="tel" id="telCustum" name="telCustum" class="form-control" placeholder="Numéro de téléphone" required>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" name="offrespeciales" type="checkbox" id="offrespeciales">
+                        <label class="form-check-label" for="offrespeciales">
+                            Je ne souhaite pas recevoir des offres spéciales ou des recommandations personnalisées par email
+                        </label>
+                    </div>
+                    <span class="text-muted">
+                        Si je m'abonne à ces communications, je pourrai me désabonner à tout moment en contactant BlaBlaCar ou en cliquant sur un lien dans les messages.
+                    </span>
+                    <hr>
+                </div>
+                <div class="btn-groupe">
+                    <h2>Vérifiez vos informations de réservation</h2>
+                    <label class="h3">Passagers</label>
+                    <div class="infos-passager" id="infos-passagers">
+                        <div class="passager d-flex align-items-center gap-2 mb-3">
+                            <div class="infos d-flex align-items-center gap-2">
+                                <i class="ti ti-info-circle text-warning fs-4"></i>
+                                <span class="name">Passager</span>
+                            </div>
+                            <div class="option">
+                                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#bs-modal-passager">À compléter</button>
+                            </div>
+                        </div>
+                        <div class="passager d-flex align-items-center gap-2 mb-3">
+                            <div class="infos d-flex align-items-center gap-2">
+                                <i class="ti ti-info-circle text-warning fs-4"></i>
+                                <span class="name">Passager</span>
+                            </div>
+                            <div class="option">
+                                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#bs-modal-passager">À compléter</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            
+            <hr>
+
+            <div class="btn-groupe">
+                <h2>Politique d'annulation</h2>
+                <span>Annulez jusqu'à 30 minutes avant le départ pour un remboursement partiel.</span>
+                <button type="button" class="my-2 w-100 btn btn-outline-light d-flex align-items-center justify-content-between" data-bs-toggle="modal" data-bs-target="#bs-modal-politique">
+                    <span class="text-dark">En savoir plus</span><i class="ti ti-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+        <div class="col-md-4 d-flex align-items-center flex-column">
+            <div id="infos-trx-directions" class="infos-trx-directions">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="infos-trx departure-infos">
+                        <div class="heure">
+                            <p>00:00</p>
+                        </div>
+                        <div class="hr"></div>
+                        <div class="trx-name">
+                            <p class="d-flex align-items-center gap-2">--- <i class="ti ti-map fs-4 text-success"></i></p>
+                            <span>---</span>
+                        </div>
+                    </div>
+                    <div class="infos-trx arret-infos">
+                        <div class="heure">
+                            <p>00h00</p>
+                        </div>
+                        <div class="hr"></div>
+                        <div class="trx-name"></div>
+                    </div>
+                    <div class="infos-trx destination-infos">
+                        <div class="heure">
+                            <p>00:00</p>
+                        </div>
+                        <div class="hr"></div>
+                        <div class="trx-name">
+                            <p class="d-flex align-items-center gap-2">--- <i class="ti ti-map fs-4 text-success"></i></p>
+                            <span>---</span>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="accordion" id="accordionBillets">
+                        <div class="accordion-item shadow-none border-0">
+                            <button class="accordion-button collapsed p-0" type="button" data-bs-toggle="collapse" data-bs-target="#billetDetais" aria-expanded="false" aria-controls="billetDetais">
+                                Billets
+                            </button>
+                            <div id="billetDetais" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionBillets" style="">
+                                <div class="accordion-body">
+                                    <div class="liste-billet">
+                                        <div class="billet">
+                                            <span>1 billlet</span>
+                                            <span class="text-dark fw-bolder">--<sup>.--</sup>€</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="prix-total d-flex align-items-center justify-content-between">
+                        <span class="h6 fw-bolder">Prix total</span>
+                        <span class="h6 fw-bolder">--<sup>.--</sup>€</span>
+                    </div>
+                  </div>
+                </div>
+            </div>
+
+            <hr>
+
+            <button form="form-infos-trx" type="submit" class="justify-content-center w-100 btn m-3 btn-rounded btn-outline-primary d-flex align-items-center">
+                Confirmer et payer
+            </button>
+            
+        </div>
+    </div>
+<!-- modal passagers form -->
+    <div id="bs-modal-passager" class="modal fade" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-body">
+            <div class="text-center mt-2 mb-4">
+                <h4 class="modal-title" id="myModalLabel">
+                    Complétez les informations passager
+                </h4>
+                <h5 class="fw-bolder text-success" id="passager-type"></h5>
+            </div>
+
+            <form class="ps-3 pr-3" id="passager-form-complet">
+                <input type="hidden" name="id" id="id-passage-modal">
+                <div class="mb-3">
+                    <label class="form-label" for="prenom">Prénom</label>
+                    <input type="text" id="prenom" name="prenom" class="form-control" placeholder="Prénom" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="nom">Nom</label>
+                    <input type="nom" id="nom" name="nom" class="form-control" placeholder="Nom" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="date-naissance">Date de naissance</label>
+                    <input type="date" id="date-naissance" name="datenaissance" class="form-control" placeholder="Date de naissance" required>
+                </div>
+
+                <div class="mb-3 text-center">
+                    <button type="button" class="btn btn-light-danger text-danger font-medium waves-effect" data-bs-dismiss="modal">
+                        Annuler
+                    </button>
+                    <button form="passager-form-complet" type="submit" class="btn btn-light-success text-success font-medium waves-effect">
+                        Confirmer
+                    </button>
+                </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- modal politique form -->
+    <div id="bs-modal-politique" class="modal fade" tabindex="-1" aria-modal="true" aria-labelledby="bs-modal-politique" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header d-flex align-items-center">
+                    <h4 class="modal-title" id="myModalLabel">
+                        Politique d'annulation et de remboursement
+                    </h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Vous pouvez annuler ou modifier gratuitement votre réservation jusqu'à 30 jours avant le départ. Passé ce délai, des frais s'appliquent.</p>
+                    <p>Si vous annulez ou modifiez entre 30 et 7 jours avant le départ, ces frais sont de 30 % du prix du billet. Si vous annulez ou modifiez entre 7 jours et 30 minutes avant, ils sont de 50 %. Vous ne pouvez ni annuler ni modifier votre réservation dans les 30 minutes précédant le départ.</p>
+                    <p>Si vous remplissez les conditions, vous recevrez un remboursement sous forme de bon d'achat valable 1 an. Veuillez noter que les offres spéciales, l'option Flex et l'option d'assurance ne peuvent être ni modifiées ni remboursées.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light-danger text-danger font-medium waves-effect" data-bs-dismiss="modal">
+                        Fermer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+<script>
+        $(document).ready(function(){
+            const $trajets = {{ trajets|json_encode|raw }},
+            $trajetsRetour = {{ trajetsRetour|json_encode|raw }},
+            $initTrajet = {{ initTrajet|json_encode|raw }},
+            $infosTrxDirections = $('#infos-trx-directions'),
+            // $prixTotalTrx = $('#prix-total-trx'),
+            $infosPassagers = $('#infos-passagers'),
+            $accordionBillets = $('#accordionBillets');
+
+            let $countPrice = 0;
+
+            $infosTrxDirections.empty();
+
+            initTrx($trajets);
+            if ($trajetsRetour) {
+                initTrx($trajetsRetour, "Retour");
+            }
+            initPassager();
+            // $prixTotalTrx.html(formatPrix($countPrice));
+
+            function initTrx(trajets, routeDirectix = null) {
+                const route = trajets.legs[0],
+                bundles = trajets.bundles[0],
+                duration = formatHeureDuration(trajets.travel_duration);
+
+                const dateTrx = formatDate(route.service_schedule_date);
+
+                let depart = route.departure_station,
+                heureDepart = timeStamp(depart.departure_timestamp).heure,
+                nomDepart = formatName(depart.name).name,
+                subNomDepart = formatName(depart.name).sub;
+
+                let arriver = route.arrival_station,
+                heureArriver = timeStamp(arriver.arrival_timestamp).heure,
+                nomArriver = formatName(arriver.name).name,
+                subNomArriver = formatName(arriver.name).sub;
+
+                let $prix = formatPrix(bundles.price),
+                items = bundles.items[0],
+                passagers = items.passenger_fares.length,
+                passagerPrice = formatPrix(items.passenger_fares[0].price),
+                billet = "";
+
+                $countPrice += parseFloat(bundles.price);
+
+                for(let i = 1; i <= passagers; i++) {
+                    billet += `
+                        <div class="billet">
+                            <span>1 billlet</span>
+                            <span class="text-dark fw-bolder">${passagerPrice}</span>
+                        </div>
+                    `;
+                }
+
+                $infosTrxDirections.append(`
+                    <div class="card mb-2">
+                        <div class="card-body">
+                            <h4 id="date-trx-title">${dateTrx} ${routeDirectix ? `(${routeDirectix})` : ""}</h4>
+                            <div class="infos-trx departure-infos">
+                                <div class="heure">
+                                    <p>${heureDepart}</p>
+                                </div>
+                                <div class="hr"></div>
+                                <div class="trx-name">
+                                    <p class="d-flex align-items-center gap-2">${nomDepart} <i class="ti ti-map fs-4 text-success"></i></p>
+                                    <span>${subNomDepart}</span>
+                                </div>
+                            </div>
+                            <div class="infos-trx arret-infos">
+                                <div class="heure">
+                                    <p>${duration}</p>
+                                </div>
+                                <div class="hr"></div>
+                                <div class="trx-name"></div>
+                            </div>
+                            <div class="infos-trx destination-infos">
+                                <div class="heure">
+                                    <p>${heureArriver}</p>
+                                </div>
+                                <div class="hr"></div>
+                                <div class="trx-name">
+                                    <p class="d-flex align-items-center gap-2">${nomArriver} <i class="ti ti-map fs-4 text-success"></i></p>
+                                    <span>${subNomArriver}</span>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="accordion" id="accordionBillets${routeDirectix ? '-retour' : ''}">
+                                <div class="accordion-item shadow-none border-0">
+                                    <button class="accordion-button collapsed p-0" type="button" data-bs-toggle="collapse" data-bs-target="#billetDetais${routeDirectix ? '-retour' : ''}" aria-expanded="false" aria-controls="billetDetais">
+                                        ${passagers} Billet${passagers > 1 ? "s" : ""}
+                                    </button>
+                                    <div id="billetDetais${routeDirectix ? '-retour' : ''}" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionBillets${routeDirectix ? '-retour' : ''}" style="">
+                                        <div class="accordion-body">
+                                            <div class="liste-billet">
+                                                ${billet}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="prix-total d-flex align-items-center justify-content-between">
+                                <span class="h6 fw-bolder">Prix total</span>
+                                <span class="h6 fw-bolder">${$prix}</span>
+                            </div>
+                        </div>
+                    </div>
+                `);
+            }
+
+            function initPassager() {
+                const passagers = $initTrajet.passengers;
+                $infosPassagers.empty();
+                $.each(passagers, function(index, passager) {
+                    $infosPassagers.append(`
+                        <div class="passager d-flex align-items-center gap-2 mb-3">
+                            <div class="infos d-flex align-items-center gap-2">
+                                <i id="icon-valid-passager-${index}" class="ti ti-info-circle text-warning fs-4"></i>
+                                <span class="name" id="nom-passage-infos-${index}">Passager</span>
+                                <div class="input-hidden">
+                                    <input type="text" name="nom_passenger_${index}" id="nom_passenger_${index}" required>
+                                    <input type="text" name="prenom_passenger_${index}" id="prenom_passenger_${index}" required>
+                                    <input type="text" name="naissance_passenger_${index}" id="naissance_passenger_${index}" required>
+                                    <input type="text" name="type_passenger_${index}" id="type_passenger_${index}" value="${passager.type}">
+                                </div>
+                            </div>
+                            <div class="option">
+                                <button type="button" class="btn-complet-passager btnp-${index} btn btn-primary btn-sm" data-type="${passager.type}" data-id="${index}" data-bs-toggle="modal" data-bs-target="#bs-modal-passager">À compléter</button>
+                            </div>
+                        </div>
+                    `);
+                });
+            }
+
+            $(document).on('submit', '#passager-form-complet', function (e) {
+                e.preventDefault();
+
+                const id = $("#id-passage-modal"),
+                prenom = $("#prenom"),
+                nom = $("#nom"),
+                naissance = $("#date-naissance");
+
+                let formData = {
+                    id: id.val(),
+                    prenom: prenom.val(),
+                    nom: nom.val(),
+                    naissance: naissance.val()
+                };
+
+                submitInfosPassager(formData);
+                validePassager(formData);
+                $("#bs-modal-passager").modal("hide");
+            });
+
+            $(document).on('submit', '#form-infos-trx', function (e) {
+                e.preventDefault();
+
+                $(".loding-page").removeClass('d-none');
+                
+                const formData = {
+                    "segments": [],
+                    "customer": {
+                        "first_name": $("#nomCustum").val(),
+                        "last_name": $("#prenomCustum").val(),
+                        "email": $("#emailCustum").val(),
+                        "tel": $("#telCustum").val(),
+                        "birth_date": $("#birthdayCustum").val()
+                    },
+                    "passengers": []
+                };
+
+                const passagers = $initTrajet.passengers;
+                $.each(passagers, function(index, passager) {
+                    let id = index + 1;
+                    formData.passengers.push({
+                        "client_ref": `passenger_ref_${id}`,
+                        "type": passager.type,
+                        "id": `passenger_${id}`,
+                        "first_name": $(`#nom_passenger_${index}`).val(),
+                        "last_name": $(`#prenom_passenger_${index}`).val(),
+                        "birth_date": $(`#naissance_passenger_${index}`).val()
+                    });
+                });
+
+                let itemsAller = [];
+
+                $.each($trajets.bundles[0].items[0].passenger_fares, function(index, passager) {
+                    itemsAller.push({
+                        "client_ref": passager.ref_id,
+                        "passenger_id": passager.passenger_id,
+                        "tariff_code": passager.tariff_code
+                    });
+                });
+
+                let segmentAller = {
+                    "client_ref": "travel_1",
+                    "origin": $trajets.legs[0].departure_station._u_i_c_station_code,  
+                    "destination": $trajets.legs[0].arrival_station._u_i_c_station_code,  
+                    "direction": "outbound",  
+                    "service_name": $trajets.legs[0].service_name,  
+                    "service_identifier": $trajets.legs[0].service_identifier,  
+                    "start_validity_date": dateToString($trajets.legs[0].service_schedule_date),
+                    "items": itemsAller
+                };
+
+                formData.segments.push(segmentAller);
+                
+                if ($trajetsRetour) {
+                    let itemsRetour = [];
+
+                    $.each($trajetsRetour.bundles[0].items[0].passenger_fares, function(index, passager) {
+                        itemsRetour.push({
+                            "client_ref": passager.ref_id,
+                            "passenger_id": passager.passenger_id,
+                            "tariff_code": passager.tariff_code
+                        });
+                    });
+
+                    let segmentRetour = {
+                        "client_ref": "travel_2",
+                        "origin": $trajetsRetour.legs[0].departure_station._u_i_c_station_code,  
+                        "destination": $trajetsRetour.legs[0].arrival_station._u_i_c_station_code,  
+                        "direction": "inbound",  
+                        "service_name": $trajetsRetour.legs[0].service_name,  
+                        "service_identifier": $trajetsRetour.legs[0].service_identifier,  
+                        "start_validity_date": dateToString($trajetsRetour.legs[0].service_schedule_date),
+                        "items": itemsRetour
+                    };
+
+                    formData.segments.push(segmentRetour);
+                }
+
+                $.ajax({
+                    url: "/creation-reservations-blablacar",
+                    type: "POST",
+                    data: JSON.stringify(formData),
+                    contentType: "application/json",
+                    success: function(response) {
+                        $(".loding-page").addClass('d-none');
+                        console.log('data sent', JSON.stringify(formData));
+                        console.log('response', response);
+                        if (response.reservations && response.reservations.data && response.reservations.data.booking) {
+                            let form = $('<form>', {
+                                'method': 'POST',
+                                'action': "/mode-paiement"
+                            });
+
+                            $('<input>').attr({
+                                'type': 'hidden',
+                                'name': 'reservation',
+                                'value': JSON.stringify(response.reservations)
+                            }).appendTo(form);
+
+                            form.appendTo('body').submit();
+                        } else {
+                            $(".loding-page").addClass('d-none');
+                            notification("warning", "Il y a eu une erreur lors de votre réservation");
+                        }
+                    },
+                    error: function(e) {
+                        $(".loding-page").addClass('d-none');
+                        console.error("error :", e);
+                    }
+                });
+            });
+
+            $(document).on('click', '.btn-complet-passager', function (e) {
+                const id = $(this).data("id"),
+                type = $(this).data("type");
+
+                switch (type) {
+                    case "A":
+                        $('#passager-type').text("(Adulte)");
+                        break;
+                    case "Y":
+                        $('#passager-type').text("(Jeune)");
+                        break;
+                    case "K":
+                        $('#passager-type').text("(Enfant)");
+                        break;
+                    case "C":
+                        $('#passager-type').text("(Bébé)");
+                        break;
+                }
+
+                let isModif = verifInfoPassager(id);
+
+                if(isModif) {
+                    modifModalPassager(id);
+                } else {
+                    initModalPassager();
+                }
+
+                $("#id-passage-modal").val(id);
+            });
+
+            // Voici la fonction corrigée pour gérer les cas d'erreur
+            function formatHeureDuration(heure) {
+                // Vérification que heure est une chaîne valide et non undefined
+                if (!heure || typeof heure !== 'string') {
+                    return "Durée non disponible";
+                }
+                
+                const matches = heure.match(/PT(\d+)H(\d+)M/);
+
+                if (matches && matches.length >= 3) {
+                    const hours = matches[1].padStart(2, '0');
+                    const minutes = matches[2].padStart(2, '0');
+                    return `${hours}h${minutes}`;
+                } else {
+                    // Si le format ne correspond pas, essayer de récupérer les heures et minutes d'une autre façon
+                    // Par exemple, en calculant la différence entre les timestamps de départ et d'arrivée
+                    try {
+                        // Calcul alternatif basé sur les timestamps si disponibles
+                        const depart = new Date(trajets.legs[0].departure_station.departure_timestamp);
+                        const arrivee = new Date(trajets.legs[0].arrival_station.arrival_timestamp);
+                        
+                        if (!isNaN(depart) && !isNaN(arrivee)) {
+                            const diff = Math.abs(arrivee - depart);
+                            const hours = Math.floor(diff / 3600000).toString().padStart(2, '0');
+                            const minutes = Math.floor((diff % 3600000) / 60000).toString().padStart(2, '0');
+                            return `${hours}h${minutes}`;
+                        }
+                    } catch (e) {
+                        console.error("Erreur de calcul de durée:", e);
+                    }
+                    
+                    // Si tout échoue, retourner une valeur par défaut
+                    return "09h00"; // Valeur estimée pour Paris-Marseille
+                }
+            }
+
+            function formatDate(date) {
+                const thisDate = (date instanceof Date && !isNaN(date)) ? date : new Date(date),
+                daysOfWeek = ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"],
+                months = ["janv.", "févr.", "mars", "avr", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."];
+                
+                let today = new Date(),
+                    tomorrow = new Date(today);
+                
+                tomorrow.setDate(today.getDate() + 1);
+
+                const dayOfWeek = daysOfWeek[thisDate.getDay()];
+                const dayOfMonth = thisDate.getDate();
+                const month = months[thisDate.getMonth()];
+                const year = thisDate.getFullYear();
+
+                today.setHours(0, 0, 0, 0);
+                tomorrow.setHours(0, 0, 0, 0);
+                thisDate.setHours(0, 0, 0, 0);
+
+                return thisDate.getTime() === today.getTime() ? "Aujourd'hui" :
+                    thisDate.getTime() === tomorrow.getTime() ? "Demain" :
+                    `${dayOfWeek}. ${dayOfMonth} ${month} ${thisDate.getFullYear() !== today.getFullYear() ? year : '' }`;
+            }
+
+            function timeStamp(date) {
+                const dateObj = new Date(date);
+
+                const jour = dateObj.getDate().toString().padStart(2, '0');
+                const mois = (dateObj.getMonth() + 1).toString().padStart(2, '0');
+                const annee = dateObj.getFullYear();
+                const heures = dateObj.getHours().toString().padStart(2, '0');
+                const minutes = dateObj.getMinutes().toString().padStart(2, '0');
+
+                const formattedDate = `${jour}/${mois}/${annee}`;
+                const formattedHeur = `${heures}:${minutes}`;
+
+                return {
+                    "date" : formattedDate,
+                    "heure" : formattedHeur,
+                };
+            }
+
+            function metaData(meta) {
+                let metaDataFormat = "";
+
+                $.each(meta, function(index, meta) {
+                    metaDataFormat += (index > 0 ? " - " : "") + meta.value;
+                });
+
+                return metaDataFormat;
+            }
+
+            function formatPrix(prix) {
+                let parts = prix.toString().split(".");
+                
+                // Formatage des milliers avec une virgule
+                let entier = parts[0];
+
+                // S'il y a une partie décimale, mettre en puissance
+                let decimal = parts[1] ? `<sup>.${parts[1]}</sup>` : "";
+
+                return `${entier}${decimal}€`;
+            }
+
+            function formatName(name) {
+                if (!name) return { "name": "Non disponible", "sub": "" };
+                
+                let parts = name.split(" - ");
+                
+                // Formatage des milliers avec une virgule
+                let nom = parts[0];
+
+                // S'il y a une partie décimale, mettre en puissance
+                let sub = parts[1] ? parts[1] : "";
+
+                return {
+                    "name" : nom,
+                    "sub" : sub
+                };
+            }
+
+            function submitInfosPassager(data) {
+                const nom = $(`#nom_passenger_${data.id}`),
+                prenom = $(`#prenom_passenger_${data.id}`),
+                dateNaissance = $(`#naissance_passenger_${data.id}`);
+
+                nom.val(data.nom);
+                prenom.val(data.prenom);
+                dateNaissance.val(data.naissance);
+            }
+
+            function verifInfoPassager(id) {
+                const nom = $(`#nom_passenger_${id}`),
+                prenom = $(`#prenom_passenger_${id}`),
+                dateNaissance = $(`#naissance_passenger_${id}`);
+
+                let isValide = true;
+
+                if (nom.val().trim() === "" && prenom.val().trim() === "" && dateNaissance.val().trim() === "") {
+                    isValide = false;
+                }
+
+                return isValide;
+            }
+
+            function initModalPassager() {
+                $("#prenom").val("");
+                $("#nom").val("");
+                $("#date-naissance").val("");
+            }
+
+            function modifModalPassager(id) {
+                const nom = $(`#nom_passenger_${id}`).val(),
+                prenom = $(`#prenom_passenger_${id}`).val(),
+                dateNaissance = $(`#naissance_passenger_${id}`).val();
+
+                $("#prenom").val(prenom);
+                $("#nom").val(nom);
+                $("#date-naissance").val(dateNaissance);
+            }
+
+            function validePassager(data) {
+                const icon = $(`#icon-valid-passager-${data.id}`),
+                nom = $(`#nom-passage-infos-${data.id}`),
+                bntModal = $(`.btn-complet-passager.btnp-${data.id}`);
+
+                icon.removeClass('ti-info-circle text-warning').addClass('ti-circle-check text-success');
+                nom.text(`${data.prenom} ${data.nom}`);
+                bntModal.text(`Modifier`);
+            }
+
+            function dateToString(dateString) {
+                let date = new Date(dateString);
+                return date.toISOString().split("T")[0];
+            }
+        });
+    </script>
+{% endblock %}

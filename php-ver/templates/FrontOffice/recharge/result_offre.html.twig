@@ -1,0 +1,25 @@
+<form action="https://www.cmi.co.ma/fr" target="_blank" method="POST">
+<div class="modal-body">
+	<table class="table"  id="id-vente-liste">
+	  	<thead>
+		    <tr>
+		    	<td class="text-primary">Numéro de Téléphone</td>
+		        <td class="text-primary">Produit</td>
+		        <td class="text-primary">Montant</td> 
+		    </tr>
+	  	</thead>
+	    <tbody>
+	        <tr>
+	        	<td><input type="text" name="numero" id="id-numero" class="form-control" placeholder="Veuillez saisir le numéro de téléphone" required=""/></td>
+		        <td>{{nom_off}} {{montant}} €</td>
+		        <td><strong>{{montant}} €</strong></td> 
+		    </tr>
+	    </tbody>
+	</table>
+
+	<div class="modal-footer">
+	    {# <a href="https://www.cmi.co.ma/fr" target="_blank" class="btn btn-success kl-confirmation">Confirmer la vente</a> pattern="^(\+212|0)([ \-_/]*)(\d[ \-_/]*){9}$#}
+	    <button  type="submit" class="btn btn-success kl-confirmation">Confirmer la vente</button>
+	    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Annuler</button>
+	</div>
+</form>

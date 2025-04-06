@@ -1,0 +1,119 @@
+{% extends 'base_admin.html.twig' %}
+
+{% set menu_journal = true %}
+{% set menu_reservation = true %}
+
+{% block title %} Journal | Reservation {% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .disabled-link {
+            pointer-events: none;  /* Désactive les interactions de la souris */
+            color: gray;           /* Optionnel : Changer la couleur pour indiquer que c'est désactivé */
+            text-decoration: none; /* Optionnel : Enlever le soulignement */
+            cursor: default;       /* Optionnel : Changer le curseur */
+        }
+        .table-responsive::-webkit-scrollbar {
+            width: 5px;
+        }
+        .table-responsive::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        .table-responsive p-1::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 10px;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+
+    <div class="card bg-light-info shadow-none position-relative overflow-hidden">
+        <div class="card-body px-4 py-3">
+            <div class="row align-items-center">
+                <div class="col-9">
+                    <h4 class="fw-semibold mb-8">Journal des reservations</h4>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                          <li class="breadcrumb-item"><a class="text-muted" href="javascript:void(0)">Reservation</a></li>
+                          <li class="breadcrumb-item active" aria-current="page">Liste</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+     <section>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive p-1">
+                            <table class="table table-light"  id="id-reservation-liste">
+                                <thead>
+                                    <tr>
+                                        <th>Date de réservation</th>
+                                        <th>Date de départ</th>
+                                        <th>Date d'arriver</th>
+                                        <th>Station de départ</th>
+                                        <th>Station d'arriver</th>
+                                        <th class="text-center">Montant</th>
+                                        <th class="text-center">Passagers</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for reservation in reservations %} 
+                                        <tr>
+                                            <td>
+                                                <small>{{ reservation.dateResa | date('d-m-Y') }}</small> <sup> | {{ reservation.dateDepart | date('H:m') }}</sup>
+                                            </td>
+                                            <td>
+                                                <small>{{ reservation.dateDepart | date('d-m-Y') }}</small> <sup> | {{ reservation.dateDepart | date('H:m') }}</sup>
+                                            </td>
+                                            <td>
+                                                <small>{{ reservation.dateArriver | date('d-m-Y') }}</small> <sup> | {{ reservation.dateArriver | date('H:m') }}</sup>
+                                            </td>
+                                            <td>{{ reservation.stationDepart }}</td>
+                                            <td>{{ reservation.stationArriver }}</td>
+                                            <td class="text-center"><b>{{ reservation.montantTotal }} &euro;</b></td>
+                                            <td class="text-center">
+                                                {% set passagers = reservation.nbrePassagers %}
+                                                {% set result = [] %}
+
+                                                {% if passagers.adult > 0 %}
+                                                    {% set result = result|merge([passagers.adult ~ ' adulte' ~ (passagers.adult > 1 ? 's' : '')]) %}
+                                                {% endif %}
+                                                {% if passagers.children > 0 %}
+                                                    {% set result = result|merge([passagers.children ~ ' enfant' ~ (passagers.children > 1 ? 's' : '')]) %}
+                                                {% endif %}
+                                                {% if passagers.bike_slot > 0 %}
+                                                    {% set result = result|merge([passagers.bike_slot ~ ' place vélo' ~ (passagers.bike_slot > 1 ? 's' : '')]) %}
+                                                {% endif %}
+
+                                                {{ result|join(', ') }}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+                    
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $('#id-reservation-liste').DataTable({
+            language: { "url": global_utils.urls.datatable_fr }
+        });
+    </script>
+{% endblock %}

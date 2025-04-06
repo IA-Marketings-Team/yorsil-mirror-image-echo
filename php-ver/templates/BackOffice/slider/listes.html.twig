@@ -1,0 +1,144 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}Listes des slides{% endblock %}
+
+{% set menu_slider_list = true %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .image-slide {
+            display: inline-block;
+            width: 100%;
+            height: 170px;
+        }
+        .image-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="card bg-light-info shadow-none position-relative overflow-hidden">
+        <div class="card-body px-4 py-3">
+            <div class="row align-items-center">
+                <div class="col-9">
+                    <h4 class="fw-semibold mb-8">Liste des slides</h4>
+                    <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a class="text-muted" href="javascript:void(0)">Slides</a></li>
+                    </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section>
+
+        <div class="row">
+            <div class="col-12">
+              <div class="card">
+                <div class="card-body">
+                    {% if is_granted("ROLE_SUPER_ADMIN") %}
+                        <div class="mb-2">
+                            <a id="ajout_admin" href="{{ path('ajout_slider') }}" class="btn btn-primary mb-2">
+                                <i class="ti ti-plus fs-4"></i> Ajouter un slide
+                            </a>
+                        </div>
+                    {% endif %}
+                  <div class="row mt-3">
+                    {% for slider in sliders %}
+                        <div class="col-md-4 col-sm-6 slider-{{slider.id}}">
+                          <div class="card shadow-none border position-relative mb-md-0">
+                            <div class="overflow-hidden rounded">
+                              <a class="image-slide" href="javascript:void(0)">
+                                <img src="{{ asset('uploads/images/slider/' ~ slider.image) }}" class="rounded hover-img card-img" alt="art">
+                              </a>
+                            </div>
+                            <div class="p-2 d-flex">
+                              <div>
+                                <h6 class="mt-2 mb-0 fw-semibold">{{slider.description ? slider.description : "slide " ~ slider.id}}</h6>
+                              </div>
+                              <div class="ms-auto d-flex gap-2">
+                                <a href="{{ path('edit_slider', {id: slider.id}) }}" class="z-1 btn bg-white text-primary round-sm rounded-circle mt-n4 shadow-sm p-0 d-flex align-items-center justify-content-center" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Modifier">
+                                  <i class="ti ti-photo-edit text-primary fs-4"></i>
+                                </a>
+                                <a data-id="{{slider.id}}" class="del-slide z-1 btn bg-white text-primary round-sm rounded-circle mt-n4 shadow-sm p-0 d-flex align-items-center justify-content-center" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Supprimer">
+                                  <i class="ti ti-trash text-danger fs-4"></i>
+                                </a>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                    {% endfor %}
+                    {% if sliders|length == 0 %}
+                        <div class="col-md-4 col-sm-6">
+                          <div class="card shadow-none border position-relative mb-md-0">
+                            <div class="overflow-hidden rounded">
+                              <a class="image-slide" href="javascript:void(0)">
+                                <img src="{{ asset('modernize/images/logos/fahana.svg') }}" class="rounded hover-img card-img" alt="art">
+                              </a>
+                            </div>
+                            <div class="p-2 d-flex">
+                              <div>
+                                <h6 class="mt-2 mb-0 fw-semibold">Slide</h6>
+                                <span class="fs-2 text-nowrap">Aucun liste</span>
+                              </div>
+                              <div class="ms-auto d-flex gap-2">
+                                <a href="{{ path('ajout_slider') }}" class="z-1 btn bg-white text-primary round-sm rounded-circle mt-n4 shadow-sm p-0 d-flex align-items-center justify-content-center" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Ajouter">
+                                  <i class="ti ti-plus text-success fs-4"></i>
+                                </a>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>            
+            </div>
+          </div>
+    </section>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script>
+        $('.del-slide').click(function (e){
+            const sliderId = $(e.currentTarget).data('id');
+            swal({
+                title: "Suppression",
+                text: "Vous voulez vraiment supprimer ce slide ?",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Oui",
+                cancelButtonText: "Non",
+                closeOnConfirm: false,
+                closeOnCancel: true },
+            function (isConfirm) {
+                if (isConfirm) {
+                    swal("Suppression", "Traîtement en cours ...", "warning");
+                    $.ajax({
+                        url: `/slider/delete/${sliderId}`,
+                        method: 'POST',
+                        dataType: "json",
+                        success: function (response) {
+                            $(`.slider-${sliderId}`).remove()
+                            swal("Suppression", "Vous avez supprimé le slide", "success");
+                        },
+                        error: function (error) {
+                            console.error(`error: ${error}`)
+                            swal("Suppression", "Non effectuée", "warning");
+                        }
+                    })
+                }
+            });
+        });
+    </script>
+{% endblock %}

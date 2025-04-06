@@ -1,0 +1,44 @@
+{% extends "base_error.html.twig" %}
+
+{% block title %} Page non trouvée{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .erreur-403-content {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+			background: white;
+            padding: 56px;
+        }
+        .img-erreur-403{
+            width: 30%;
+        }
+        .erreur-403-content h2 {
+            color: #fabe82;
+            text-align: center;
+            font-weight: 900;
+            text-shadow: 0.4px 0.4px 0px #000000;
+            font-family: cursive;
+        }
+        @media screen and (max-width: 600px){
+            .erreur-403-content {
+                padding: 10px;
+            }
+            .img-erreur-403 {
+                width: 100%;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="position-relative overflow-hidden radial-gradient min-vh-100">
+        <div class="erreur-403-content gap-3 d-flex flex-column align-items-center justify-content-center">
+            <img src="{{ asset('modernize/images/error/erreur_403.jpg') }}" class="img-erreur-403" alt="erreur403">
+            <h2>Vous n'avez pas le accéder sur cette ressource !</h2>
+            <a href="{{ path('home_back')}}" class="btn btn-outline-danger btn-sm m-t fs-5">Tableau de bord</a>
+        </div>
+    </div>
+{% endblock %}

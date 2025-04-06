@@ -1,0 +1,8 @@
+{% if operateurs is defined %}
+    <h3 class="operateurName">{{operateurs.name}}</h3>
+    <input type="hidden" id="id-operateur" name="operateur" value="{{ operateurs.name }}" />
+    <input type="hidden" id="id-code-pays" name="code_pays" value="{{ operateurs.country.isoName }}" />
+    <div class="iconLogo">
+        <img src="{{operateurs.logoUrls[0]}}" alt="profil" style="width:100px; height: 100px; object-fit: cover;">
+    </div>
+{% endif %}

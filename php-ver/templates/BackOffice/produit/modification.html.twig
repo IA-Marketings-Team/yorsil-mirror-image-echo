@@ -1,0 +1,115 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}Modification d'un produit{% endblock %}
+
+{% set menu_produit = true %}
+{% set menu_produit_liste = true %}
+
+{% block body %}
+
+    <div class="card bg-light-info shadow-none position-relative overflow-hidden">
+        <div class="card-body px-4 py-3">
+          <div class="row align-items-center">
+            <div class="col-9">
+              <h4 class="fw-semibold mb-8">Produit</h4>
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a class="text-muted" href="javascript:void(0)">Produits</a></li>
+                  <li class="breadcrumb-item"><a class="text-muted" href="{{ path('produit')}}">Liste</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Modification</li>
+                </ol>
+              </nav>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    {{ form_start(edit_form) }}
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body p-4">
+                        <div class="form">
+                            {{ form_start(edit_form,{attr:{'enctype':'multipart/form-data'}}) }}
+                                <div class="row align-items-center">
+                                    <div class="col-sm-3">
+                                        {% if produit.fichier %}
+                                            {% set img_produit = produit.fichier ? produit.fichier.urlFichier : '' %}
+                                            <div class="kl-profile-content mt-2" id="kl-profile-content">
+                                                <p class="card-subtitle mb-4">Modifier la photo du produit à partir d'ici</p>
+                                                <div class="text-center">
+                                                    <img id="img_prev" src="{{ asset(img_produit) }}" alt="" class="img-fluid" width="120" height="120">  
+                                                    <div class="d-flex align-items-left justify-content-left my-4 gap-3">
+                                                        {{ form_row(edit_form.images, {'attr':{'class':'form-control'} }) }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="row mb-4">
+                                    <div class="col-sm-6">{{ form_row(edit_form.nom, {'attr': {'class': 'form-custom'}}) }}</div>
+                                    <div class="col-sm-6">{{ form_row(edit_form.categorie, {'attr': {'class': 'form-custom'}}) }}</div>
+                                </div>
+                                <div class="row mb-4">
+                                    <div class="col-sm-6">{{ form_row(edit_form.prixAchat, {'attr': {'class': 'form-custom'}}) }}</div>
+                                    <div class="col-sm-6">{{ form_row(edit_form.prixVente, {'attr': {'class': 'form-custom'}}) }}</div>
+                                </div>
+                                <div class="row mb-4">
+                                    <div class="col-sm-6">{{ form_row(edit_form.marque)}}</div>
+                                </div>
+                                <div class="row mb-4">
+                                    <div class="col-sm-6">{{ form_row(edit_form.description, {'attr': {'class': 'form-custom'}}) }}</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <input type="checkbox" id="id-is-promotion" name="is_promotion"/>
+                                            <label>En promotion ?</label>
+                                    </div>
+                                </div>
+                                {% set is_promo = (is_promotion == 0) ? ' d-none' : '' %}
+                                <div class="kl-promo row{{is_promo}}">
+                                    <div class="col-sm-6">{{ form_row(edit_form.prixPromo, {'attr': {'class': 'form-custom'}}) }}</div>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="d-flex align-items-center justify-content-end gap-3">
+                    <button class="btn btn-success">Modifier</button>
+                    <a href="{{ path('categorie')}}" class="btn btn-danger">Annuler</a>
+                </div>
+            </div>
+        </div>
+    {{ form_end(edit_form) }}
+                   
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent()}}
+    <script src="{{ asset('plugins/croppie/croppie.min.js') }}"></script>
+    <script src="{{ asset('backoffice/produit/produit.edit.js') }}"></script>
+
+    <script>
+    const inputmodifP = document.getElementById("produit_images");
+    const img_prev = document.getElementById("img_prev");
+    const imgSrc = img_prev.getAttribute("src");
+
+        inputmodifP.addEventListener('change', function(){
+            const fichier_categorie = this.files[0];
+            if (fichier_categorie) {
+                const read_file_cate = new FileReader();
+
+                read_file_cate.addEventListener("load", function(){
+                    img_prev.setAttribute("src", this.result);
+                });
+
+                read_file_cate.readAsDataURL(fichier_categorie);
+            } else {
+                img_prev.setAttribute("src", imgSrc);
+            }
+        });
+    </script>
+{% endblock %}

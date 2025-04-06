@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <title>Yorsil | {% block title %}{% endblock %}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta content="width=device-width, initial-scale=1.0" name="viewport">
+        <link type="text/css" rel="stylesheet" rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
+        <meta content="" name="author" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta content="" name="description">
+        <meta content="" name="keywords">
+        <link rel="shortcut icon" href="{{ asset('modernize/images/logos/favicon.svg') }}">
+        <!-- Owl Carousel -->
+        <link rel="stylesheet" href="{{ asset('modernize/libs/owl.carousel/dist/assets/owl.carousel.min.css') }}">
+        <!-- datatables -->
+        <link rel="stylesheet" href="{{ asset('modernize/libs/datatables.net-bs5/css/dataTables.bootstrap5.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('modernize/libs/select2/dist/css/select2.min.css') }}">
+        <!-- sweetalert -->
+        <link rel="stylesheet" href="{{ asset('modernize/libs/sweetalert/sweetalert.css') }}">
+        <!-- notification -->
+        <link rel="stylesheet" href="{{ asset('css/notification.css') }}" />
+        {% block stylesheets %}
+        {% endblock %}
+        <link rel="stylesheet" href="{{ asset('modernize/css/style.min.css') }}" />
+        <style>
+            .loding-page {
+                position: fixed;
+                top: 0;
+                left: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 100%;
+                height: 100vh;
+                background: #00000050;
+                z-index: 999999;
+            }
+
+            .loding-page img {
+                width: 150px;
+                height: 150px;
+                border-radius: 50%;
+                box-shadow: 1px 1px 5px;
+            }
+        </style>
+    </head>
+    <body>
+        {% set role = '' %}
+        {% if (app.user.roles[0] == 'ROLE_SUPER_ADMIN') %} {% set role = 'Super Administrateur' %} {% endif %}
+        {% if (app.user.roles[0] == 'ROLE_ADMIN') %} {% set role = 'Administrateur' %} {% endif %}
+        {% if (app.user.roles[0] == 'ROLE_DEV') %} {% set role = 'Développeur ' %} {% endif %}
+        
+        <!-- Body Wrapper -->
+        <div class="page-wrapper" id="main-wrapper" data-theme="blue_theme"  data-layout="vertical" data-sidebartype="full" data-sidebar-position="fixed" data-header-position="fixed">
+            <!-- Sidebar Start -->
+            {{ include('partials_back/sidebar.html.twig') }}
+            <div class="role-user d-none" data-role="{{is_granted('ROLE_ADMIN') ? 'admin' : 'user'}}"></div>
+            <!-- Main wrapper -->
+            <div class="body-wrapper">
+                {% for label,messages in app.flashes %}
+                    {% for message in messages %}
+                        <div class="d-none kl-flash-message" data-type="{{ label }}" data-message="{{ message }}"></div>
+                    {% endfor %}
+                {% endfor %}
+
+                <!-- Header Start -->
+                {{ include('partials_back/header.html.twig') }}
+
+                <div class="container-fluid">
+                {% block body %}
+                    
+                {% endblock %}
+                </div>
+            </div>
+
+        </div>
+        <!-- Preloader -->
+        <div class="preloader"><img src="{{ asset('modernize/images/logos/favicon.svg') }}" alt="loader" class="lds-ripple img-fluid" /></div>
+        
+        <!-- loading -->
+        <div class="loding-page d-none">
+            <img src="{{ asset('modernize/images/logos/logo.gif') }}" alt="">
+        </div>
+        
+        <!-- LoadSubmite -->
+        <div class="preloading">
+            <div class="LoadSubmite">
+                <img src="{{ asset('modernize/images/logos/fahana.svg') }}" alt="circlePreload" class="circlePreload img-fluid" />
+            </div>
+        </div>
+        
+        <!-- javascripts -->
+        {% block javascripts %}
+            <script src="{{ asset('modernize/libs/jquery/dist/jquery.min.js') }}"></script>
+            <script src="{{ asset('modernize/libs/simplebar/dist/simplebar.min.js') }}"></script>
+            <script src="{{ asset('modernize/libs/bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script>
+            <!-- core files -->
+            <script src="{{ asset('modernize/js/app.min.js') }}"></script>
+            <script src="{{ asset('modernize/js/app.dark.init.js') }}"></script>
+            <script src="{{ asset('modernize/js/app-style-switcher.js') }}"></script>
+            <script src="{{ asset('modernize/js/sidebarmenu.js') }}"></script>
+            <script src="{{ asset('modernize/js/custom.js') }}"></script>
+            <!-- current page js files -->
+            <script src="{{ asset('modernize/libs/owl.carousel/dist/owl.carousel.min.js') }}"></script>
+            <script src="{{ asset('modernize/libs/apexcharts/dist/apexcharts.min.js') }}"></script>
+            <script src="{{ asset('modernize/js/dashboard.js') }}"></script>
+            <!-- ---------------------------------------------- -->
+            <!-- current page js files -->
+            <!-- ---------------------------------------------- -->
+            <script src="{{ asset('modernize/libs/select2/dist/js/select2.full.min.js') }}"></script>
+            <script src="{{ asset('modernize/libs/select2/dist/js/select2.min.js') }}"></script>
+            <script src="{{ asset('modernize/libs/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+            <script src="{{ asset('modernize/js/datatable/dataTables.buttons.min.js') }}"></script>
+            <script src="{{ asset('modernize/js/datatable/buttons.flash.min.js') }}"></script>
+            <script src="{{ asset('modernize/js/datatable/jszip.min.js') }}"></script>
+            <script src="{{ asset('modernize/js/datatable/pdfmake.min.js') }}"></script>
+            <script src="{{ asset('modernize/js/datatable/vfs_fonts.js') }}"></script>
+            <script src="{{ asset('modernize/js/datatable/buttons.html5.min.js') }}"></script>
+            <script src="{{ asset('modernize/js/datatable/buttons.print.min.js') }}"></script>
+            <!-- sweetalert -->
+            <script src="{{ asset('modernize/libs/sweetalert/sweetalert.min.js') }}"></script>
+            <!-- notify -->
+            <script src="{{ asset('modernize/libs/notify/notify.min.js') }}"></script>
+            <script src="{{ asset('modernize/js/notification.js') }}"></script>
+            <script src="{{ asset('modernize/js/forms/select2.init.js') }}"></script>
+            <!-- general js -->
+            <script src="{{ asset('backoffice/general.js') }}"></script>
+            <script src="{{ asset('backoffice/notification/notif.js') }}"></script>
+            <script src="{{ asset('backoffice/notification/notification.js') }}"></script>
+            <!-- global_utils -->
+            {% include 'globale_javascript.html.twig' %}
+
+            <script>
+                $(document).on('submit', 'form', function (e) {
+                    $('.loding-page').removeClass('d-none')
+                })
+            </script>
+        {% endblock %}
+        
+    </body>
+</html>

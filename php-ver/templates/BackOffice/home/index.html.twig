@@ -1,0 +1,363 @@
+{% extends 'base_admin.html.twig' %}
+
+{% set menu_dashboard = true %}
+
+{% block title %}Tableau de bord{% endblock %}
+
+{% block body %}
+    <div class="row">
+        {# <div class="col-lg-4 d-flex align-items-stretch">
+          <div class="card w-100 bg-light-success overflow-hidden">
+            <div class="card-body py-3">
+              <div class="row justify-content-center align-items-center">
+                <div class="col-12 text-center">
+                  <img src="{{ asset('modernize/images/logos/fahana.svg')}}" width="130" alt="" class="img-fluid">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div> #}
+        <div class="col-lg-3 d-flex align-items-stretch">
+          <div class="card w-100 bg-light-primary">
+            <div class="card-body text-center d-flex flex-column align-items-center justify-content-center gap-2">
+              <h5 class="mb-1 fw-bolder text-uppercase text-primary">CHIFFRE D'AFFAIRES</h5>
+              <h4 class="fw-semibold m-0">{{ (ca_flix[2] + ca_recharge[2] + ca_transfert[2]) | number_format(2, ',', ' ') | number_format(2, ',', ' ')}} €</h4>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 d-flex align-items-stretch">
+          <div class="card w-100 bg-light-primary">
+            <div class="card-body text-center d-flex flex-column align-items-center justify-content-center gap-2">
+              <h3 class="mb-1 fw-bolder text-uppercase text-primary">COMMISSION</h3>
+              <h4 class="fw-semibold m-0">{{ comm | number_format(2, ',', ' ')}} €</h4>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 d-flex align-items-stretch">
+          <div class="card w-100 bg-light-warning">
+            <a href="{{ path('boutique') }}" class="card-body text-center d-flex flex-column align-items-center justify-content-center gap-2">
+              <h3 class="mb-1 fw-bolder text-uppercase text-warning">Partenaires</h3>
+              <h4 class="fw-semibold m-0">{{ nbrBoutique }}</h4>
+            </a>
+          </div>
+        </div>
+        <div class="col-lg-3 d-flex align-items-stretch">
+          <div class="card w-100 bg-light-danger">
+            <a class="card-body text-center d-flex flex-column align-items-center justify-content-center gap-2" data-bs-toggle="modal" data-bs-target="#id-modal-facture">
+              <button class="mb-1 btn btn-danger w-100">Facturation Services</button>
+            </a>
+          </div>
+        </div>
+
+        {# <div class="col-lg-3 d-flex align-items-stretch">
+          <div class="card w-100">
+            <div class="card">
+              <div class="card-body text-center d-flex flex-column align-items-center justify-content-center gap-2">
+                <div class="mb-9">
+                  <h5 class="card-title fw-semibold">Facturation de services</h5>
+                </div>  
+                <form id="exportForm" action="{{ path('facture_services') }}" method="post" target="_blank">
+                  <div class="input-group mb-3">
+                    <select class="form-select mb-1" name="boutique" id="listeBoutiques" required>
+                        <option value="" selected>Séléctionner une boutique</option>
+                        {% for boutique in boutiques %}
+                            <option value="{{ boutique.id }}">{{ boutique.nom }}</option>
+                        {% endfor %}
+                    </select>
+                  </div>
+                  <div class="input-group mb-3">
+                    <select class="form-select mb-3" name="mode" id="listefactures" required>
+                        <option value="" selected>Séléctionner une mode de facturation</option>
+                        <option value="1">HT</option>
+                        <option value="2">TTC</option>
+                    </select>
+                  </div>
+                  <button onclick="submitFormInNewTab()" class="btn btn-danger w-100">Export PDF</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div> #}
+
+        <!-- solde Api -->
+        <div class="col-12">
+          <div class="row justify-content-center">
+            <div class="col-lg-4 d-flex align-items-stretch">
+              <div class="card w-100 bg-light-primary">
+                <div class="card-body text-center d-flex flex-column align-items-center justify-content-center gap-2">
+                  <p class="fw-semibold fs-3 mb-1">ALEDA</p>
+                  <h5 class="fw-semibold text-primary mb-0">{{soldeApi.aleda | number_format(2, ',', ' ')}} €</h5>
+                </div>
+              </div>
+            </div>
+            {# <div class="col-lg-4 d-flex align-items-stretch">
+              <div class="card w-100 bg-light-primary">
+                <div class="card-body text-center d-flex flex-column align-items-center justify-content-center gap-2">
+                  <p class="fw-semibold fs-3 mb-1">DING</p>
+                  <h5 class="fw-semibold text-primary mb-0">{{soldeApi.ding}} €</h5>
+                </div>
+              </div>
+            </div> #}
+            <div class="col-lg-4 d-flex align-items-stretch">
+              <div class="card w-100 bg-light-primary">
+                <div class="card-body text-center d-flex flex-column align-items-center justify-content-center gap-2">
+                  <p class="fw-semibold fs-3 mb-1">RELOADLY</p>
+                  <h5 class="fw-semibold text-primary mb-0">{{soldeApi.reloadly | number_format(2, ',', ' ')}} €</h5>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CA par services -->
+        <div class="col-lg-4 d-flex align-items-stretch">
+          <div class="card w-100 bg-light-primary">
+            <div class="card-body text-center d-flex flex-column align-items-center justify-content-center gap-2">
+              <p class="fw-semibold fs-3 mb-1">Chiffre d'affaires FLIXBUS</p>
+              <h5 class="fw-semibold text-primary mb-0">{{ ca_flix[2] | number_format(2, ',', ' ')}} €</h5>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 d-flex align-items-stretch">
+          <div class="card w-100 bg-light-primary">
+            <div class="card-body text-center d-flex flex-column align-items-center justify-content-center gap-2">
+              <p class="fw-semibold fs-3 mb-1">Chiffre d'affaires CARTE DE RECHARGE</p>
+              <h5 class="fw-semibold text-primary mb-0">{{ ca_recharge[2] | number_format(2, ',', ' ')}} €</h5>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 d-flex align-items-stretch">
+          <div class="card w-100 bg-light-primary">
+            <div class="card-body text-center d-flex flex-column align-items-center justify-content-center gap-2">
+              <p class="fw-semibold fs-3 mb-1">Chiffre d'affaires TRANSFERT DE CREDIT</p>
+              <h5 class="fw-semibold text-primary mb-0">{{ ca_transfert[2] | number_format(2, ',', ' ')}} €</h5>
+            </div>
+          </div>
+        </div>
+
+        {# CA filtre #}
+        <div class="col-lg-4 d-flex align-items-stretch">
+          <div class="card w-100 bg-light-primary">
+            <div class="card-body text-center d-flex flex-column align-items-center justify-content-center gap-2">
+              <p class="fw-semibold fs-3 mb-1">Chiffre d'affaires Du Jour</p>
+              <h5 class="fw-semibold text-primary mb-0">{{ (ca_flix[0] + ca_recharge[0] + ca_transfert[0]) | number_format(2, ',', ' ')}} €</h5>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 d-flex align-items-stretch">
+          <div class="card w-100 bg-light-primary">
+            <div class="card-body text-center d-flex flex-column align-items-center justify-content-center gap-2">
+              <p class="fw-semibold fs-3 mb-1">Chiffre d'affaires Du Mois</p>
+              <h5 class="fw-semibold text-primary mb-0">{{ (ca_flix[1] + ca_recharge[1] + ca_transfert[1]) | number_format(2, ',', ' ')}} €</h5>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 d-flex align-items-stretch">
+          <div class="card w-100 bg-light-primary">
+            <div class="card-body text-center d-flex flex-column align-items-center justify-content-center gap-2">
+              <p class="fw-semibold fs-3 mb-1">Chiffre d'affaires Totale</p>
+              <h5 class="fw-semibold text-primary mb-0">{{ (ca_flix[2] + ca_recharge[2] + ca_transfert[2]) | number_format(2, ',', ' ')}} €</h5>
+            </div>
+          </div>
+        </div>
+        
+        <!-- COMM par services -->
+        <div class="col-lg-4 d-flex align-items-stretch">
+          <div class="card w-100 bg-light-primary">
+            <div class="card-body text-center d-flex flex-column align-items-center justify-content-center gap-2">
+              <p class="fw-semibold fs-3 mb-1">Commission FLIXBUS</p>
+              <h5 class="fw-semibold text-primary mb-0">{{ comm_flix | number_format(2, ',', ' ')}} €</h5>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 d-flex align-items-stretch">
+          <div class="card w-100 bg-light-primary">
+            <div class="card-body text-center d-flex flex-column align-items-center justify-content-center gap-2">
+              <p class="fw-semibold fs-3 mb-1">Commission CARTE DE RECHARGE</p>
+              <h5 class="fw-semibold text-primary mb-0">{{ comm_recharge | number_format(2, ',', ' ')}} €</h5>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 d-flex align-items-stretch">
+          <div class="card w-100 bg-light-primary">
+            <div class="card-body text-center d-flex flex-column align-items-center justify-content-center gap-2">
+              <p class="fw-semibold fs-3 mb-1">Commission TRANSFERT DE CREDIT</p>
+              <h5 class="fw-semibold text-primary mb-0">{{ comm_transfert | number_format(2, ',', ' ')}} €</h5>
+            </div>
+          </div>
+        </div>
+        
+        <!-- transaction -->
+        <div class="col-lg-4 d-flex align-items-stretch">
+          <div class="card w-100 bg-light-primary">
+            <div class="card-body text-center d-flex flex-column align-items-center justify-content-center gap-2">
+              <p class="fw-semibold fs-3 mb-1">Transaction Du Jours</p>
+              <h5 class="fw-semibold text-primary mb-0">{{carteVenduParJour()+transfertDiaspoParDays()+transfertParDays()+reservationParJour()}}</h5>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 d-flex align-items-stretch">
+          <div class="card w-100 bg-light-primary">
+            <div class="card-body text-center d-flex flex-column align-items-center justify-content-center gap-2">
+              <p class="fw-semibold fs-3 mb-1">Transaction Du Mois</p>
+              <h5 class="fw-semibold text-primary mb-0">{{carteVenduParMois()+transfertDiaspoParMois()+transfertParMois()+reservationParMois()}}</h5>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 d-flex align-items-stretch">
+          <div class="card w-100 bg-light-primary">
+            <div class="card-body text-center d-flex flex-column align-items-center justify-content-center gap-2">
+              <p class="fw-semibold fs-3 mb-1">Transaction Du Mois Passé</p>
+              <h5 class="fw-semibold text-primary mb-0">{{carteVenduMoisDernier()+transfertDiaspoMoisDernier()+transfertMoisDernier()+reservationMoisDernier()}}</h5>
+            </div>
+          </div>
+        </div>
+        {# <div class="col-lg-3 d-flex align-items-stretch">
+          <div class="card w-100 bg-light-primary">
+            <div class="card-body text-center d-flex flex-column align-items-center justify-content-center gap-2">
+              <p class="fw-semibold fs-3 mb-1">Cartes Vendu / Année</p>
+              <h5 class="fw-semibold text-primary mb-0">{{carteVenduParAnnee()}}</h5>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 d-flex align-items-stretch">
+          <div class="card w-100 bg-light-primary">
+            <div class="card-body text-center d-flex flex-column align-items-center justify-content-center gap-2">
+              <p class="fw-semibold fs-3 mb-1">Transfert / Jours</p>
+              <h5 class="fw-semibold text-primary mb-0">{{transfertParDays()}}</h5>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 d-flex align-items-stretch">
+          <div class="card w-100 bg-light-primary">
+            <div class="card-body text-center d-flex flex-column align-items-center justify-content-center gap-2">
+              <p class="fw-semibold fs-3 mb-1">Transfert / Mois</p>
+              <h5 class="fw-semibold text-primary mb-0">{{transfertParMois()}}</h5>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 d-flex align-items-stretch">
+          <div class="card w-100 bg-light-primary">
+            <div class="card-body text-center d-flex flex-column align-items-center justify-content-center gap-2">
+              <p class="fw-semibold fs-3 mb-1">Transfert / Année</p>
+              <h5 class="fw-semibold text-primary mb-0">{{transfertParAnnee()}}</h5>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 d-flex align-items-stretch">
+          <div class="card w-100 bg-light-primary">
+            <div class="card-body text-center d-flex flex-column align-items-center justify-content-center gap-2">
+              <p class="fw-semibold fs-3 mb-1">Réservation / Jours</p>
+              <h5 class="fw-semibold text-primary mb-0">{{reservationParJour()}}</h5>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 d-flex align-items-stretch">
+          <div class="card w-100 bg-light-primary">
+            <div class="card-body text-center d-flex flex-column align-items-center justify-content-center gap-2">
+              <p class="fw-semibold fs-3 mb-1">Réservation / Mois</p>
+              <h5 class="fw-semibold text-primary mb-0">{{reservationParMois()}}</h5>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 d-flex align-items-stretch">
+          <div class="card w-100 bg-light-primary">
+            <div class="card-body text-center d-flex flex-column align-items-center justify-content-center gap-2">
+              <p class="fw-semibold fs-3 mb-1">Réservation / Année</p>
+              <h5 class="fw-semibold text-primary mb-0">{{reservationParAnnee()}}</h5>
+            </div>
+          </div>
+        </div> #}
+    </div>
+
+
+    <div class="modal fade" id="id-modal-facture" tabindex="-1" aria-labelledby="modal-facture">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header d-flex align-items-center">
+            <h4 class="modal-title" id="modal-facture">
+              Facturation de services d'une boutique
+            </h4>
+            <button type="button" class="kl-close-geste btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="exportForm" action="{{ path('facture_services') }}" method="post" target="_blank">
+              <div class="input-group mb-3">
+                <select class="form-select mb-1" style="width: 100%!important;" name="boutique" id="listeBoutiques" required>
+                    <option value="" selected>Séléctionner une boutique</option>
+                    {% for boutique in boutiques %}
+                        <option value="{{ boutique.id }}">{{ boutique.nom }}</option>
+                    {% endfor %}
+                </select>
+              </div>
+              <div class="input-group mb-3">
+                <select class="form-select mb-3" style="width: 100%!important;" name="mode" id="listefactures" required>
+                    <option value="" selected>Séléctionner une mode de facturation</option>
+                    <option value="1">HT</option>
+                    <option value="2">TTC</option>
+                </select>
+              </div>
+              <button onclick="submitFormInNewTab()" class="btn btn-danger w-100">Export PDF</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {# <div class="row">
+      <div class="col-12 d-flex align-items-strech">
+        <div class="card w-100">
+          <div class="card-body">
+            <h5 class="card-title fw-semibold">Transfert crédit</h5>
+            <div id="stats" class="my-4"></div>
+            <div class="position-relative">
+              <div class="d-flex align-items-center justify-content-between mb-7">
+                <div class="d-flex">
+                  <div class="p-6 bg-light-primary rounded me-6 d-flex align-items-center justify-content-center">
+                    <i class="ti ti-grid-dots text-primary fs-6"></i>
+                  </div>
+                  <div>
+                  </div>
+                </div>
+                <div class="bg-light-primary badge">
+                  <p class="fs-3 text-primary fw-semibold mb-0">+68</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div> #}
+{% endblock %}
+
+{% block javascripts %}
+  {{ parent() }}
+  <script>
+    $(document).ready(function() {
+      $("#listeBoutiques").select2({
+        dropdownParent: $("#id-modal-facture")
+      });
+      $("#listefactures").select2({
+        dropdownParent: $("#id-modal-facture")
+      });
+
+      function submitFormInNewTab() {
+          const form = document.getElementById('exportForm');
+          const boutique = document.getElementById('listeBoutiques').value;
+
+          if (boutique) {
+              // Crée un nouvel onglet
+              const newTab = window.open('', '_blank');
+              form.target = newTab.name;
+              form.submit();
+          } else {
+              alert('Veuillez sélectionner une boutique.');
+          }
+      }
+
+      $(document).on("submit", "#exportForm", function (e) {
+        $('.loding-page').addClass('d-none')
+      })
+      
+    });
+  </script>
+{% endblock %}

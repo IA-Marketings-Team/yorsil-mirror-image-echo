@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Yorsil | {% block title %}{% endblock %}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta content="width=device-width, initial-scale=1.0" name="viewport">
+        <link type="text/css" rel="stylesheet" rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
+        <meta content="" name="author" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta content="" name="description">
+        <meta content="" name="keywords">
+
+       	<link rel="stylesheet" href="{{ asset('modernize/css/style-dark.min.css') }}" />
+       
+        {% block stylesheets %}
+        	
+        {% endblock %}
+    </head>
+
+    <body data-theme="dark">
+        {% for label,messages in app.flashes %}
+            {% for message in messages %}
+                <div class="d-none kl-flash-message" width="20" height="20" data-type="{{ label }}" data-message="{{ message }}"></div>
+            {% endfor %}
+        {% endfor %}
+
+        {% if error is defined %}
+            {% if error %}
+                <div class="d-none kl-flash-message" width="20" height="20" data-type="error" data-message="{{ error.messageKey|trans(error.messageData, 'security') }}"></div>
+            {% endif %}
+        {% endif %}
+        <!-- Body Wrapper -->
+        <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full" data-sidebar-position="fixed" data-header-position="fixed">
+        {% block body %}
+            
+        {% endblock %}
+        </div>
+
+        <!-- javascripts -->
+        {% block javascripts %} 
+        {% endblock %}
+        <!-- Import Js Files -->
+    </body>
+</html>

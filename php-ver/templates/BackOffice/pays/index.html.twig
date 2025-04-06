@@ -1,0 +1,224 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}Liste des pays{% endblock %}
+
+{% block stylesheets %}
+  {{ parent() }}
+  <style type="text/css">
+    .overflowcard{
+        /*display: contents;*/
+        height: 350px;
+        overflow-y: scroll;
+      }
+
+      .overflowcard::-webkit-scrollbar{
+        width: 10px;
+      }
+
+      .overflowcard::-webkit-scrollbar-track{
+        background: #f1f1f1;
+      }
+
+      .overflowcard::-webkit-scrollbar-track-thumb{
+        background: #red;
+      }
+
+      .overflowcard::-webkit-scrollbar-track-thumb:hover{
+        background: #555;
+      }
+  </style>
+{% endblock %}
+
+{% set menu_pays = true %}
+
+{% block body %}
+
+    <div class="card bg-light-info shadow-none position-relative overflow-hidden">
+        <div class="card-body px-4 py-3">
+          <div class="row align-items-center">
+            <div class="col-9">
+              <h4 class="fw-semibold mb-8">Pays</h4>
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a class="text-muted" href="javascript:void(0)">Pays</a></li>
+                  <li class="breadcrumb-item active"><a class="text-muted" href="{{ path('pays')}}">Liste</a></li>
+                </ol>
+              </nav>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="row px-4 py-3 border-bottom">
+            <div class="col-sm-4">
+              <h5 class="card-title fw-semibold mb-0">Reloadly par défaut </h5>
+            </div>
+            <div class="col-sm-8">
+              <div class="row">
+                <div class="col-sm-6">
+                  <select
+                      name="type"
+                      id="id-type-api select2-with-placeholder"
+                      class="kl-select-api select2 form-control"
+                      style="width: 80%; height: 36px"
+                    >
+                      <option>Veuillez séléctionner </option>
+                      <option value="diaspo">Diaspo Transfert</option>
+                      <option value="ding">Ding</option>
+                      <option value="reloadly">Reloadly</option>
+                  </select>
+                </div>
+                <div class="col-sm-6">
+                  <input type="text" name="name_pays" class="form-control kl-recherche" id="id-name-pays" placeholder="Rechercher le nom du pays" style="width: 80%" />
+                </div>
+              </div>
+             
+              
+            </div>
+          </div>
+          <div class="card-body p-4">
+            <form action="{{path('modification_pays')}}" method="POST">
+            <div class="overflowcard">
+              <div class="row kl-result">
+                <div class="spinner text-center d-none" style="display: flex;align-items: center;justify-content: center;width: 100%;height: 100%;position: absolute;top: -4px;left: -4px;background-color:  rgb(247 247 249 / 47%);z-index: 999;">
+                  <div class="spinner-border text-primary" role="status">
+                      <span class="visually-hidden">Loading...</span>
+                  </div>
+                </div>
+                <input type="hidden" name="api" id="id-hidden-api">
+                {% for payss in pays %}
+                  <div class="col-4">  
+                    <div class="form-check form-switch">
+                      {% set is_api = (payss.typeApi != null ) ? 1 : 0 %}
+                      <label class="form-check-label" for="flexSwitchCheckDefault">{{payss.nom}}</label>
+                      <input class="form-check-input kl-check" type="checkbox" data-id="{{payss.id}}" id="flexSwitchCheckDefault" name="is_api[]" {% if(payss.typeApi == 'diaspo' ) %} checked="checked" {% endif %} />
+                      <input type="hidden" class="kl-iso" name="iso[]" id="id-iso-{{payss.id}}" value="{{is_api}}" />
+                      <input type="text" class="d-none" name="ids[]" id="id-is-{{payss.id}}" value="{{payss.id}}" />
+                    </div>
+                  </div>
+                {% endfor %}
+                </div>
+              </div>
+          </div>
+        </div>
+      </div>
+        <div class="row mb-2">
+        <div class="col-sm-6">
+          <div class="d-flex align-items-center justify-content-start gap-3">
+            {# <h4>Tout Cocher <input class="form-check-input kl-checks" type="checkbox" id="checkAll" name="checkAll" {% if(all_check == true ) %} checked="checked" {% endif %} /> </h4> #}
+             <h4>Tout Cocher <input class="form-check-input kl-checks" type="checkbox" id="checkAll" name="checkAll"/> </h4>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="d-flex align-items-center justify-content-end gap-3">
+              <button class="btn btn-success">Modifier</button>
+              <a href="{{ path('pays')}}" class="btn btn-danger">Annuler</a>
+          </div>
+        </div>
+          </form>
+      </div>
+    </div>
+                   
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+  <script>
+  
+  var href = "{{path('filtre_pays')}}";
+
+  $(document).on('change','.kl-check', function(e) {
+    if($(this).is(':checked')) {
+      var id  = $(this).attr('data-id');
+      $('#id-iso-'+id).val(1);
+    } else {
+      var id  = $(this).attr('data-id');
+      $('#id-iso-'+id).val(0);
+    }
+  });
+
+   $(document).on('change','.kl-checks', function(e) {
+    if($(this).is(':checked')) {
+      var check = document.querySelector('.kl-checks');
+      var checkboxes = document.querySelectorAll('.kl-check');
+
+      checkboxes.forEach(function(checkbox) {
+          checkbox.checked = check.checked;
+      });
+
+      $('.kl-iso').val(1);
+
+    } else {
+      var check = document.querySelector('.kl-checks');
+      var checkboxes = document.querySelectorAll('.kl-check');
+
+      checkboxes.forEach(function(checkbox) {
+          checkbox.checked = !checkbox.checked;
+      });
+
+      $('.kl-iso').val(0);
+    }
+  });
+
+  $(document).on('change','.kl-select-api', function(e) {
+    var api = $(this).val();
+    $('#id-hidden-api').val(api);
+    $('.spinner').removeClass('d-none');
+    var nom = $('.kl-recherche').val();
+      $.ajax({
+        url: href,
+        method: 'POST',
+        data: {
+            nom: nom,
+            api: api
+        },
+        success: function (response) {
+            if (response) {
+              $('.kl-result').html(response.html);
+              $('.spinner').addClass('d-none');
+            }
+            else{
+                window.location.reload();
+                console.log('Error');    
+            }
+        },
+        error: function (error) {
+          console.log(error);
+        }
+      })
+  });
+
+  $(document).on('change','.kl-recherche', function(e) {
+    $('.spinner').removeClass('d-none');
+    var nom = $(this).val();
+    var api = $('.kl-select-api').val();
+      $.ajax({
+        url: href,
+        method: 'POST',
+        data: {
+            nom: nom,
+            api: api
+        },
+        success: function (response) {
+            if (response) {
+              $('.kl-result').html(response.html);
+              $('.spinner').addClass('d-none');
+            }
+            else{
+                window.location.reload();
+                console.log('Error');    
+            }
+        },
+        error: function (error) {
+          console.log(error);
+        }
+      })
+    
+  });
+
+  </script>
+
+{% endblock %}

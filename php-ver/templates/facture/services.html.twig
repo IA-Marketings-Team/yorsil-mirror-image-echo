@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <title>Yorsil | {% block title %}{% endblock %}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta content="width=device-width, initial-scale=1.0" name="viewport">
+        <link type="text/css" rel="stylesheet" rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta content="" name="author" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta content="" name="description">
+        <meta content="" name="keywords">
+        <style>
+            /*body {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }*/
+
+            #facturation {
+                /*width: 210mm; 
+                height: 297mm; */
+                margin: auto;
+               /* padding: 20mm;*/ /* Marge interne */
+               /* border: 1px solid #ccc;*/ /* Bordure pour visualiser la page */
+               /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);*/ /* Ombre pour l'effet papier */
+                background-color: white;
+                display: flex;
+                flex-direction: column;
+            }
+            .facture-title {
+                text-align: center;
+            }
+            .header-facture {
+                display: flex;
+                align-items: flex-start;
+                justify-content: space-between;
+            }
+            .header-facture .info-societe .logo {
+                width: 30mm;
+            }
+            .client-numero {
+                width: 100%;
+                text-align: right;
+            }
+            .table-facture {
+                width: 100%;
+                border-collapse: collapse;
+            }
+            .table-facture thead{
+                padding: .5rem .5rem;
+                background: #002060;
+                color: #fff;
+            }
+            .footer-facture {
+                width: 100%;
+                margin-top: auto;
+                text-align: center;
+            }
+            .footer-facture h2{
+                font-size: 15px;
+            }
+            .footer-facture p{
+                font-size: 12px;
+                color: gray;
+            }
+            .header-options {
+                box-sizing: border-box;
+                padding: 5px 5rem;
+                height: 40px;
+                background: #0000008c;
+                backdrop-filter: blur(2px);
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                overflow: hidden;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+            }
+            .header-options #print-facture {
+                height: 20;
+                cursor: pointer;
+            }
+            .header-options #print-facture svg,
+            .header-options a svg{
+                width: 20px;
+                height: 20px;
+            }
+            .header-options #print-facture svg path,
+            .header-options a svg path{
+                fill: white;
+            }
+            /* Pour l'impression */
+            @media print {
+                body {
+                    margin: 0;
+                    padding: 0;
+                    box-sizing: border-box;
+                }
+                title {
+                    display: none;
+                }
+                .header-options {
+                    display: none;
+                }
+
+                #facturation {
+                    width: 210mm;
+                    height: 297mm;
+                    margin: 0;
+                    box-shadow: none;
+                    border: none;
+                    page-break-after: always;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        {# <div class="header-options">
+            <a href="javascript:void(0)">
+                <svg viewBox="0 0 448 512"><path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z" /></svg>
+            </a>
+            <div id="print-facture">
+                <svg viewBox="0 0 512 512">
+                    <path d="M128 0C92.7 0 64 28.7 64 64l0 96 64 0 0-96 226.7 0L384 93.3l0 66.7 64 0 0-66.7c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0L128 0zM384 352l0 32 0 64-256 0 0-64 0-16 0-16 256 0zm64 32l32 0c17.7 0 32-14.3 32-32l0-96c0-35.3-28.7-64-64-64L64 192c-35.3 0-64 28.7-64 64l0 96c0 17.7 14.3 32 32 32l32 0 0 64c0 35.3 28.7 64 64 64l256 0c35.3 0 64-28.7 64-64l0-64zM432 248a24 24 0 1 1 0 48 24 24 0 1 1 0-48z" />
+                </svg>
+            </div>
+        </div> #}
+        <section id="facturation">
+            <h1 class="facture-title">SERVICES</h1>
+            <div class="header-facture">
+                <div class="info-societe">
+                    <img src="data:{{ image_type }};base64,{{ image_base64 }}" alt="logo" width="75" height="75">
+                    <address style="margin-bottom: 1rem; font-style: normal;line-height: 1.5;">
+                        61 RUE DE LYON <br>
+                        75012 PARIS <br>
+                        <strong>Numéro Siret :</strong> 93109801600013 <br>
+                        <strong>Numéro TVA :</strong> FR5931098016 <br>
+                        <strong>Code NAF / APE :</strong> 6202A
+                        </p>
+                    </address>
+                </div>
+                <div class="info-facture">
+                    <address  style=" text-align: right;margin-bottom: 1rem; font-style: normal;">
+                        {{ client.nom }} <br>
+                        {%if(client.adresse)%}{{ client.adresse }} <br>{% endif %}
+                        {%if(client.siren) %}<strong>Numéro Siren :</strong> {{ client.siren }} <br>{% endif %}
+                        <strong>N° CLIENT : </strong>{{ client.code }} <br>
+                        <strong>DATE : </strong>{{ "now"|date("d/m/Y") }}<br>
+                    </address>
+                </div>
+            </div>
+            <div class="body-facture">
+                <table class="table-facture">
+                    <thead>
+                        <tr style="border-bottom: 2px solid #ccc;padding: .4rem .4rem;font-size: 11px;">
+                            <th style="text-align: center; padding: .4rem .4rem;">Date</th>
+                            <th style="text-align: center; padding: .4rem .4rem;">Type</th>
+                            <th style="text-align: center; padding: .4rem .4rem;">Désignation</th>
+                            <th style="text-align: center; padding: .4rem .4rem;">Réf</th>
+                            <th style="text-align: center; padding: .4rem .4rem;">Quantité</th>
+                            <th style="text-align: center; padding: .4rem .4rem;">Prix Unité</th>
+                            <th style="text-align: center; padding: .4rem .4rem;">Remise</th>
+                            <th style="text-align: center; padding: .4rem .4rem;">Prix Achat HT</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% set totalHT = 0 %}
+                        {% set totalTTC = 0 %}
+                        {% for item in billingItems %}
+                            {% set dates  = item.date|date('Y-m-d H:i:s') %}
+                            {% set credit = creditBoutiqueDater(user,dates) %}
+                            {% set debit  = debitBoutiqueDater(user,dates) %}
+                            {% set geste  = gesteBoutiqueDater(user,dates) %}
+                            {% set solde  = credit+geste-debit %}
+                            {% set totalHT = totalHT + (item.montant | round(2)) %}
+                            {% set totalTTC = totalTTC + ((item.montant + item.commission) | round(2))  %}
+                            <tr style="text-align:center;padding: .4rem .4rem; font-size: 12px;">
+                                <td>{{ item.date|date("d/m/Y") }}</td>
+                                <td>{{ item.type }}</td>
+                                <td>{{ item.nomservice }}</td>
+                                <td>{{ item.reference }}</td>
+                                <td>1</td>
+                                <td>{{ (item.montant + item.commission) | number_format(2, ',', ' ') }} &euro;</td>
+                                <td>{{ item.commission | number_format(2, ',', ' ') }} &euro;</td>
+                                <td>{{ item.montant | number_format(2, ',', ' ') }} &euro;</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tr style="padding: .5rem .5rem;background-color: rgba(0, 0, 0, 0.05);font-size: 14px;">
+                        <td colspan="2">
+                        </td>
+                        <td colspan="5" style=" color:#212529;text-align:right;padding: .2rem .2rem;"><strong style="width: 100px">
+                            Montant Total HT</strong></td>
+                        <td style="color: #212529;text-align: center;padding: .2rem .2rem;">
+                            <strong style="width: 100px">{{ totalHT | number_format(2, ',', ' ') }} &euro;</strong>
+                        </td>
+                    </tr>
+                    {% if(facturation=='2') %}
+                        <tr style="padding: .5rem .5rem;background-color: rgba(0, 0, 0, 0.05);font-size: 14px;">
+                            <td colspan="2">
+                            </td>
+                            <td colspan="5" style=" color:#212529;text-align:right;padding: .2rem .2rem;"><strong style="width: 100px">
+                                Montant Total TTC</strong></td>
+                            <td style="color: #212529;text-align: center;padding: .2rem .2rem;">
+                                <strong style="width: 100px">{{ totalTTC | number_format(2, ',', ' ') }} &euro;</strong>
+                            </td>
+                        </tr> 
+                    {% endif %}
+                </table>
+            </div>
+            <div class="footer-facture">
+                <h2>SARL YORSIL</h2>
+                <p>61 RUE DE LYON 75012 PARIS</p>
+                <p>931 098 016 R.C.S. Paris - TVA FR95931098016</p>
+                <p>Capital social : 25 000,00 €</p>
+            </div>
+        </section>
+
+        <script>
+            window.onload = function () {
+                const print = document.getElementById('print-facture')
+                print.addEventListener("click", function(e){
+                    window.print()
+                    return false
+                }, false)
+            }
+        </script>
+
+    </body>
+</html>

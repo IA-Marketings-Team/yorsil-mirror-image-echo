@@ -1,0 +1,423 @@
+{% extends 'base_admin.html.twig' %}
+
+{% set menu_bout = true %}
+
+{% block title %}Liste des boutiques{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('modernize/libs/select2/dist/css/select2.min.css') }}">
+{% endblock %}
+
+{% block body %}
+    <div class="card bg-light-info shadow-none position-relative overflow-hidden">
+        <div class="card-body px-4 py-3">
+          <div class="row align-items-center">
+            <div class="col-9">
+              <h4 class="fw-semibold mb-8">Liste des boutiques </h4>
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a class="text-muted" href="javascript:void(0)">Boutique</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Liste</li>
+                </ol>
+              </nav>
+            </div>
+            {# <div class="col-3">
+              <div class="text-center mb-n5">  
+                <img src="{{ asset('modernize/images/logos/favicon.svg') }}" alt="" class="img-fluid mb-n4">
+              </div>
+            </div> #}
+          </div>
+        </div>
+    </div>
+
+    <section>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <form action="{{path('import_fichier_boutique')}}" method="post" enctype="multipart/form-data">
+                            <div class="row mb-2">
+                                <div class="col-sm-4">
+                                        <input type="file" class="form-control" id="fileInput" name="fileInput" accept=".csv, .xlsx, .xls" required>
+                                    </div>
+                                    <div class="col-sm-8">
+                                        <button class="btn btn-success mb-2"> 
+                                            <i class="ti ti-file fs-4"></i> Importer Fichier
+                                        </button>
+                                    
+                        </form>
+                                    <a id="ajout_admin" href="{{ path('bout_nouv') }}" class="btn btn-primary mb-2" style="margin-left: 20px;">
+                                        <i class="ti ti-plus fs-4"></i> Ajouter une boutique
+                                    </a>
+
+                            </div>
+                        <div class="table-responsive">
+                            <table id="id-boutique-liste" class="table">
+                                <thead>
+                                    <tr>
+				                        <th>Code</th>
+		                                <th>Nom</th>
+		                                <th>N° RCS</th>
+		                                <th>Contact</th>
+		                                <th>Email</th>
+		                                <th>Adresse</th>
+		                                <th>C.P</th>
+		                                <th>Crédit</th>
+		                                <th>Débit</th>
+                                        <th>Geste</th>
+                                        {# <th>Seuil</th> #}
+		                                <th>Solde</th>
+                                        <th>Seuil Bill</th>
+		                                <th>Admin</th>
+                                        <th>Status</th>
+										<th></th>
+				                    </tr>
+                                </thead>
+                                <tbody>
+                                    {# {% for bout in bouts %}
+                                        <tr> #}
+                                            {# <td>{{ bout.code }}</td>
+                                            <td>{{ bout.nom }}</td>
+                                            <td>{{ bout.nRcs }}</td>
+                                            <td>{{ bout.numMobile }}</td>
+                                            <td class="text-center">{{ bout.email }}</td>
+                                            <td>{{ bout.adresse }}</td>
+                                            <td class="text-center">{{ bout.codePost }}</td> #}
+                                            {# <td class="text-center">0</td>
+                                            <td class="text-center">0</td>
+                                            <td class="text-center">0</td>
+                                            <td class="text-center">0</td>
+                                            <td class="text-center">0</td> #}
+                                            {# <td class="text-center">--</td>
+                                            <td>
+                                                <div class="btn-group mb-2">
+                                                    <button type="button" class="btn btn-light-info text-info dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                        <i class="ti ti-menu-2 fs-4"></i>
+                                                    </button>
+                                                    <ul class="dropdown-menu animated flipInY px-2">
+                                                        <li class="d-flex justify-content-center align-items-center gap-1">
+                                                            <a class="btn mb-1 btn-sm font-medium d-flex gap-3 align-items-center btn-primary text-white waves-effect waves-light" href="{{ path('bout_edit',{id:bout.id}) }}">
+                                                                <i class="ti ti-edit fs-4" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Modifier"></i>
+                                                            </a>
+                                                            <a class="btn mb-1 btn-sm font-medium d-flex gap-3 align-items-center btn-primary text-white waves-effect waves-light" href="{{ path('bout_suppr',{id:bout.id}) }}" onclick="return confirm('Est-ce que vous voulez vraiment supprimer cette boutique');">
+                                                                <i class="ti ti-trash fs-4" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Supprimer"></i>
+                                                            </a> #}
+                                                            {# <a class="btn mb-1 btn-sm font-medium d-flex gap-3 align-items-center btn-primary text-white waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#id-modal-credit" data-bs-whatever="@mdo" href="javascript:void(0)">
+                                                                <i class="ti ti-credit-card fs-4" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Créditer"></i>
+                                                            </a>
+                                                            <a class="btn mb-1 btn-sm font-medium d-flex gap-3 align-items-center btn-primary text-white waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#id-modal-debit" data-bs-whatever="@mdo" href="javascript:void(0)">
+                                                                <i class="ti ti-credit-card-off fs-4" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Débiter"></i>
+                                                            </a> #}
+                                                            {# <a class="btn mb-1 btn-sm font-medium d-flex gap-3 btn-primary text-white waves-effect waves-light" href="{{ path('bout_caissier',{id:bout.id}) }}">
+                                                                <i class="ti ti-cash fs-4" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Caissier du boutique"></i>
+                                                            </a> #}
+                                                            {# <a class="btn mb-1 btn-sm font-medium d-flex gap-3 btn-primary text-white waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#id-modal-geste" data-bs-whatever="@mdo" href="javascript:void(0)">
+                                                                <i class="ti ti-chart-line fs-4" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Geste commercial"></i>
+                                                            </a>
+                                                            <a class="btn mb-1 btn-sm font-medium d-flex gap-3 btn-primary text-white waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#id-modal-seuil" data-bs-whatever="@mdo" href="javascript:void(0)">
+                                                                <i class="ti ti-rainbow-off fs-4" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Ajout de seuil"></i>
+                                                            </a> #}
+                                                        {# </li>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %} #}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {# ---------------------- (Modal credit) ------------- #}
+    <div class="modal fade" id="id-modal-credit" tabindex="-1" aria-labelledby="modal-credit">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header d-flex align-items-center">
+                <h4 class="modal-title" id="modal-credit">
+                    Rechargement d'une boutique
+                </h4>
+                <button type="button" class="kl-close btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="id-form-credit" class="kl-form-credit" role="form" method="POST" novalidate>
+                        <input type="hidden" name="boutique_id" id="id-boutique-credit">
+                        <div class="mb-3">
+                            <label for="id-montant-credit" class="control-label">Montant à recharger</label>
+                            <input type="number" id="id-montant-credit" name="montant"  min="50.00" step="0.01" class="form-control" required="Minimum 50 €" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="id-type-recharge" class="control-label">Type de rechargement</label>
+                            <select name="type_recharge" id="id-type-recharge" class="form-control chosen-type" data-placeholder="Choisissez le type de rechargement" required=""  style="width: 100%">
+                                {# <option value="">Virement Bancaire</option> #}
+                                <option value="1">Espèces (par coursier)</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="id-note-credit" class="control-label">Note</label>
+                            <input type="text" id="id-note-credit" name="note" class="form-control" />
+                        </div>
+                        <div class="mb-3 form-check form-switch">
+                            <label class="form-check-label" for="id-is-perc">
+                                Ajouter un percepteur
+                            </label>
+                            <input class="form-check-input kl-is-perc" type="checkbox" id="id-is-perc"/>
+                        </div>
+                        <div class="mb-3 kl-percept d-none">
+                            <label class="form-check-label" for="id-percepteur">Percepteur</label>
+                            <select name="percepteur" id="id-percepteur" class="form-control chosen-percepteur" data-placeholder="Choisissez le percepteur..." tabindex="2" style="width: 100%; height: 36px">
+                                <option></option>
+                                {% for percepteur in percepteurs %}
+                                    <option value="{{percepteur.id}}">{{percepteur.prenom}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger font-medium" data-bs-dismiss="modal">
+                                Annuler
+                            </button>
+                            <button type="button kl-submit" class="btn btn-primary">
+                                Valider
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# ---------------------- (Modal debit) ------------- #}
+    <div class="modal fade" id="id-modal-debit" tabindex="-1" aria-labelledby="modal-debit">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header d-flex align-items-center">
+                <h4 class="modal-title" id="modal-debit">
+                    Débiter une boutique
+                </h4>
+                <button type="button" class="kl-close-debit btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="id-form-debit" class="kl-form-debit" role="form" method="POST" novalidate>
+                        <input type="hidden" name="boutique_id" id="id-boutique-debit">
+                        <div class="mb-3">
+                            <label for="id-montant-debit" class="control-label">Montant à Débiter</label>
+                            <input type="number" id="id-montant-debit" name="montant" step="0.01" class="form-control" required/>
+                        </div>
+                        <div class="mb-3">
+                            <label for="id-note-debit" class="control-label">Note</label>
+                            <input type="text" id="id-note-debit" name="note" class="form-control" required/>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger font-medium" data-bs-dismiss="modal">
+                                Annuler
+                            </button>
+                            <button type="button kl-submit" class="btn btn-primary">
+                                Valider
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# ---------------------- (Modal caissier) ------------- #}
+    <div class="modal fade" id="id-modal-caissier" tabindex="-1" aria-labelledby="modal-caissier">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header d-flex align-items-center">
+                <h4 class="modal-title" id="modal-caissier">
+                    Caissier du boutique
+                </h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover " id="id-boutique-liste">
+                            <thead>
+                                <tr>
+                                    <td>Nom du boutique</td>
+                                    <td>Identifiant</td>
+                                    <td>Email</td>
+                                    <td>Admin</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {# {% for bout in bouts %} #}
+                                <tr>
+                                    <td class="c-nomBout"></td>
+                                    <td class="c-ident"></td>
+                                    <td class="c-mail"></td>
+                                    <td class="c-admin"></td>
+                                </tr>
+                            {# {% endfor %} #}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary text-primary font-medium" data-bs-dismiss="modal">
+                            OK
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    {# ---------------------- (Modal geste commercial) ------------- #}
+    <div class="modal fade" id="id-modal-geste" tabindex="-1" aria-labelledby="modal-geste">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header d-flex align-items-center">
+                <h4 class="modal-title" id="modal-geste">
+                    Geste commercial sur une boutique
+                </h4>
+                <button type="button" class="kl-close-geste btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="id-form-geste" class="kl-form-geste" role="form" method="POST" novalidate>
+                        <input type="hidden" name="boutique_id" id="id-boutique-geste">
+                        <div class="mb-3">
+                            <label for="id-montant-geste" class="control-label">Montant à Créditer</label>
+                            <input type="number" id="id-montant-geste" name="montant" step="0.01" class="form-control" required=""/>
+                        </div>
+                        <div class="mb-3">
+                            <label for="id-note-geste" class="control-label">Motif</label>
+                            <input type="text" id="id-note-geste" name="note" class="form-control" required/>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger font-medium" data-bs-dismiss="modal">
+                                Annuler
+                            </button>
+                            <button type="button kl-submit" class="btn btn-primary">
+                                Valider
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# ---------------------- (Modal seuil) ------------- #}
+    <div class="modal fade" id="id-modal-seuil" tabindex="-1" aria-labelledby="modal-seuil">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header d-flex align-items-center">
+                <h4 class="modal-title" id="modal-seuil">
+                    Ajout de seuil sur une boutique
+                </h4>
+                <button type="button" class="kl-close-seuil btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="id-form-seuil" class="kl-form-seuil" role="form" method="POST" novalidate>
+                        <input type="hidden" name="boutique_id" id="id-boutique-seuil">
+                        <div class="mb-3">
+                            <label for="id-montant-seuil" class="control-label">Montant</label>
+                            <input type="number" id="id-montant-seuil" name="montant" min="50.00" step="0.01" class="form-control" required />
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger font-medium" data-bs-dismiss="modal">
+                                Annuler
+                            </button>
+                            <button type="button kl-submit" class="btn btn-primary">
+                                Valider
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# ---------------------- (Modal seuil billeterie) ------------- #}
+    <div class="modal fade" id="id-modal-seuil-b" tabindex="-1" aria-labelledby="modal-seuil-b">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header d-flex align-items-center">
+                <h4 class="modal-title" id="modal-seuil-b">
+                    Seuil de billeterie d'une boutique
+                </h4>
+                <button type="button" class="kl-close-seuil-b btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="id-form-seuil-b" class="kl-form-seuil-b" role="form" method="POST" novalidate>
+                        <input type="hidden" name="boutique_id" id="id-boutique-seuil-b">
+                        <div class="mb-3">
+                            <label for="id-montant-seuil-b" class="control-label">Montant du seuil</label>
+                            <select name="montant_seuil_b" id="id-montant-seuil-b" class="form-control chosen-seuil" data-placeholder="Choisissez le montant..."  style="width: 100%">
+                                <option value="0">0 &euro;</option>
+                                <option value="50">50 &euro;</option>
+                                <option value="100">100 &euro;</option>
+                                <option value="150">150 &euro;</option>
+                            </select>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger font-medium" data-bs-dismiss="modal">
+                                Annuler
+                            </button>
+                            <button type="button kl-submit" class="btn btn-primary">
+                                Valider
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('modernize/libs/select2/dist/js/select2.full.min.js') }}"></script>
+    <script src="{{ asset('modernize/libs/select2/dist/js/select2.min.js') }}"></script>
+    <script>
+        // $('#id-boutique-liste').DataTable({
+        //     language: { "url": global_utils.urls.datatable_fr }
+        // });
+        $(".chosen-percepteur").select2({
+            dropdownParent: $("#id-modal-credit")
+        });
+        $(".chosen-seuil").select2({
+            dropdownParent: $("#id-modal-seuil-b")
+        });
+        $(".chosen-type").select2({
+            dropdownParent: $("#id-modal-credit")
+        });
+
+
+    	/* $('.chosen-select').chosen({width: "100%"}); 
+
+        var elem = document.querySelector('.kl-is-perc');
+        var switchery = new Switchery(elem, { color: '#1AB394', size: 'small' });*/
+
+        $(document).on('change','#id-is-perc', function(e) {
+            $('#id-percepteur').val('')
+            if ($(this).is(':checked')) {
+                $(this).attr('value', 'true');
+            }
+            else {
+               $(this).attr('value', 'false');
+            }
+            var check = $(this).val(); 
+            // console.log(check);
+            (check === 'false') ? $('.kl-percept').addClass('d-none') : $('.kl-percept').removeClass('d-none');
+            (check === 'false') ? $('#id-percepteur').attr('required', false) : $('#id-percepteur').attr('required', true); 
+        });
+
+        var href_edit_defaut = "{{ path('bout_edit',{id:0}) }}";
+        var href_suppr_defaut = "{{ path('bout_suppr',{id:0}) }}";
+
+        var is_dev = "{{ is_granted('ROLE_DEV') }}";
+
+        var href_assigne_defaut = "{{ path('bout_assigne',{id:0}) }}";
+
+        var href_caissier_defaut = "{{ path('bout_caissier',{id:0}) }}";
+	</script>
+	<script src="{{ asset('backoffice/boutique/boutique.liste.js') }}"></script>
+{% endblock %}

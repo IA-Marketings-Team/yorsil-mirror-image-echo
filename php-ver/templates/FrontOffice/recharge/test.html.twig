@@ -1,0 +1,265 @@
+{% extends 'base_front.html.twig' %}
+
+{% set menu_menu_recharge_mobile = true %}
+
+{% block title %}Recharge{% endblock %}
+
+{% block stylesheets %} 
+    {{ parent() }}
+    <style type="text/css">
+      .card {
+          margin-bottom: 1rem;
+      }
+      .kl-img{
+        box-shadow: rgba(93 ,135 ,255 ,0.43) 2.5px 2.5px;
+        border: 2px solid #E4E6EF !important;
+      }
+
+      .kl-img:hover {
+        box-shadow:  rgba(93 ,135 ,255 ,0.33) 5px 5px;
+      }
+
+      .kl-pad{
+        padding-bottom: 60px;
+        padding-top: 30px;
+      }
+
+      .kl-box{
+        box-shadow: rgba(93 ,135 ,255 ,0.43) 2.5px 2.5px;
+        border: 3px solid #E4E6EF !important;
+      }
+
+      .overflowcard{
+        display: block;
+        height: 150px;
+        overflow-y: scroll;
+      }
+
+      .overflowcard::-webkit-scrollbar{
+        width: 5px;
+      }
+
+      .overflowcard::-webkit-scrollbar-track{
+        background: #f1f1f1;
+      }
+
+      .overflowcard::-webkit-scrollbar-track-thumb{
+        background: #red;
+      }
+
+      .overflowcard::-webkit-scrollbar-track-thumb:hover{
+        background: #555;
+      }
+
+      .label-tiny {
+        font-size: 0.8rem;
+        font-weight: 700;
+        white-space: nowrap;
+        color: #b5b5c3;
+      }
+
+      .price {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #5e6278;
+      }
+      .operateur-load .card .image-load {
+        width: 100%;
+        height: 90px;
+        border-radius: 5px;
+        background: #c4c4c4;
+        animation: loading 1s infinite;
+      }
+      .operateur-load .card .card-body h5 {
+        width: 100%;
+        height: 20px;
+        background: #cdcdcd;
+        margin: 0;
+        border-radius: 5px;
+        animation: loading 1s infinite;
+      }
+      .card-operateur{
+        box-shadow: rgba(93 ,135 ,255 ,0.43) 2.5px 2.5px;
+        border: 2px solid #E4E6EF !important;
+        transition: 0.2s ease;
+      }
+
+      .card-operateur:hover {
+        box-shadow:  rgba(93 ,135 ,255 ,0.33) 5px 5px;
+      }
+      .card-operateur .card-operateur-img {
+        width: 100%;
+        min-width: 125px;
+        height: 125px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .card-operateur .card-operateur-img img{
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+      .card-operateur .card-operateur-name {
+        font-size: 15px;
+      }
+      .card-head {
+        gap: 1rem;
+      }
+      .card-head img {
+        height: 50px;
+      }
+      .categorie {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        background: #f6f6f6;
+        padding: 5px;
+      }
+      .categorie h5 {
+        margin: 0;
+      }
+      .categorie img {
+        height: 30px;
+      }
+      .offre-item .operateur {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        flex-direction: column;
+        height: 100%;
+        word-break: break-word;
+      }
+      .offre-item .operateur img{
+        width: 100%;
+      }
+      .offre-item .operateur h5{
+        margin: 0;
+        font-size: 12px;
+      }
+      .offre-item .title {
+        border-bottom: 1px solid lightgray;
+        margin-bottom: 5px;
+        font-size: 12px;
+      }
+      .offre-item .title h2{
+        font-size: 12px;
+      }
+      .offre-item .details{
+        font-size: 12px;
+        overflow: hidden;
+        max-height: 110px;
+        padding: 5px;
+        overflow-y: scroll;
+        margin-bottom: 1rem;
+      }
+
+      .offre-item .details::-webkit-scrollbar {
+          width: 10px; 
+          background-color: #fcfcfc; 
+      }
+
+      .offre-item .details::-webkit-scrollbar-thumb {
+          background-color: rgba(0, 0, 0, 0.4);
+          border-radius: 8px; 
+          border: 2px solid #fcfcfc; 
+      }
+
+      .offre-item .details::-webkit-scrollbar-thumb:hover {
+          background-color: rgba(0, 0, 0, 0.6); 
+      }
+
+      
+      .offre-item .details::-webkit-scrollbar-button:vertical:decrement {
+          background-color: #f1f1f1; 
+          height: 16px;
+          border-radius: 5px 5px 0 0;  
+          background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill="%23000000" d="M8 4l4 4H4z"/></svg>'); 
+          background-repeat: no-repeat;
+          background-position: center;
+      }
+
+      .offre-item .details::-webkit-scrollbar-button:vertical:increment {
+          background-color: #f1f1f1; 
+          height: 16px;
+          border-radius: 0 0 5px 5px; 
+          background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill="%23000000" d="M8 12l4-4H4z"/></svg>'); 
+          background-repeat: no-repeat;
+          background-position: center;
+      }
+      
+      .offre-item .details::-webkit-scrollbar-track {
+          background-color: #fcfcfc; 
+          border-radius: 8px;
+      }
+
+      @keyframes loading {
+          0%,100% {
+              animation-timing-function: cubic-bezier(0, 0, .2, 1);
+              opacity: 1;
+          }
+
+          50% {
+              animation-timing-function: cubic-bezier(.8, 0, 1, 1);
+              opacity: 0.5;
+          }
+      }
+
+    </style>
+{% endblock %}
+
+{% block body %}
+
+  <div class="card bg-light-info shadow-none position-relative overflow-hidden">
+      <div class="card-body px-4 py-3">
+        <div class="row">
+          <div class="col-md-9">
+            <h4 class="fw-semibold mb-8">Recharge</h4>
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item active"><a class="text-muted" href="javascript:void(0)">Recharge</a></li>
+              </ol>
+            </nav>
+          </div>
+        </div>
+      </div>
+  </div>
+
+  <ul class="nav nav-tabs" id="myTab" role="tablist">
+      {% for index, catalogue in catalogues %}
+        <li class="nav-item" role="presentation">
+            <button class="nav-link {{index == 0 ? 'active' : '' }}" id="tab-{{index}}" data-bs-toggle="tab" data-bs-target="#panel-{{index}}" type="button" role="tab" aria-controls="panel-{{index}}" aria-selected="{{index == 0 ? 'true' : 'false' }}">{{catalogue.name}}</button>
+        </li>
+      {% endfor %}
+  </ul>
+  
+  <div class="tab-content" id="myTabContent">
+    {% for indexCatalogue, catalogue in catalogues %}
+      <div class="tab-pane fadeInRight {{indexCatalogue == 0 ? 'show active' : '' }}" id="panel-{{indexCatalogue}}" role="tabpanel" aria-labelledby="tab-{{indexCatalogue}}">
+        <div class="row row-cols-1 row-cols-md-6 g-4">
+          {% for indexCategorie, categorie in catalogue.categories %}
+            <div class="col">
+              <div class="card h-100">
+                <img src="{{categorie.catalogImageUrl}}" class="card-img-top" alt="{{categorie.name}}">
+                <div class="card-body">
+                  <h5 class="card-title"></h5>
+                  <p class="card-text">{{categorie.name}}</p>
+                </div>
+                <div class="card-footer">
+                  <small class="text-muted">{{categorie.type}}</small>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+{% endblock %}
+
+{% block javascripts %}
+  {{ parent() }}
+{% endblock %}

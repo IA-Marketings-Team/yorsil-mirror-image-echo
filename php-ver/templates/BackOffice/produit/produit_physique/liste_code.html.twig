@@ -1,0 +1,62 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}Liste des codes {{ produit.nom }} {% endblock %}
+
+{% set menu_produit = true %}
+{% set menu_produit_physique_liste = true %}
+
+{% block body %}
+
+    <div class="card bg-light-info shadow-none position-relative overflow-hidden">
+        <div class="card-body px-4 py-3">
+            <div class="row align-items-center">
+                <div class="col-9">
+                    <h4 class="fw-semibold mb-8">Liste des codes {{ produit.nom }} </h4>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                          <li class="breadcrumb-item"><a class="text-muted" href="{{path('produit_physique')}}">Produits virtuels</a></li>
+                          <li class="breadcrumb-item active" aria-current="page">Liste</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table"  id="id-produit-physique-liste">
+                                <thead>
+                                    <tr>
+                                        <td>Code</td>
+                                        <td>Status</td> 
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for code in codes %}
+                                        <tr>
+                                            <td>{{code.code}}</td>
+                                            <td>
+                                                <i class = "ti ti-cards fs-5 {{ (code.status == 'pending') ? 'text-warning' : 'text-success'}}" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{{ (code.status == 'pending') ? 'En attente de vente' : 'Vendu'}}"></i>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+{% endblock %}
+{% block javascripts %}
+	{{ parent() }}
+    <script src="{{ asset('backoffice/produit/produit.physique.list.js') }}"></script>
+{% endblock %}

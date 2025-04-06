@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Récupération Mot de passe</title>
+	<style>
+		*{
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+			margin: 0 auto;
+		}
+		body {
+			padding: 5px;
+			display: flex;
+		}
+		.mail-content {
+			position: relative;
+			color: #545151;
+			text-align: center;
+			border: 1px solid #b4b0b0;
+			width: max-content;
+			height: max-content;
+			border-radius: 10px;
+			padding: 25px;
+		}
+		.mail-content .logo{
+		    width: 100px;
+			display: block;
+		}
+		.mail-content a{
+		    text-decoration: none;
+		    border: 1px solid #196fe5;
+		    color: #196fe5;
+		    border-radius: 5px;
+		    padding: 10px;
+		    margin-top: 10px;
+		    font-size: 1.2rem;
+		    display: block;
+		}
+		.mail-content a:hover {
+		    border: 1px solid #0053c6;
+		    color: #ffffff;
+		    background: #196fe5;
+		}
+	</style>
+</head>
+<body>
+	<div class="mail-content">
+		<img src="{{logo}}" alt="" class="logo">
+		<h1>Bonjour {{ nom }}, c'est  YORSIL!</h1>
+		<h3>Votre mot de passe après modification est : <strong>{{ mdp }}</strong></h3>
+		<hr>
+		<img src="{{mailImg}}" alt="">
+		<h4>Pour se connecter, aller vers:</h4>
+		<a href="{{ url('app_login') }}"> yorsil.fr</a>
+	</div>
+</body>
+</html>

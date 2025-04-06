@@ -1,0 +1,452 @@
+{% extends 'base_front.html.twig' %}
+
+    {% set menu_transfert_argent = true %}
+    
+    {% block title %}Transfert de Crédit{% endblock %}
+    
+    {% block stylesheets %} 
+        {{ parent() }}
+        <link rel="stylesheet" href="{{ asset('flag-icon-css/css/flag-icons.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('modernize/libs/country/country.css') }}" />
+        <style>
+            .card-header h4{
+                margin: 0;
+            }
+            .detail-tarif h2{
+                font-size: 13px;
+                font-weight: 900;
+                position: relative;
+            }
+            .detail-tarif h2::after{
+                content: "";
+                position: absolute;
+                display: block;
+                left: 0;
+                width: 50%;
+                margin: 5px 0px;
+                height: 2px;
+                background: #0a7ea4;
+            }
+            .img-tarif {
+                padding: 0 !important;
+            }
+            .detail-tarif .detail {
+                font-size: 12px;
+            }
+            .tarif-unitaire span{
+                font-weight: 900;
+                color: #b5b5c9;
+            }
+            .tarif-unitaire h2{
+                font-weight: 900;
+                font-size: 20px;
+                font-family: sans-serif;
+                color: #5a5b6f;
+            }
+            .valide-btn {
+                margin-top: auto;
+            }
+            .transfertCredit {
+                position: relative;
+            }
+            .preload-transfert {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: #f9f9f900;
+                backdrop-filter: blur(2px);
+                z-index: 1000;
+                display: none;
+            }
+            #cardOperateurSelected,
+            #cardTarifList
+            {
+                display: none;
+            }
+            #cardOperateurSelected .info-orerateur-img {
+                width: 100%;
+                height: 174px;
+                object-fit: contain;
+                padding: 5px;
+                background: white;
+            }
+            #destiataireForm.modif .select-coutry{
+                pointer-events: none;
+            }
+            /* loadig */
+            #loading-check {
+                display: none;
+            }
+            .load-wrapp {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                overflow: hidden;
+                width: 100%;
+                height: 40px;
+            }
+            .line {
+                display: inline-block;
+                width: 15px;
+                height: 15px;
+                border-radius: 15px;
+                background-color: #d0d0d0;
+            }
+            .load-1 .line:nth-last-child(1) {
+                animation: loadingA 1.5s 1s infinite;
+            }
+            .load-1 .line:nth-last-child(2) {
+                animation: loadingA 1.5s 0.5s infinite;
+            }
+            .load-1 .line:nth-last-child(3) {
+                animation: loadingA 1.5s 0s infinite;
+            }
+            .hover-img:hover {
+                z-index: 999;
+            }
+            @keyframes loadingA {
+                0 {
+                    height: 15px;
+                }
+                50% {
+                    height: 35px;
+                }
+                100% {
+                    height: 15px;
+                }
+            }
+    
+            
+            div#loading-achat.hidde {
+                display: none;
+            }
+            div#loading-achat {
+                position: fixed;
+                top: 0;
+                left: 0;
+                background: #80808033;
+                backdrop-filter: blur(2px);
+                width: 100%;
+                height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 9999999;
+            }
+            div#loading-achat .load-wrapp .load-1 .line{
+                background-color: #0a7ea4;
+            }
+            /* end loadig */
+    
+            /* liste operateur */
+            #container-operateur-list {
+                display: none;
+            }
+            .operateur-card{
+                overflow: hidden;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-direction: column;
+                gap: 5px;
+                text-align: center;
+                height: 100%;
+                background: #cbcbcb40;
+                backdrop-filter: blur(5px);
+                border-radius: 10px;
+                border-top: 1px solid #d0d0d0;
+                border-left: 1px solid #d0d0d0;
+                box-shadow: 1px 1px 5px #d0d0d0;
+                cursor: pointer;
+                transition: 0.3s;
+            }
+            .operateur-card:hover {
+                box-shadow: 2px 2px 5px #8a8a8a;
+            }
+            .operateur-card:active {
+                box-shadow: 1px 1px 5px #8a8a8a;
+            }
+            .operateur-card img{
+                width: 100%;
+                height: 154px;
+                object-fit: contain;
+                margin-bottom: auto;
+                background: white;
+                padding: 5px;
+            }
+            .operateur-card .name-operateur{
+                font-size: 15px;
+                font-weight: 900;
+                padding: 10px 5px;
+                margin: 0;
+                margin-top: auto;
+            }
+            /* end liste operateur */
+            /* new interface ding */
+            #operateur-selected {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .card-operateur-selected {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 1rem;
+                box-shadow: 0 0 5px #ccc;
+                padding: 10px;
+                margin: 1rem;
+                border-radius: 5px;
+            }
+            .logo-operateur {
+                width: 50px;
+                object-fit: contain;
+            }
+            .name-operateur {
+                font-weight: 900;
+            }
+            #liste-offre-ding {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-direction: column;
+                gap: 1rem;
+                padding-bottom: 1rem;
+            }
+            .nav-listes {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 100%;
+            }
+            #nav-tab-offres {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-wrap: wrap;
+                gap: 5px;
+            }
+            #nav-tab-offres .nav-link{
+                background: transparent;
+                color: #7f7d7d;
+                font-weight: 600;
+                border: 1px solid #7f7d7d;
+                padding: 15px 35px;
+                margin: 0px 5px;
+                transition: 0.4s ease;
+            }
+            #nav-tab-offres .nav-link.active{
+                color: #0a7ea4;
+                border: 1px solid #0a7ea4;
+                box-shadow: 0 0 5px #ccc !important;
+            }
+            #nav-tabContent {
+                width: 100%;
+            }
+            .liste-offres-cards {
+                display: flex;
+                justify-content: center;
+                flex-wrap: wrap;
+                gap: 5px;
+            }
+            .liste-offres-cards .card-for-offre{
+                flex: 0 0 calc(20% - 5px);
+                min-width: 180px;
+                border: 1px solid #0a7ea4;
+                padding: 10px;
+                border-left: 10px solid #0a7ea4;
+                cursor: pointer;
+            }
+            .card-for-offre .header-card{
+                display: flex;
+                align-items: baseline;
+                padding-bottom: 1rem;
+            }
+            .card-for-offre .header-card h2{
+                font-size: 20px;
+                margin: 0;
+            }
+            .card-for-offre .header-card .ti-info-circle{
+                font-size: 20px;
+                cursor: pointer;
+                margin-left: auto;
+            }
+            .card-for-offre .body-card{
+                padding-bottom: 1rem;
+            }
+            .card-for-offre .body-card p{
+                margin: 0;
+            }
+            .card-for-offre .foot-card {
+                display: flex;
+            }
+            .card-for-offre .foot-card button{
+                margin-left: auto;
+            }
+            #card-open-range {
+                display: none;
+            }
+            </style>
+    {% endblock %}
+    
+    {% block body %}
+    
+        <div class="card bg-light-info shadow-none position-relative overflow-hidden">
+            <div class="card-body px-4 py-3">
+              <div class="row">
+                <div class="col-md-9">
+                  <h4 class="fw-semibold mb-8">Transfert de Crédit</h4>
+                  <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                      <li class="breadcrumb-item"><a class="text-muted" href="{{ path('hist_transf')}}">Journal</a></li>
+                      <li class="breadcrumb-item active" aria-current="page">Transfert</li>
+                    </ol>
+                  </nav>
+                </div>
+              </div>
+            </div>
+        </div>
+    
+        <div class="transfertCredit">
+            <div class="row justify-content-center">
+                <div class="col-md-6 d-flex">
+                    <div class="card hover-img w-100">
+                        <div class="card-header">
+                            <h4>Destinataire</h4>
+                        </div>
+                        <form class="card-body p-4" id="destiataireForm">
+                            <div class="row">
+                                <div class="col-md-9">
+                                    {% include 'FrontOffice/transfert/listCountry.html.twig' with {'listeCountry': listeCountry} %}
+                                </div>
+                                <div class="col-md-3">
+                                    <button class="btn btn-success disabled" id="valideDestinataire">Valider</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+    
+                <div class="col-md-6" id="cardOperateurSelected"></div>
+    
+                <div class="col-12" id="loading-check">
+                    <div class="load-wrapp">
+                        <div class="load-1">
+                            <div class="line"></div>
+                            <div class="line"></div>
+                            <div class="line"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <section id="container-operateur-list">
+                <div class="row justify-content-center operateur-card-list" id="operateurCardList"></div>
+            </section>
+    
+            <section id="cardOffreLists">
+                <div class="row" id="cardOffreItem"></div>
+            </section>
+
+            <section id="liste-offre-ding"></section>
+
+            <section id="card-open-range">
+                <div class="row justify-content-center">
+                    <div class="col-md-5">
+                        <form id="form-open-range">
+                            <div class="card">
+                                <div class="card-body card-body px-4 py-2">
+                                    <div class="mb-1">
+                                        <label for="or-monatant" class="form-label">Montant</label>
+                                        <input type="text" class="form-control" id="or-monatant" placeholder="Montant" required>
+                                        <div class="invalid-feedback" id="invalid-feedback-or">
+                                            le montant n'est pas valide
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-footer d-flex justify-content-end">
+                                    <button class="btn btn-primary btn-sm" type="submit">Valider</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+    
+            <div class="preload-transfert" id="preloadTransfert">
+                <img src="{{ asset('modernize/images/logos/largeicon.svg') }}" width="180" alt="">
+            </div>
+    
+            <!-- modal details ding -->
+            <div class="modal fade" id="modal-info-forfait" tabindex="-1" aria-labelledby="modal-stock">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Plus d'info</h4>
+                            <button type="button" class="kl-close btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed quas officiis laborum, facere inventore quasi nulla tenetur aliquid, ad magni vitae nostrum cupiditate. Deleniti, impedit libero perspiciatis consequatur error fuga?</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Ok</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- modal confirm -->
+            <div class="modal fade" id="modal-valide-tarif" tabindex="-1" aria-labelledby="bs-example-modal-md" aria-hidden="true" >
+                <div class="modal-dialog modal-dialog-centered modal-md">
+                    <div class="modal-content">
+                        <form id="formValidModal" method="POST">
+                            <div class="modal-header d-flex align-items-center" >
+                                <h4 class="modal-title" id="myLargeModalLabel">Mobicarte sms ilimites</h4>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" ></button>
+                            </div>
+                            <div class="modal-body">
+                                <p id="modalProduitSelected">
+                                    <span class="fw-bolder">Produit séléctionné: </span>1x opérateur <span class="tarifModal">5,00</span>€
+                                </p>
+                            </div>
+                            <div class="modal-footer d-flex gap-1 align-items-center justify-content-end">
+                                <button type="button" id="valide-trx-api" class="btn btn-light-success text-success font-medium waves-effect text-start">
+                                    Valider
+                                </button>
+                                <button type="button" class="btn btn-light-danger text-danger font-medium waves-effect text-start" data-bs-dismiss="modal" >
+                                    Annuler
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            
+    
+            <div id="loading-achat" class="hidde">
+                <div class="load-wrapp">
+                    <div class="load-1">
+                        <div class="line"></div>
+                        <div class="line"></div>
+                        <div class="line"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+    {% endblock %}
+    
+    {% block javascripts %}
+        {{ parent() }}
+        <script>
+            const $offresManuel   = {{ offres|json_encode|raw }};
+        </script>
+        <script src="{{ asset('modernize/libs/country/country.js') }}"></script>
+    {% endblock %}
+    

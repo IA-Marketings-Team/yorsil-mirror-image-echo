@@ -1,0 +1,234 @@
+{% extends 'base_front.html.twig' %}
+
+{% set politique_Confidentialite = true %}
+
+{% block title %}Mentions légales{% endblock %}
+
+{% block stylesheets %} 
+    {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-none border">
+                <div class="card-body">
+                    <h4 class="fw-semibold">Mentions légales</h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-none border">
+                <div class="card-body p-2">
+                    <h5 class="fw-semibold mb-2">Éditeur du site</h5>
+                    <p class="fs-2">Le site YORSIL est édité par :</p>
+                    <ul class="list-unstyled mb-0">
+                        <li class="d-flex align-items-center gap-3 mb-2">
+                            <i class="ti ti-point text-dark fs-2"></i>
+                            <p class="fs-2 fw-semibold mb-0"><strong>Raison sociale : </strong>YORSIL</p>
+                        </li>
+                        <li class="d-flex align-items-center gap-3 mb-2">
+                            <i class="ti ti-point text-dark fs-2"></i>
+                            <p class="fs-2 fw-semibold mb-0"><strong>Forme juridique : </strong>Société à responsabilité limitée (SARL)</p>
+                        </li>
+                        <li class="d-flex align-items-center gap-3 mb-2">
+                            <i class="ti ti-point text-dark fs-2"></i>
+                            <p class="fs-2 fw-semibold mb-0"><strong>Capital social : </strong>25 000,00 €</p>
+                        </li>
+                        <li class="d-flex align-items-center gap-3 mb-2">
+                            <i class="ti ti-point text-dark fs-2"></i>
+                            <p class="fs-2 fw-semibold mb-0"><strong>Siège social : </strong>61 rue de Lyon, 75012 Paris, France</p>
+                        </li>
+                        <li class="d-flex align-items-center gap-3 mb-2">
+                            <i class="ti ti-point text-dark fs-2"></i>
+                            <p class="fs-2 fw-semibold mb-0"><strong>Numéro RCS : </strong>931 098 016 R.C.S. Paris</p>
+                        </li>
+                        <li class="d-flex align-items-center gap-3 mb-2">
+                            <i class="ti ti-point text-dark fs-2"></i>
+                            <p class="fs-2 fw-semibold mb-0"><strong>Immatriculation : </strong>18 juillet 2024</p>
+                        </li>
+                        <li class="d-flex align-items-center gap-3 mb-2">
+                            <i class="ti ti-point text-dark fs-2"></i>
+                            <p class="fs-2 fw-semibold mb-0"><strong>Activité principale : </strong>Recherche, développement, conception, et vente de biens et services dans le domaine des transactions électroniques sécurisées, des paiements, et des solutions informatiques.</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card shadow-none border">
+                        <div class="card-body p-2">
+                            <h5 class="fw-semibold mb-2">Directeur de la publication</h5>
+                            <ul class="list-unstyled mb-0">
+                                <li class="d-flex align-items-center gap-3 mb-2">
+                                    <i class="ti ti-point text-dark fs-2"></i>
+                                    <p class="fs-2 fw-semibold mb-0"><strong>Nom : </strong>Tarik Abdelhak</p>
+                                </li>
+                                <li class="d-flex align-items-center gap-3 mb-2">
+                                    <i class="ti ti-point text-dark fs-2"></i>
+                                    <p class="fs-2 fw-semibold mb-0"><strong>Fonction : </strong>Gérant</p>
+                                </li>
+                                <li class="d-flex align-items-center gap-3 mb-2">
+                                    <i class="ti ti-point text-dark fs-2"></i>
+                                    <p class="fs-2 fw-semibold mb-0"><strong>Contact : </strong><a href="mailto:contact@yorsil.com">contact@yorsil.com</a></p>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="card shadow-none border">
+                        <div class="card-body p-2">
+                            <h5 class="fw-semibold mb-2">Hébergeur du site</h5>
+                            <p class="fs-2">Le site YORSIL est hébergé par :</p>
+                            <ul class="list-unstyled mb-0">
+                                <li class="d-flex align-items-center gap-3 mb-2">
+                                    <i class="ti ti-point text-dark fs-2"></i>
+                                    <p class="fs-2 fw-semibold mb-0"><strong>Raison sociale : </strong>OVH SAS</p>
+                                </li>
+                                <li class="d-flex align-items-center gap-3 mb-2">
+                                    <i class="ti ti-point text-dark fs-2"></i>
+                                    <p class="fs-2 fw-semibold mb-0"><strong>Siège social : </strong>2 rue Kellermann, 59100 Roubaix, France</p>
+                                </li>
+                                <li class="d-flex align-items-center gap-3 mb-2">
+                                    <i class="ti ti-point text-dark fs-2"></i>
+                                    <p class="fs-2 fw-semibold mb-0"><strong>Téléphone : </strong><a href="tel:+33 9 72 10 10 07">+33 9 72 10 10 07</a></p>
+                                </li>
+                                <li class="d-flex align-items-center gap-3 mb-2">
+                                    <i class="ti ti-point text-dark fs-2"></i>
+                                    <p class="fs-2 fw-semibold mb-0"><strong>Site web : </strong><a href="mailto:www.ovhcloud.com">www.ovhcloud.com</a></p>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12">
+            <div class="p-4 rounded-2 bg-light ms-7">
+                <div class="d-flex align-items-center gap-3">
+                    <img src="{{asset('images/contact.png')}}" alt="" class="rounded-circle" width="40" height="40">
+                    <h6 class="fw-semibold mb-0 fs-4">Contact</h6>
+                </div>
+                <p class="my-3">
+                    <span class="fs-2">Pour toute question ou réclamation, veuillez nous contacter : </span>
+                </p>
+                <div class="mb-2 d-flex align-items-center">
+                    <span class="ms-1">
+                        <i class="ti ti-mail text-success"></i>
+                    </span>
+                    <span class="text-dark fs-2 fw-bold ms-1">Email : </span>
+                    <a href="mailto:contact@yorsil.com" class="fw-bold fs-2 ms-2">contact@yorsil.com</a>
+                </div>
+                <div class="mb-2 d-flex align-items-center">
+                    <span class="ms-1">
+                        <i class="ti ti-phone text-success"></i>
+                    </span>
+                    <span class="text-dark fs-2 fw-bold ms-1">Téléphone : </span>
+                    <a href="tel:+33 01 88 61 16 20" class="text-light-dark fw-bold fs-2 ms-2">+33 01 88 61 16 20</a>
+                </div>
+                <div class="mb-2 d-flex align-items-center">
+                    <span class="ms-1">
+                        <i class="ti ti-map-pin text-success"></i>
+                    </span>
+                    <span class="text-dark fs-2 fw-bold ms-1">Adresse postale : </span>
+                    <span class="fw-bold fs-2 ms-2">61 rue de Lyon, 75012 Paris, France</span>
+                </div>
+                <div class="d-flex align-items-center">
+                    <span class="ms-1">
+                        <i class="ti ti-world-www text-success"></i>
+                    </span>
+                    <span class="text-dark fs-2 fw-bold ms-1">Site web : </span>
+                    <span class="fw-bold fs-2 ms-2">www.yorsil.com</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12 mt-4">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="tab-content">
+                        <div id="note-full-container" class="note-has-grid row">
+                            <div class="col-md-12 single-note-item all-category">
+                                <div class="card card-body">
+                                    <span class="side-stick"></span>
+                                    <h6 class="note-title text-truncate w-75">Propriété intellectuelle</h6>
+                                    <div class="note-content">
+                                        <p class="note-inner-content">Tous les éléments du site YORSIL (textes, images, logos, vidéos, design, logiciels, etc.) sont protégés par le droit d’auteur et les lois relatives à la propriété intellectuelle. Toute reproduction ou utilisation sans autorisation préalable est strictement interdite.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 single-note-item all-category note-social">
+                                <div class="card card-body">
+                                    <span class="side-stick"></span>
+                                    <h6 class="note-title text-truncate w-75">Responsabilité</h6>
+                                    <div class="note-content">
+                                        <ul class="list-unstyled mb-0">
+                                            <li class="d-flex align-items-center gap-3 mb-2">
+                                                <i class="ti ti-point text-dark fs-2"></i>
+                                                <p class="fs-2 fw-semibold mb-0"><strong>Exactitude des informations : </strong>YORSIL s’efforce de fournir des informations précises et à jour sur le site, mais ne garantit pas leur exactitude ou leur exhaustivité.</p>
+                                            </li>
+                                            <li class="d-flex align-items-center gap-3 mb-2">
+                                                <i class="ti ti-point text-dark fs-2"></i>
+                                                <p class="fs-2 fw-semibold mb-0"><strong>Limitation : </strong>YORSIL décline toute responsabilité pour les dommages directs ou indirects résultant de l’utilisation du site ou de l’impossibilité d’y accéder.</p>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="tab-content">
+                        <div id="note-full-container" class="note-has-grid row">
+                            <div class="col-md-12 single-note-item all-category note-important">
+                                <div class="card card-body">
+                                    <span class="side-stick"></span>
+                                    <h6 class="note-title text-truncate w-75">Données personnelles</h6>
+                                    <p class="note-date fs-2">Le traitement des données personnelles collectées via le site YORSIL respecte le Règlement Général sur la Protection des Données (RGPD) et la loi Informatique et Libertés.</p>
+                                    <p class="note-date fs-2">Vos droits :</p>
+                                    <div class="note-content">
+                                        <p class="note-inner-content">Les utilisateurs disposent d’un droit d’accès, de rectification, d’effacement et d’opposition concernant leurs données personnelles.</p>
+                                        <p class="note-inner-content">Pour exercer ces droits :</p>
+                                        <ul class="list-unstyled mb-0">
+                                            <li class="d-flex align-items-center gap-3 mb-2">
+                                                <i class="ti ti-point text-dark fs-2"></i>
+                                                <p class="fs-2 fw-semibold mb-0"><strong>Par email : </strong><a href="mailto:contact@yorsil.com">contact@yorsil.com</a></p>
+                                            </li>
+                                            <li class="d-flex align-items-center gap-3 mb-2">
+                                                <i class="ti ti-point text-dark fs-2"></i>
+                                                <p class="fs-2 fw-semibold mb-0"><strong>Par courrier : </strong>61 rue de Lyon, 75012 Paris, France</p>
+                                            </li>
+                                        </ul>
+                                        <p class="mt-3 note-inner-content">Pour plus d’informations, veuillez consulter notre [<a href="{{path('politique_de_confidentialite')}}">Politique de confidentialité</a>].</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="tab-content">
+                        <div id="note-full-container" class="note-has-grid row">
+                            <div class="col-md-12 single-note-item all-category note-business">
+                                <div class="card card-body">
+                                    <span class="side-stick"></span>
+                                    <h6 class="note-title text-truncate w-75">Loi applicable et juridiction</h6>
+                                    <p class="note-date fs-2">Les présentes mentions légales sont régies par les lois françaises. En cas de litige, les tribunaux compétents de Paris seront seuls habilités à statuer.</p>
+                                    <div class="note-content">
+                                        <p class="note-inner-content"><strong>Note : </strong> Cette version est conforme à la réglementation française. Vous pouvez maintenant la publier sur votre site web.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

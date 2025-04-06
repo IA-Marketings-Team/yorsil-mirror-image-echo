@@ -1,0 +1,79 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}Liste des frais de services{% endblock %}
+
+{% set menu_frais = true %}
+
+{% block body %}
+
+    <div class="card bg-light-info shadow-none position-relative overflow-hidden">
+        <div class="card-body px-4 py-3">
+            <div class="row align-items-center">
+                <div class="col-9">
+                    <h4 class="fw-semibold mb-8">Liste des frais de services</h4>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                          <li class="breadcrumb-item"><a class="text-muted" href="javascript:void(0)">Frais de services</a></li>
+                          <li class="breadcrumb-item active" aria-current="page">Liste</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        {# <div class="mb-2">
+                            <a id="ajout_admin" href="{{ path('new_categorie') }}" class="btn btn-primary mb-2">
+                                <i class="ti ti-plus fs-4"></i> Ajouter un frais de service
+                            </a>
+                        </div> #}
+                        <div class="table-responsive">
+                            <table class="table"  id="id-categorie-liste">
+                                <thead>
+                                    <tr>
+                                        <td>Services</td>
+                                        <td class="text-center">Pourcentage</td>
+                                        <td class="text-center">Pourcentage boutique</td>
+                                        <td></td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for frais_service in frais_services %}
+	                                    <tr>
+                                            {% set type = '' %}
+                                                {% if(frais_service.type == '1') %} {% set type = 'FlixBus' %} {% endif %}
+                                                {% if(frais_service.type == '2') %} {% set type = 'Ding' %} {% endif %}
+                                                {% if(frais_service.type == '3') %} {% set type = 'Reloadly' %} {% endif %}
+                                                {% if(frais_service.type == '4') %} {% set type = 'Aleda' %} {% endif %}  
+                                                {% if(frais_service.type == '5') %} {% set type = 'DiaspoTransfert' %} {% endif %}
+                                                {% if(frais_service.type == '6') %} {% set type = 'Produit Virtuel' %} {% endif %}
+	                                        <td>{{type}}</td>
+                                            <td class="text-center"><b>{{frais_service.pourcentage}} %</b></td>
+                                            <td class="text-center"><b>{{frais_service.pourcentageBoutique}} %</b></td>
+	                                        <td class="text-center">
+	                                            <a class="btn btn-info btn-sm "href="{{path('edit_frais_service',{id:frais_service.id}) }}">
+	                                                <i data-bs-toggle="tooltip" data-bs-title="Modifier" class="ti ti-edit text-white"></i>
+	                                            </a>
+	                                            
+	                                        </td>
+	                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}
+{% block javascripts %}
+	{{ parent() }}
+    <script src="{{ asset('backoffice/categorie/categorie.liste.js') }}"></script>
+{% endblock %}

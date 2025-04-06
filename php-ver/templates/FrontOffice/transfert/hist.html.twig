@@ -1,0 +1,132 @@
+{% extends 'base_front.html.twig' %}
+
+    {% set menu_hist_transfert = true %}
+    
+    {% block title %}Historique des transferts{% endblock %}
+    
+    {% block stylesheets %}
+        {{ parent() }}
+        <link rel="stylesheet" href="{{ asset('modernize/libs/select2/dist/css/select2.min.css') }}">
+    {% endblock %}
+    
+    {% block body %}
+        <div class="card bg-light-info shadow-none position-relative overflow-hidden">
+            <div class="card-body px-4 py-3">
+              <div class="row align-items-center">
+                <div class="col-9">
+                  <h4 class="fw-semibold mb-8">Historique des transferts</h4>
+                  <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                      <li class="breadcrumb-item"><a class="text-muted" href="{{ path('transfert_credit') }}">Transfert</a></li>
+                      <li class="breadcrumb-item active" aria-current="page">Liste</li>
+                    </ol>
+                  </nav>
+                </div>
+                {# <div class="col-3">
+                  <div class="text-center mb-n5">  
+                    <img src="{{ asset('modernize/images/logos/favicon.svg') }}" alt="" class="img-fluid mb-n4">
+                  </div>
+                </div> #}
+              </div>
+            </div>
+        </div>
+        <section>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <form id="exportForm" action="{{ path('facture_services_boutique') }}" method="post" target="_blank">
+                                <input type="hidden" name="type" value="3">
+                                <div class="row mb-2">
+                                    <div class="col-sm-3">
+                                        <input type="date" id="id-date-debut" class="form-control" name="date_debut" required="Valeur requis">
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <input type="date" id="id-date-fin" class="form-control" name="date_fin" required="Valeur requis">
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <button onclick="submitFormInNewTab()" class="btn btn-danger mb-2"> 
+                                            <i class="ti ti-file fs-4"></i> Exporter Facture Recharge
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                            <div class="table-responsive">
+                                <table id="id-boutique-liste" class="table table-light">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th class="text-center">Opérateur</th>
+                                            <th class="text-center">Numéro</th>
+                                            <th class="text-center">Prix Unité</th>
+                                            <th class="text-center">Prix d'Achat</th>
+                                            {# <th class="text-center">Remise</th> #}
+                                            <th class="text-center">Pays</th>
+                                            <th class="text-center">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for transfert in transferts %} 
+                                            {% if(transfert) %}
+                                                <tr>
+                                                    <td data-order="{{ transfert.date | date('Y-m-d H:i') }}">{{ transfert.date | date('d-m-Y') }}</td>
+                                                    <td class="text-center">{{ transfert.operateur }}</td>
+                                                    <td class="text-center">{{ transfert.numero }}</td>
+                                                    <td class="text-center"><b>{{ transfert.montant|number_format(2, '.', '') }} &euro;</b></td>
+                                                    {% set ca = (transfert.fraisBoutique) ? transfert.fraisBoutique|number_format(2, '.', '') : 0 %}
+                                                    <td class="text-center"><b>{{ (transfert.montant-ca)|number_format(2, '.', '') }} &euro;</b></td>
+                                                    {# <td class="text-center"><b>{{ (transfert.fraisBoutique) ? transfert.fraisBoutique|number_format(2, '.', '') : 0 }} &euro;</b></td> #}
+                                                    <td class="text-center">{{ transfert.pays  }}</td>
+                                                    <td class="text-center">
+                                                        {% if transfert.status == 'pending' or transfert.status == 'success'  %}
+                                                            <i class = "ti ti-circle-check fs-5 text-success" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Success"></i>
+                                                        {% else %}
+                                                            <i class = "ti ti-ban fs-5 text-danger" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Rejeté"></i>
+                                                        {% endif %}
+                                                    </td>
+                                                </tr>
+                                            {% endif %}
+                                        {% endfor %}
+                                        {% for transfertManuel in transfertManuel %} 
+                                            {% if(transfertManuel) %}
+                                                <tr>
+                                                    <td data-order="{{ transfertManuel.date | date('Y-m-d H:i') }}">{{ transfertManuel.date | date('d-m-Y') }}</td>
+                                                    <td class="text-center">{{ transfertManuel.operateur.nom }}</td>
+                                                    <td class="text-center">{{ transfertManuel.numero }}</td>
+                                                    <td class="text-center"><b>{{ transfertManuel.montant|number_format(2, '.', '') }} &euro;</b></td>
+                                                    <td class="text-center"><b>{{ (transfertManuel.fraisBout) ? transfertManuel.fraisBout|number_format(2, '.', '') : 0 }} &euro;</b></td>
+                                                    {% set ca = (transfertManuel.fraisBout) ? transfertManuel.fraisBout|number_format(2, '.', '') : 0 %}
+                                                    {# <td class="text-center"><b>{{ (transfertManuel.montant-ca)|number_format(2, '.', '') }} &euro;</b></td> #}
+                                                    <td class="text-center">{{ transfertManuel.operateur.nompays }}</td>
+                                                    <td class="text-center">
+                                                        {% if transfertManuel.isvalid %}
+                                                            <i class = "ti ti-circle-check fs-5 text-success" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Success"></i>
+                                                        {% else %}
+                                                            <i class = "ti ti-history-toggle fs-5 text-warning" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="En attente"></i>
+                                                        {% endif %}
+                                                    </td>
+                                                </tr>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    
+    {% endblock %}
+    
+    {% block javascripts %}
+        {{ parent() }}
+        <script src="{{ asset('modernize/libs/select2/dist/js/select2.full.min.js') }}"></script>
+        <script src="{{ asset('modernize/libs/select2/dist/js/select2.min.js') }}"></script>
+        <script>
+            $('#id-boutique-liste').DataTable({
+                language: { "url": global_utils.urls.datatable_fr },
+                "order": [[0, "desc"]],
+            });
+        </script>
+    {% endblock %}

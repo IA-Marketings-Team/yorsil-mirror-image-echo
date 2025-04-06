@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Yorsil | {% block title %}{% endblock %}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta content="width=device-width, initial-scale=1.0" name="viewport">
+        <link type="text/css" rel="stylesheet" rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
+        <meta content="" name="author" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta content="" name="description">
+        <meta content="" name="keywords">
+        <link rel="shortcut icon" href="{{ asset('modernize/images/logos/favicon.svg') }}">
+        
+        <!-- Owl Carousel -->
+        <link rel="stylesheet" href="{{ asset('modernize/libs/owl.carousel/dist/assets/owl.carousel.min.css') }}">
+        <!-- Core Css -->
+        <link rel="stylesheet" href="{{ asset('modernize/css/style.min.css') }}" />
+       
+        {% block stylesheets %}
+        	
+        {% endblock %}
+    </head>
+
+    <body>
+        {% for label,messages in app.flashes %}
+            {% for message in messages %}
+                <div class="d-none kl-flash-message" width="20" height="20" data-type="{{ label }}" data-message="{{ message }}"></div>
+            {% endfor %}
+        {% endfor %}
+
+        {% if error is defined %}
+            {% if error %}
+                <div class="d-none kl-flash-message" width="20" height="20" data-type="error" data-message="{{ error.messageKey|trans(error.messageData, 'security') }}"></div>
+            {% endif %}
+        {% endif %}
+        <!-- Body Wrapper -->
+        <div class="page-wrapper" id="main-wrapper" data-theme="blue_theme"  data-layout="vertical" data-sidebartype="full" data-sidebar-position="fixed" data-header-position="fixed">
+        {% block body %}
+            
+        {% endblock %}
+        </div>
+        <!-- Preloader -->
+        <div class="preloader">
+            <img src="{{ asset('modernize/images/logos/favicon.svg') }}" alt="loader" class="lds-ripple img-fluid" />
+        </div>
+
+        <!-- javascripts -->
+        {% block javascripts %} 
+            <script src="{{ asset('modernize/libs/jquery/dist/jquery.min.js') }}"></script>
+            <script src="{{ asset('modernize/libs/simplebar/dist/simplebar.min.js') }}"></script>
+            <script src="{{ asset('modernize/libs/bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script>
+            <!-- core files -->
+            <script src="{{ asset('modernize/js/app.min.js') }}"></script>
+            <script src="{{ asset('modernize/js/app.dark.init.js') }}"></script>
+            <script src="{{ asset('modernize/js/app-style-switcher.js') }}"></script>
+            <script src="{{ asset('modernize/js/sidebarmenu.js') }}"></script>
+            
+            <script src="{{ asset('modernize/js/custom.js') }}"></script>
+            <!-- current page js files -->
+            <script src="{{ asset('modernize/libs/owl.carousel/dist/owl.carousel.min.js') }}"></script>
+            <!-- notify -->
+            <script src="{{ asset('modernize/libs/notify/notify.min.js') }}"></script>
+            <script src="{{ asset('modernize/js/notification.js') }}"></script>
+            <!-- general js -->
+            <script src="{{ asset('backoffice/general.js') }}"></script>
+        {% endblock %}
+        <!-- Import Js Files -->
+    </body>
+
+</html>
+    

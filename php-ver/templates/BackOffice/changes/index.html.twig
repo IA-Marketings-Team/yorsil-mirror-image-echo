@@ -1,0 +1,72 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}Listes des taux de changes{% endblock %}
+
+{% set menu_taux_change = true %}
+
+{% block body %}
+    <div class="card bg-light-info shadow-none position-relative overflow-hidden">
+        <div class="card-body px-4 py-3">
+            <div class="row align-items-center">
+                <div class="col-9">
+                    <h4 class="fw-semibold mb-8">Liste des taux de changes</h4>
+                    <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item active" aria-current="page">Liste</li>
+                        <li class="breadcrumb-item"><a class="text-muted" href="{{ path('faire_un_depot') }}">Taux de change</a></li>
+                    </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <section>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center justify-content-start mb-2">
+                            <a id="faire_depot" href="{{ path('new_taux_change') }}" class="btn btn-primary mb-2">
+                                <i class="ti ti-plus fs-4"></i> Ajouter un taux de change
+                            </a>
+                        </div>
+                        <div class="table-responsive">
+                            <table id="table" class="table table-light text-nowrap">
+                                <thead>
+                                    <tr>
+                                        <td>Date</td>
+                                        <td class="text-center">Euro</td>
+                                        <td class="text-center">Devise</td>
+                                        <td class="text-center">Pays</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for taux_change in taux_changes %}
+                                        <tr>
+                                            <td data-order="{{ taux_change.dateChange | date('Y-m-d H:i') }}">{{ taux_change.dateChange|date('d-m-Y') }}</td>
+                                            <td class="text-center"><b>{{ 1 |number_format(2, '.', '') }} &euro;</b></td>
+                                            <td class="text-center"><b>{{ taux_change.montantChange |number_format(2, '.', '') }} {{taux_change.devise}}</b></td>
+                                            <td class="text-center">
+                                                {{ taux_change.paysChange.nom }}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $('#table').DataTable({
+            language: { "url": global_utils.urls.datatable_fr },
+            "order": [[0, "desc"]],
+        });
+    </script>
+{% endblock %}

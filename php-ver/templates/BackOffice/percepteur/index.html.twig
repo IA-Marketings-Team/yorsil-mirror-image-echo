@@ -1,0 +1,142 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}Listes des percepteurs{% endblock %}
+
+{% set menu_percepteur = true %}
+
+{% block body %}
+
+    <div class="card bg-light-info shadow-none position-relative overflow-hidden">
+        <div class="card-body px-4 py-3">
+            <div class="row align-items-center">
+                <div class="col-9">
+                    <h4 class="fw-semibold mb-8">Liste des percepteurs</h4>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                          <li class="breadcrumb-item"><a class="text-muted" href="javascript:void(0)">Percepteurs</a></li>
+                          <li class="breadcrumb-item active" aria-current="page">Liste</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+	{# {% for label,messages in app.flashes %}
+		{% for message in messages %}
+		<div class="container">
+			<div class="d-flex align-items-center justify-content-end">
+				<div>
+					<div class="alert bg-{{ label }} text-white rounded-0">
+						{{ message }}
+					</div>
+				</div>
+			</div>
+		</div>
+	{% endfor %}
+	{% endfor %} #}
+
+    <section>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="mb-2">
+                            <a id="ajout_admin" href="{{ path('new_percept') }}" class="btn btn-primary mb-2">
+                                <i class="ti ti-plus fs-4"></i> Ajouter un percepteur
+                            </a>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-light"  id="id-percepteur-liste">
+                                <thead>
+                                    <tr>
+                                        <td>Nom</td>
+                                        <td>Prénom(s)</td>
+                                        <td>Téléphone</td>
+                                        <td>Ville</td>
+                                        <td class="text-center">Pays</td>
+                                        <td class="text-center">Rechargement</td>
+                                        <td class="text-center">Depot</td>
+                                        <td class="text-center">Solde</td>
+                                        <td class="text-center">Seuil</td>
+                                        <td class="text-center">Action</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {# {% for percept in percepts %}
+                                    <tr>
+                                        <td>{{ percept.nom }}</td>
+                                        <td>{{ percept.prenom }}</td>
+                                        <td>{{ percept.tele }}</td>
+                                        <td>{{ percept.ville }}</td>
+                                        <td>{{ percept.pays }}</td>
+                                        <td>
+                                            <a class="btn btn-info btn-sm "href="{{path('edit_percept',{id:percept.id}) }}">
+                                                <i data-toggle="tooltip" data-original-title="Modifier" class="fa fa-edit text-white"></i>
+                                            </a>
+                                            <a class="btn btn-danger btn-sm delete" data-href="{{ path('suppr_perecpt', {id:percept.id}) }}">
+                                                <i data-toggle="tooltip" data-original-title="Supprimer" class="fa fa-trash text-white"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %} #}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="id-modal-seuil" tabindex="-1" aria-labelledby="modal-seuil-b">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header d-flex align-items-center">
+                <h4 class="modal-title" id="modal-seuil-b">
+                    Seuil d'un percepteur
+                </h4>
+                <button type="button" class="kl-close-seuil btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="id-form-seuil" class="kl-form-seuil" role="form" method="POST" novalidate>
+                        <input type="hidden" name="percepteur_id" id="id-percepteur-seuil">
+                        <div class="mb-3">
+                            <label for="id-montant-seuil" class="control-label">Montant du seuil</label>
+                            <select name="montant_seuil" id="id-montant-seuil" class="form-control chosen-seuil" data-placeholder="Choisissez le montant..."  style="width: 100%">
+                                {# <option value="0">0 &euro;</option> #}
+                                <option value="500">500 &euro;</option>
+                                <option value="1000">1000 &euro;</option>
+                                <option value="1500">1500 &euro;</option>
+                            </select>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger font-medium" data-bs-dismiss="modal">
+                                Annuler
+                            </button>
+                            <button type="button kl-submit" class="btn btn-primary">
+                                Valider
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </section>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+
+    <script>
+        var href_edit_defaut = '{{path('edit_percept',{id:0}) }}';
+        var href_suppr_defaut = '{{path('suppr_perecpt',{id:0}) }}';
+        // $('[data-bs-toggle="tooltip"]').tooltip({
+        //     placement : 'top',
+        // });
+        $(".chosen-seuil").select2({
+            dropdownParent: $("#id-modal-seuil")
+        });
+    </script>
+    <script src="{{ asset('backoffice/percepteur/percepteur.liste.js') }}"></script>
+{% endblock %}

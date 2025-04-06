@@ -1,0 +1,113 @@
+{% extends 'base_front.html.twig' %}
+
+{% set menu_billeteries = true %}
+
+{% block title %}Traversées{% endblock %}
+
+{% block stylesheets %} 
+    {{ parent() }}
+    <style type="text/css">
+    .logo-station {
+        width: 60px;
+        object-fit: contain;
+    }
+    .items-dispo {
+        display: flex;
+        justify-content: space-around;
+    }
+    .items-dispo img{
+        width: 20px;
+    }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="card more-info p-2 text-center mb-4">
+        <h1 class="d-flex align-items-center justify-content-center gap-2 text-uppercase">
+            <span>{{route.DepartureName}}</span>
+            <i class="ti ti-ship"></i>
+            <span>{{route.DestinationName}}</span>
+        </h1>
+        <div>
+            <a class="btn btn-dark btn-block">Modifiez votre recherche</a>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-12">
+            {% for voyage in traversee.sailing %}
+                {% for go in voyage %}
+                    {% set company = go.company == "gnv" ? "ShortGNV.svg" : "ShortGrimaldi.svg" %}
+                    <div class="card overflow-hidden">
+                        <table class="table align-middle mb-0">
+                            <thead class="bg-white">
+                                <tr>
+                                    <td>Compagnie</td>
+                                    <td class="text-center">Départ</td>
+                                    <td class="text-center">Durée</td>
+                                    <td class="text-center">Destination</td>
+                                    <td class="text-center">Prix</td>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-light-primary">
+                                <tr>
+                                    <td>
+                                        <img src="{{asset('modernize/images/billeterie/' ~ company)}}" class="logo-station" alt="item-icon">
+                                    </td>
+                                    <td class="text-center">
+                                        <p class="fw-bolder">{{ go.DepartureDateTime }}</p>
+                                        <p>{{go.DeparturePortName}}</p>
+                                        <p class="fw-bolder">{{ go.DepartureTime }}</p>
+                                    </td>
+                                    <td class="text-center">
+                                        <p class="fw-bolder">{{ go.Duration }}</p>
+                                        <p class="fw-bolder">Aller</p>
+                                        <span class="mb-1 badge rounded-pill bg-dark">{{ go.ShipName }}</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <p class="fw-bolder">{{ go.ArriveDateTime }}</p>
+                                        <p>{{ go.DestinationPortName }}</p>
+                                        <p class="fw-bolder">{{ go.ArrivalTime }}</p>
+                                    </td>
+                                    <td class="text-center">
+                                        {% set prix = 'Non disponible' %}
+                                        {% for c in traversee.cost %}
+                                            {% if c.SailingId == go.Id %}
+                                                {% set prix = c.GrossAmount ~ ' €' %}
+                                            {% endif %}
+                                        {% endfor %}
+                                        <h4 class="fw-bolder">{{prix}}</h4>
+                                        <a href="{{path('recapitulatif_reservation')}}" class="btn btn-danger">Continuer</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot class="bg-white">
+                                <tr>
+                                    <td>Traversée maritime details</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td class="items-dispo">
+                                        <img src="{{asset('modernize/images/billeterie/coffee.svg')}}" alt="item-icon">
+                                        <img src="{{asset('modernize/images/billeterie/singlecoffee.svg')}}" alt="item-icon">
+                                        <img src="{{asset('modernize/images/billeterie/radio.svg')}}" alt="item-icon">
+                                        <img src="{{asset('modernize/images/billeterie/singlebess.svg')}}" alt="item-icon">
+                                        <img src="{{asset('modernize/images/billeterie/wifis.svg')}}" alt="item-icon">
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+            
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(document).ready(function(){
+        });
+    </script>
+{% endblock %}

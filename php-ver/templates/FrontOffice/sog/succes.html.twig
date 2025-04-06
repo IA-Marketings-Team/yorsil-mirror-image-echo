@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="-1">
+    <title>Paiement réussi</title>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Données reçues :</h2>
+
+        <!-- STEP 2 : Récupération des paramètres du 'kr-answer' -->
+
+        <strong>Numéro de la boutique :</strong>
+        {{ answer['kr-answer'].shopId }}
+        <br />
+
+        <strong>Le statut de la transaction :</strong>
+        {{ answer['kr-answer'].orderStatus }}
+        <br />
+
+        <strong>Numéro de la transaction :</strong>
+        {{ answer['kr-answer'].transactions[0].uuid }}
+        <br />
+
+        <strong>Numéro de la commande :</strong>
+        {{ answer['kr-answer'].orderDetails.orderId }}
+        <br />
+    </div>
+</body>
+
+</html>

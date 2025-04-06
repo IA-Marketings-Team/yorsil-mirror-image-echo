@@ -1,0 +1,39 @@
+{% extends 'base_auth.html.twig' %}
+
+{% block title %}Mot de passe oublié{% endblock %}
+
+{% block body %}
+    <div class="position-relative overflow-hidden radial-gradient min-vh-100">
+        <div class="position-relative z-index-5">
+            <div class="row">
+                <div class="col-lg-6 col-xl-8 col-xxl-8 left-login-logo">
+                    <a href="javascript:void(0)" class="text-nowrap logo-img d-block px-4 py-9 pb-5 pb-xl-0 w-100">
+                        <img src="{{ asset('modernize/images/logos/largeicon.svg') }}" width="180" alt="">
+                    </a>
+                    <div class="d-none d-lg-flex align-items-center justify-content-center" style="height: calc(100vh - 80px);">
+                        <img src="{{ asset('modernize/images/logos/favicon.svg') }}" alt="" class="img-fluid" width="500">
+                    </div>
+                </div>
+                <div class="col-lg-6 col-xl-4 col-xxl-4">
+                    <div class="card mb-0 shadow-none rounded-0 min-vh-100 h-100">
+                        <div class="d-flex align-items-center w-100 h-100">
+                            <div class="card-body px-xxl-5">
+                                <h2 class="mb-3 fs-7 fw-bolder text-center">Mot de passe oublié?</h2>
+                                <p class="mb-9">Veuillez saisir l'adresse e-mail associée à votre compte et nous vous enverrons par e-mail un lien pour réinitialiser votre mot de passe.</p>
+                                <form method="post">
+                                    <div class="mb-3">
+                                        <label for="inputEmail" class="form-label">Email</label>
+                                        <input type="email" class="form-control" id="inputEmail" name="email" autocomplete="email" required autofocus placeholder="Email" aria-describedby="emailHelp">
+                                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('forgot') }}">
+                                    </div>
+                                    <button class="btn btn-primary w-100 py-8 mb-4 rounded-2">Vérifier</button>
+                                    <a href="{{ path('app_login')}}" class="btn btn-light-primary text-primary w-100 py-8">Retour connexion</a>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

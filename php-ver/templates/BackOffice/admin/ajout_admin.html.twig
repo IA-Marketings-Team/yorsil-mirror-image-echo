@@ -1,0 +1,151 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}Ajout de nouveau administrateur{% endblock %}
+
+{% set menu_admin_list = true %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {# test<link href="{{ asset('plugins/inspinia/css/inputFile.css') }}" rel="stylesheet"> #}
+{% endblock %}
+
+{% block body %}
+    <div class="card bg-light-info shadow-none position-relative overflow-hidden">
+        <div class="card-body px-4 py-3">
+          <div class="row align-items-center">
+            <div class="col-9">
+              <h4 class="fw-semibold mb-8">Administrateur</h4>
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a class="text-muted" href="javascript:void(0)">Administrateurs</a></li>
+                  <li class="breadcrumb-item"><a class="text-muted" href="{{ path('liste_admin')}}">Liste</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Ajout</li>
+                </ol>
+              </nav>
+            </div>
+            {# <div class="col-3">
+              <div class="text-center mb-n5">  
+                <img src="{{ asset('modernize/images/logos/favicon.svg') }}" alt="" class="img-fluid mb-n4">
+              </div>
+            </div> #}
+          </div>
+        </div>
+    </div>
+    
+{{ form_start(form, {'attr':{'id':'form-add-admin'} })}}
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="px-4 py-3 border-bottom">
+                    <h5 class="card-title fw-semibold mb-0">Photo de profil</h5>
+                </div>
+                <div class="card-body p-4">
+                    <h5 class="card-title fw-semibold">Change de profil</h5>
+                    <p class="card-subtitle mb-4">Changez votre photo de profil à partir d'ici</p>
+                    <div class="text-center">
+                    <img id="img_prev" src="{{ asset('modernize/images/profile/user-1.jpg') }}" alt="" class="img-fluid rounded-circle" width="120" height="120">
+                    <div class="d-flex align-items-center justify-content-center my-4 gap-3">
+                        {{ form_row(form.picture, {'attr':{'class':'form-control'} }) }}
+                    </div>
+                    <p class="mb-0">JPG ou PNG autorisés</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="px-4 py-3 border-bottom">
+                    <h5 class="card-title fw-semibold mb-0">informations personnelles</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="mb-4">
+                        {{ form_label(form.nom, 'Nom', {'label_attr': {'class': 'form-label'} }) }}
+                        {{ form_widget(form.nom, {'attr':{'class':'form-control'} }) }}
+                    </div>
+                    <div class="mb-4">
+                        {{ form_label(form.prenom, 'Prenom', {'label_attr': {'class': 'form-label'} }) }}
+                        {{ form_widget(form.prenom, {'attr':{'class':'form-control'} }) }}
+                    </div>
+                    <div class="mb-4">
+                        {{ form_label(form.email, 'Email', {'label_attr': {'class': 'form-label'} }) }}
+                        {{ form_widget(form.email, {'attr':{'class':'form-control'} }) }}
+                    </div>
+                    <div class="mb-4">
+                        {{ form_label(form.tel, 'Téléphone', {'label_attr': {'class': 'form-label'} }) }}
+                        {{ form_widget(form.tel, {'attr':{'class':'form-control'} }) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="px-4 py-3 border-bottom">
+                    <h5 class="card-title fw-semibold mb-0">Sécurité</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="mb-4">
+                        {{ form_label(form.Password, 'Mot de passe', {'label_attr': {'class': 'form-label'} }) }}
+                        {{ form_widget(form.Password, {'attr':{'class':'form-control'} }) }}
+                    </div>
+                    <div class="mb-4">
+                        {{ form_label(form.Confir_pwd, 'Confirmer le mot de passe', {'label_attr': {'class': 'form-label'} }) }}
+                        {{ form_widget(form.Confir_pwd, {'attr':{'class':'form-control'} }) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="d-flex align-items-center justify-content-end mt-4 gap-3">
+                <button class="btn btn-primary btn-ajout-admin">Ajouter</button>
+                <a href="{{ path('liste_admin')}}" class="btn btn-light-danger text-danger">Annuler</a>
+            </div>
+        </div>
+    </div>
+{{ form_end(form) }}
+
+{% endblock %}
+{% block javascripts %}
+    {{ parent()}}
+    <script>
+        const inputPicture = document.getElementById("admin_picture");
+        const img_prev = document.getElementById("img_prev");
+        const imgSrc = img_prev.getAttribute("src");
+
+        inputPicture.addEventListener('change', function(){
+            const fichier_categorie = this.files[0];
+            if (fichier_categorie) {
+                const read_file_cate = new FileReader();
+
+                read_file_cate.addEventListener("load", function(){
+                    img_prev.setAttribute("src", this.result);
+                });
+
+                read_file_cate.readAsDataURL(fichier_categorie);
+            } else {
+                img_prev.setAttribute("src", imgSrc);
+            }
+        });
+        $(document).on('click','.btn-ajout-admin', function(e) {
+            e.preventDefault();
+            swal({
+                title: "Ajouter",
+                text: `Êtes-vous sûr de vouloir ajouter un administateur`,
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Ajouter",
+                cancelButtonText: "Annuler",
+                closeOnConfirm: false,
+                closeOnCancel: false },
+            function (isConfirm) {
+                if (isConfirm) {
+                    swal("Ajouter", "effectuer avec succès", "success");
+                    $('#form-add-admin').submit()
+                    $('.preloading').fadeIn()
+                } else {
+                    swal("Annulation", "Modification annuler", "error");
+                }
+            });
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,69 @@
+{% extends 'base_admin.html.twig' %}
+
+{% set menu_journal = true %}
+{% set menu_debit = true %}
+
+{% block title %} Journal de Débit{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block body %}
+
+    <div class="card bg-light-info shadow-none position-relative overflow-hidden">
+        <div class="card-body px-4 py-3">
+            <div class="row align-items-center">
+                <div class="col-9">
+                    <h4 class="fw-semibold mb-8">Liste débits par boutique</h4>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                          <li class="breadcrumb-item"><a class="text-muted" href="javascript:void(0)">Débit</a></li>
+                          <li class="breadcrumb-item active" aria-current="page">Liste</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-light"  id="id-debit-liste">
+                                <thead>
+                                    <tr>
+        		                        <th>Nom admin</th>
+                                        <th>Boutique</th>
+                                        <th>Montant</th>
+                                        <th>Date</th>
+                                        <th>Note</th>
+        								<th>Action</th>
+        		                    </tr>
+                                </thead>
+                                <tbody>
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+                    
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $('[data-toggle="tooltip"]').tooltip({
+            placement : 'top',
+        });
+        var href_suppr_defaut = '#';
+    </script>
+    <script src="{{ asset('backoffice/journal/debit.liste.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,619 @@
+{% extends 'base_front.html.twig' %}
+
+{% set menu_billeteries = true %}
+
+{% block title %}billeteries{% endblock %}
+
+{% block stylesheets %} 
+    {{ parent() }}
+    <style type="text/css">
+        #paiement-reservation {
+            width: 100%;
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #e2e2e2;
+        }
+        .header-date-trx {
+            font-weight: 900;
+        }
+        .infos-trx {
+            display: flex;
+            gap: 1rem;
+            min-height: 40px;
+            height: 40px;
+        }
+        .infos-trx .heure {
+            flex: 0 0 50px;
+            width: 50px;
+        }
+        .infos-trx .heure p{
+            font-weight: bolder;
+            color: #000;
+            margin: 0;
+        }
+        .infos-trx .hr {
+            position: relative;
+            width: 3px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .infos-trx .trx-name p {
+            margin-bottom: 0;
+        }
+        .infos-trx.arret-infos .heure{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+        .infos-trx.arret-infos .heure p{
+            color: gray;
+        }
+        .infos-trx.arret-infos .hr::before{
+            content: "";
+            position: relative;
+            width: 3px;
+            height: 100%;
+            background-color: transparent;
+            background-position: top;
+            background-repeat: round;
+            background-image: url('/images/dotted.svg');
+            background-size: 3px 7.6px;
+        }
+        .infos-trx.destination-infos .heure{
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: flex-end;
+            height: 100%;
+        }
+        .infos-trx.departure-infos .hr::before,
+        .infos-trx.destination-infos .hr::before{
+            content: "";
+            width: 3px;
+            height: 100%;
+            background: #000;
+        }
+        .infos-trx.departure-infos .hr::after,
+        .infos-trx.destination-infos .hr::after{
+            content: "";
+            width: 10px;
+            background: #fff;
+            aspect-ratio: 1/1;
+            border: 2px solid #000;
+            border-radius: 50%;
+            position: absolute;
+        }
+        .infos-trx.departure-infos .hr{
+            padding-top: 5px;
+        }
+        .infos-trx .trx-name p{
+            font-weight: 800;
+            color: #000;
+        }
+        .infos-trx .trx-name span{
+            font-size: 10px;
+        }
+        .infos-trx.departure-infos .trx-name,
+        .infos-trx.destination-infos .trx-name {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .infos-trx.departure-infos .trx-name {
+            justify-content: flex-start;
+        }
+        .infos-trx.destination-infos .trx-name {
+            justify-content: flex-end;
+        }
+        .infos-trx.departure-infos .hr::after{
+            top: 5px;
+        }
+        .infos-trx.destination-infos .hr{
+            padding-bottom: 5px;
+        }
+        .infos-trx.destination-infos .hr::after{
+            bottom: 5px;
+        }
+        .loading {
+            position: relative;
+        }
+
+        .loading > div {
+            width: 60px;
+            height: 60px;
+        }
+
+        .loading > div > div {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background: #61a3ff;
+            top: 10px;
+            left: 10px;
+            transform-origin: 20px 20px;
+            border-radius: 8px;
+            animation: spin-a 2s infinite cubic-bezier(0.5, 0, 0.5, 1);
+        }
+
+        .loading > div > .c2 {
+            top: 10px;
+            left: auto;
+            right: 10px;
+            transform-origin: -4px 20px;
+            animation: spin-b 2s infinite cubic-bezier(0.5, 0, 0.5, 1);
+        }
+        .loading > div > .c3 {
+            top: auto;
+            left: auto;
+            right: 10px;
+            bottom: 10px;
+            transform-origin: -4px -4px;
+            animation: spin-c 2s infinite cubic-bezier(0.5, 0, 0.5, 1);
+        }
+        .loading > div > .c4 {
+            top: auto;
+            bottom: 10px;
+            transform-origin: 20px -4px;
+            animation: spin-d 2s infinite cubic-bezier(0.5, 0, 0.5, 1);
+        }
+
+        @keyframes spin-a {
+            0%   { transform: rotate(90deg); }
+            0%  { transform: rotate(90deg); }
+            50%  { transform: rotate(180deg); }
+            75%  { transform: rotate(270deg); }
+            100% { transform: rotate(360deg); }
+        }
+        @keyframes spin-b {
+            0%   { transform: rotate(90deg); }
+            25%  { transform: rotate(90deg); }
+            25%  { transform: rotate(180deg); }
+            75%  { transform: rotate(270deg); }
+            100% { transform: rotate(360deg); }
+        }
+        @keyframes spin-c {
+            0%   { transform: rotate(90deg); }
+            25%  { transform: rotate(90deg); }
+            50%  { transform: rotate(180deg); }
+            50%  { transform: rotate(270deg); }
+            100% { transform: rotate(360deg); }
+        }
+        @keyframes spin-d {
+            0%   { transform: rotate(90deg); }
+            25%  { transform: rotate(90deg); }
+            50%  { transform: rotate(180deg); }
+            75%  { transform: rotate(270deg); }
+            75% { transform: rotate(360deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+
+        .loading > span {
+            width: 100px;
+            height: 30px;
+            position: absolute;
+            left: 50%;
+            margin-left: -50px;
+            top: 50%;
+            margin-top: 30px;
+            color: #ff8c00;
+            font-size: 12px;
+            text-align: center;
+        }
+        .card-success {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .icon-success {
+            position: absolute;
+            width: 60px;
+            aspect-ratio: 1/1;
+            border-radius: 50%;
+            top: calc(0% - 30px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        .icon-success i{
+            background: white;
+            width: 60px;
+            height: 60px;
+            overflow: hidden;
+            border-radius: 50%;
+            font-size: 50px;
+            color: #13deb9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        a.ok-payement {
+            position: absolute;
+            width: 50px;
+            aspect-ratio: 1/1;
+            bottom: calc(0% - 25px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+
+    <section id="paiement-reservation">
+        <div class="card">
+            <div class="card-body">
+                <div class="loadging-content d-flex align-items-center justify-content-center">
+                    <div class="loading">
+                        <div>
+                            <div class="c1"></div>
+                            <div class="c2"></div>
+                            <div class="c3"></div>
+                            <div class="c4"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(document).ready(function(){
+            const $reservation = {{ reservation|json_encode|raw }},
+            $booking = $reservation.data.booking,
+            $trajets = $booking.outbound_booking_tariff_segments[0].booking_journey_segments[0],
+            $trajetsRetour = $booking.inbound_booking_tariff_segments ? $booking.inbound_booking_tariff_segments[0].booking_journey_segments[0] : null,
+            $prix = formatPrix($booking.total_price_to_be_paid),
+            trajet = {
+                deparName: formatName($trajets.departure_station.name).name,
+                deparSubName: formatName($trajets.departure_station.name).sub,
+                arriverName: formatName($trajets.arrival_station.name).name,
+                arriverSubName: formatName($trajets.arrival_station.name).sub,
+                heureDepart: timeStamp($trajets.departure_date_time).heure,
+                heureArriver: timeStamp($trajets.arrival_date_time).heure
+            };
+
+            console.log($reservation);
+
+            let infosTrajet = ""
+
+            if ($trajetsRetour) {
+                infosTrajet += `
+                    <div class="col-6">
+                        <h4>Aller</h4>
+                    </div>
+                    <div class="col-6">
+                        <h4>Retour</h4>
+                    </div>
+                `
+            }
+
+            infosTrajet += `
+                <div class="col-6">
+                    <div class="infos-trx departure-infos">
+                        <div class="heure">
+                            <p>${trajet.heureDepart}</p>
+                        </div>
+                        <div class="hr"></div>
+                        <div class="trx-name">
+                            <p class="d-flex align-items-center gap-2">${trajet.deparName} <i class="ti ti-map fs-4 text-success"></i></p>
+                            <span>${trajet.deparSubName}</span>
+                        </div>
+                    </div>
+                    <div class="infos-trx destination-infos">
+                        <div class="heure">
+                            <p>${trajet.heureArriver}</p>
+                        </div>
+                        <div class="hr"></div>
+                        <div class="trx-name">
+                            <p class="d-flex align-items-center gap-2">${trajet.arriverName} <i class="ti ti-map fs-4 text-success"></i></p>
+                            <span>${trajet.arriverSubName}</span>
+                        </div>
+                    </div>
+                </div>
+            `
+
+            if ($trajetsRetour) {
+                let trajetRetour = {
+                    deparName: formatName($trajetsRetour.departure_station.name).name,
+                    deparSubName: formatName($trajetsRetour.departure_station.name).sub,
+                    arriverName: formatName($trajetsRetour.arrival_station.name).name,
+                    arriverSubName: formatName($trajetsRetour.arrival_station.name).sub,
+                    heureDepart: timeStamp($trajetsRetour.departure_date_time).heure,
+                    heureArriver: timeStamp($trajetsRetour.arrival_date_time).heure
+                };
+
+                infosTrajet += `
+                    <div class="col-6">
+                        <div class="infos-trx departure-infos">
+                            <div class="heure">
+                                <p>${trajetRetour.heureDepart}</p>
+                            </div>
+                            <div class="hr"></div>
+                            <div class="trx-name">
+                                <p class="d-flex align-items-center gap-2">${trajetRetour.deparName} <i class="ti ti-map fs-4 text-success"></i></p>
+                                <span>${trajetRetour.deparSubName}</span>
+                            </div>
+                        </div>
+                        <div class="infos-trx destination-infos">
+                            <div class="heure">
+                                <p>${trajetRetour.heureArriver}</p>
+                            </div>
+                            <div class="hr"></div>
+                            <div class="trx-name">
+                                <p class="d-flex align-items-center gap-2">${trajetRetour.arriverName} <i class="ti ti-map fs-4 text-success"></i></p>
+                                <span>${trajetRetour.arriverSubName}</span>
+                            </div>
+                        </div>
+                    </div>
+                `
+            }
+
+
+
+
+            $("#paiement-reservation").html(`
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            ${infosTrajet}
+                        </div>
+                        <hr>
+                        <span class="d-flex align-items-center mb-2">
+                            <i class="ti ti-lock fs-4 me-2"></i>
+                            Paiement 100 % sécurisé.
+                        </span>
+                        <span class="text-muted">En effectuant cet achat, vous acceptez les conditions générales de transport</span>
+                    </div>
+                    <div class="card-footer justify-content-center d-flex align-items-center">
+                        <button type="button" id="valide-payment" class="justify-content-center btn mb-1 btn-rounded btn-outline-primary d-flex align-items-center">
+                            <i class="ti ti-lock fs-4 me-2"></i>
+                            Payer ${$prix}
+                        </button>
+                    </div>
+                </div>
+            `);
+
+            $(document).on('click', '#valide-payment', function (e) {
+                loadPayement()
+
+                $data = {
+                    "payments": [
+                        {
+                            "amount": $booking.total_price_to_be_paid,
+                            "currency": "EUR",
+                            "method": "APIPAYMENT",
+                            "status": "S"
+                        }
+                    ],
+                    "booking_number": $booking.booking_number,
+                };
+
+                $.ajax({
+                    url: "/creation-paiement-blablacar",
+                    type: "POST",
+                    data: JSON.stringify($data),
+                    contentType: "application/json",
+                    success: function(response) {
+                        if (response.reservations && response.reservations.data && response.reservations.data.booking && response.reservations.data.booking.payments.length > 0) {
+                            confirmPayment($booking.booking_number)
+                        } else {
+                            notification("warning", "Il n'y erreur lors de votre réservation")
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Erreur :", response.status);
+                    }
+                });
+            })
+
+            function formatHeureDuration(heure) {
+                const matches = heure.match(/PT(\d+)H(\d+)M/);
+
+                if (matches) {
+                    const hours = matches[1].padStart(2, '0'); // Ajoute un zéro devant si nécessaire
+                    const minutes = matches[2].padStart(2, '0');
+
+                    const formattedTime = `${hours}h${minutes}`;
+
+                    return formattedTime
+                } else {
+                    console.log("Format invalide !");
+                }
+            }
+
+            function formatDate(date) {
+                const thisDate = (date instanceof Date && !isNaN(date)) ? date : new Date(date),
+                daysOfWeek = ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"],
+                months = ["janv.", "févr.", "mars", "avr", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."];
+                
+                let today = new Date(),
+                    tomorrow = new Date(today);
+                
+                tomorrow.setDate(today.getDate() + 1);
+
+                const dayOfWeek = daysOfWeek[thisDate.getDay()];
+                const dayOfMonth = thisDate.getDate();
+                const month = months[thisDate.getMonth()];
+                const year = thisDate.getFullYear();
+
+                today.setHours(0, 0, 0, 0);
+                tomorrow.setHours(0, 0, 0, 0);
+                thisDate.setHours(0, 0, 0, 0);
+
+                return thisDate.getTime() === today.getTime() ? "Aujourd’hui" :
+                    thisDate.getTime() === tomorrow.getTime() ? "Demain" :
+                    `${dayOfWeek}. ${dayOfMonth} ${month} ${thisDate.getFullYear() !== today.getFullYear() ? year : '' }`;
+            }
+
+            function timeStamp(date) {
+                const dateObj = new Date(date);
+
+                const jour = dateObj.getDate().toString().padStart(2, '0');
+                const mois = (dateObj.getMonth() + 1).toString().padStart(2, '0');
+                const annee = dateObj.getFullYear();
+                const heures = dateObj.getHours().toString().padStart(2, '0');
+                const minutes = dateObj.getMinutes().toString().padStart(2, '0');
+
+                const formattedDate = `${jour}/${mois}/${annee}`;
+                const formattedHeur = `${heures}:${minutes}`;
+
+                return {
+                    "date" : formattedDate,
+                    "heure" : formattedHeur,
+                }
+            }
+
+            function metaData(meta) {
+                let metaDataFormat = "";
+
+                $.each(meta, function(index, meta) {
+                    metaDataFormat += (index > 0 ? " - " : "") + meta.value;
+                });
+
+                return metaDataFormat
+            }
+
+            function formatPrix(prix) {
+                let parts = prix.toString().split(".");
+                
+                // Formatage des milliers avec une virgule
+                let entier = parts[0];
+
+                // S'il y a une partie décimale, mettre en puissance
+                let decimal = parts[1] ? `<sup>.${parts[1]}</sup>` : "";
+
+                return `${entier}${decimal}€`;
+            }
+
+            function formatName(name) {
+                let parts = name.split(" - ");
+                
+                // Formatage des milliers avec une virgule
+                let nom = parts[0];
+
+                // S'il y a une partie décimale, mettre en puissance
+                let sub = parts[1] ? parts[1] : "";
+
+                return {
+                    "name" : nom,
+                    "sub" : sub
+                };
+            }
+
+            function dateToString(dateString) {
+                let date = new Date(dateString);
+                return date.toISOString().split("T")[0];
+            }
+
+            function loadPayement() {
+                $("#paiement-reservation").html( `
+                    <div class="card">
+                        <div class="card-body d-flex align-items-center justify-content-center flex-column">
+                            <h3 class="text-loading-payement text-success fw-bolder">Préparation de votre paiement ...</h3>
+                            <div class="loadging-content d-flex align-items-center justify-content-center">
+                                <div class="loading">
+                                    <div>
+                                        <div class="c1"></div>
+                                        <div class="c2"></div>
+                                        <div class="c3"></div>
+                                        <div class="c4"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `)
+            }
+
+            function payementEffectuer(qrCode) {
+                $("#paiement-reservation").html( `
+                    <div class="card card-success">
+                        <div class="icon-success">
+                            <i class="ti ti-circle-check"></i>
+                        </div>
+                        <div class="card-body d-flex align-items-center justify-content-center flex-column">
+                            <h3 class="text-loading-payement text-success fw-bolder">Votre paiement a été effectué avec succès</h3>
+                            <p>Vous recevrez une confirmation par e-mail.</p>
+                            <img src="${qrCode}" alt="" width="100px">
+                            <h3 class="text-warning">${$prix}</h3>
+                            <h5>booking: 3UD7L8</p></h5>
+                        </div>
+                        <a href="/blablacar" class="ok-payement btn btn-success">Ok</a>
+                    </div>
+                `)
+            }
+
+            function loadSpin() {
+                return `
+                    <div class="spinner-border spinner-border-sm" role="status">
+                        <span class="visually-hidden">...</span>
+                    </div>
+                `
+            }
+
+            function confirmPayment(bookingNumber) {
+                const data = {
+                    "booking_number": bookingNumber,
+                }
+
+                $.ajax({
+                    url: "/confirmation-paiement-blablacar",
+                    type: "POST",
+                    data: JSON.stringify($data),
+                    contentType: "application/json",
+                    success: function(response) {
+                        if (response.reservations && response.reservations.data && response.reservations.data.booking && response.reservations.data.booking.payments.length > 0) {
+                            reservationFinale(bookingNumber)
+                        } else {
+                            notification("warning", "Il n'y erreur lors de votre réservation")
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Erreur :", response.status);
+                    }
+                });
+            }
+
+            function reservationFinale(bookingNumber) {
+                const data = {
+                    "booking_number": bookingNumber,
+                }
+
+                $.ajax({
+                    url: "/reservation-finale-blablacar",
+                    type: "POST",
+                    data: JSON.stringify($data),
+                    contentType: "application/json",
+                    success: function(response) {
+                        if (response.reservations && response.reservations.data && response.reservations.data.booking && response.reservations.data.booking.ticket_documents.length > 0) {
+                            let qrCode = response.reservations.data.booking.ticket_documents[0].url
+                            payementEffectuer(qrCode)
+                        } else {
+                            notification("warning", "Il n'y erreur lors de votre réservation")
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Erreur :", response.status);
+                    }
+                });
+            }
+        });
+    </script>
+{% endblock %}

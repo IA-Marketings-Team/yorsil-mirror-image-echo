@@ -1,0 +1,63 @@
+{% extends 'base_admin.html.twig' %}
+{% block title %}Modification du mot de passe{% endblock %}
+
+{% block body %}
+{# <div class="noselect"> #}
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <div class="col-lg-10">
+            <h2>Profil</h2>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="{{path('profil_edit')}}">Profil</a>
+                </li>
+                <li class="breadcrumb-item active">
+                    <strong>Modification de mot de passe</strong>
+                </li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="ibox ">
+                    <div class="ibox-title">
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+
+                        {{ form_start(form) }}
+
+                        <div class="form-group">{{ form_row(form.oldPassword) }}</div>
+                        <div class="form-group">{{ form_row(form.newPassword) }}</div>
+                        <div class="form-group">{{ form_row(form.comfirmPassword) }}</div>
+                        {# <div class="row">
+                            <div class="col-md-5">{{ form_row(form.oldPassword) }}</div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-5">{{ form_row(form.newPassword) }}</div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-5">{{ form_row(form.comfirmPassword) }}</div>
+                        </div> #}
+                        <div class="form-group">
+                            <div class="flex float-right  mt-3">
+                                <Button class="btn btn-primary"><i class="fa fa-check"></i>Enregistrer</Button>
+                                <a href="{{path('profil_edit')}}" class="btn btn-warning rounded-0">
+                                    <i class="fa fa-times"></i>
+                                    Annuler
+                                </a>
+                            </div>
+                        </div>
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{# </div> #}
+{% endblock %}

@@ -1,0 +1,93 @@
+{% extends 'base_front.html.twig' %}
+
+{% block title %}Fawatir{% endblock %}
+
+{% block stylesheets %}
+	{{ parent() }}
+	<style>
+		.service {
+			min-height: 90vh;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+		.service-form {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			flex-direction: column;
+			gap: 5px;
+			max-height: 490px;
+			width: 300px;
+			border-radius: 10px;
+			box-shadow: 0px 0px 5px #ccc;
+			padding: 1rem;
+		}
+		.service-form form h1{
+			color: #86b7fe;
+		}
+		.service-form form{
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			flex-direction: column;
+			gap: 5px;
+			width: 100%;
+			height: 100%;
+		}
+		.form-confirm-btn{
+			width: 100%;
+			display: flex;
+			justify-content: flex-end;
+			align-items: center;
+			gap: 5px;
+		}
+	</style>
+{% endblock %}
+	
+{% block body %}
+
+	{# {% if response.creancierParams is defined %}
+    {% set item = response.creancierParams.item %}
+    {% endif %} #}{# 
+    <p>Libellé : {{ item.libelle }}</p>
+    <p>Nom du champ : {{ item.nomChamp }}</p>
+    <p>Type de champ : {{ item.typeChamp }}</p>
+    <p>Taille maximale : {{ item.tailleMax }}</p>
+    <p>Taille minimale : {{ item.tailleMin }}</p> #}
+
+	<div class="container">
+		<div class="service">
+			<div class="service-form">
+				<form action="{{ path('impayes')}}" method="POST">
+					<h1>Formulaire</h1>
+					<input type="hidden" name="creancier_id" value="{{creancierId}}">
+					<input type="hidden" name="creance_id" value="{{creanceId}}">
+					<input type="hidden" name="nbr_params" value="{{response.nbrParams}}">
+				{% if response.creancierParams is defined and response.creancierParams.item is not empty %}
+					{% if response.creancierParams.item is iterable %}
+						{% for key,item in response.creancierParams.item %}
+							<input type="hidden" name="nom_champ_{{key}}" value="{{ item.nomChamp }}">
+							<div class="mb-3">
+								<label class="form-label">{{ item.libelle }}</label>
+								<input type="{{ item.typeChamp }}" class="form-control" name="val_champ_{{key}}" min="{{ item.tailleMin }}" max="{{ item.tailleMax }}" required="">
+							</div>
+						{% endfor %}
+					{% else %}
+						<input type="hidden" name="nom_champ_0" value="{{ response.creancierParams.item.nomChamp }}">
+						<div class="mb-3">
+							<label class="form-label">{{ response.creancierParams.item.libelle }}</label>
+							<input type="{{ response.creancierParams.item.typeChamp }}" class="form-control" name="val_champ_0" min="{{ response.creancierParams.item.tailleMin }}" max="{{ response.creancierParams.item.tailleMax }}" required="">
+						</div>
+					{% endif %}
+				{% endif %}
+					<div class="form-confirm-btn">
+						<a class="btn btn-danger" href="{{ path('liste_creanciers')}}">Retour</a>
+						<input class="btn btn-primary" type="submit" value="Envoyer">
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}

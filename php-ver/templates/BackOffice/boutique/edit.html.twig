@@ -1,0 +1,337 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}Modification de boutique{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('modernize/libs/select2/dist/css/select2.min.css') }}">
+{% endblock %}
+
+{% block body %}
+    <div class="card bg-light-info shadow-none position-relative overflow-hidden">
+        <div class="card-body px-4 py-3">
+          <div class="row align-items-center">
+            <div class="col-9">
+              <h4 class="fw-semibold mb-8">Boutiques</h4>
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a class="text-muted" href="javascript:void(0)">Boutique</a></li>
+                  <li class="breadcrumb-item"><a class="text-muted" href="{{ path('boutique')}}">Liste</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Modification</li>
+                </ol>
+              </nav>
+            </div>
+            {# <div class="col-3">
+              <div class="text-center mb-n5">  
+                <img src="{{ asset('modernize/images/logos/favicon.svg') }}" alt="" class="img-fluid mb-n4">
+              </div>
+            </div> #}
+          </div>
+        </div>
+    </div>
+    
+{{ form_start(form)}}
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body p-4">
+                    <div class="row mb-4">
+                        {# <div class="col-md-4 mb-3">{{ form_row(form.code, {'attr':{'class':'form-control'} }) }}</div> #}
+                        <div class="col-md-4 mb-3">{{ form_row(form.nRcs, {'attr':{'class':'form-control'} }) }}</div>
+                        <div class="col-md-4 mb-3">{{ form_row(form.numMobile, {'attr':{'class':'form-control'} }) }}</div>
+                        <div class="col-md-4 mb-3">{{ form_row(form.facturation) }}</div>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col-md-6 mb-3">{{ form_row(form.nom, {'attr':{'class':'form-control'} }) }}</div>
+                        <div class="col-md-6 mb-3">{{ form_row(form.codePost, {'attr':{'class':'form-control'} }) }}</div>
+                        {# ----- #}
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col-md-6 mb-3">{{ form_row(form.email, {'attr':{'class':'form-control'} }) }}</div>
+                        <div class="col-md-6 mb-3">{{ form_row(form.adresse, {'attr':{'class':'form-control'} }) }}</div>
+                        {# ----- #}
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col-md-6 mb-3">{{ form_row(form.ville, {'attr':{'class':'form-control'} }) }}</div>
+                        <div class="col-md-6 mb-3">{{ form_row(form.pays) }}</div>                        
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col-md-6 mb-4">{{ form_row(form.cinGerant, {'attr':{'class':'form-control'} }) }}</div>                       
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col-md-6 text-center">
+                            <p class="card-subtitle mb-4">Kbis (Image/PDF)</p>
+                                {% set userKbis = boutique.preuveCabis ? 'uploads/images/cabis/' ~ boutique.preuveCabis  : 'modernize/images/logos/uploadFile.png' %}
+                                {% if verifTypeFile(boutique.preuveCabis) == 'pdf' %}
+                                    <img id="img_prev" src="{{ asset('modernize/images/logos/filePdf.png') }}" alt="" class="img-fluid " width="120" height="120">
+                                {% else %}
+                                    <img id="img_prev" src="{{ asset(userKbis) }}" alt="" class="img-fluid " width="120" height="120">
+                                {% endif %}
+                                <div class="my-4 gap-3">
+                                    {{ form_row(form.preuveCabis, {'attr':{'class':'form-control'} }) }}
+                                </div>
+                        </div>
+                        <div class="col-md-6 text-center">
+                            <p class="card-subtitle mb-4">Pièce d'identité (Image/PDF)</p>
+                                {% set userIdentity = boutique.pieceIdentity ? 'uploads/images/pieceIdentity/' ~ boutique.pieceIdentity  : 'modernize/images/logos/uploadFile.png' %}
+                                {% if verifTypeFile(boutique.pieceIdentity) == 'pdf' %}
+                                    <img id="img_prev_identity" src="{{ asset('modernize/images/logos/filePdf.png') }}" alt="" class="img-fluid " width="120" height="120">
+                                {% else %}
+                                    <img id="img_prev_identity" src="{{ asset(userIdentity) }}" alt="" class="img-fluid " width="120" height="120">
+                                {% endif %}
+                                <div class="my-4 gap-3">
+                                    {{ form_row(form.pieceIdentity, {'attr':{'class':'form-control'} }) }}
+                                </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% if boutique.user %}
+            {% set user = boutique.user %}
+            {% set user_ip = user.ipAdress %}
+            {% set user_last = user.dateLastLogin %}
+        {% else %}
+            {% set user = null %}
+            {% set user_ip = null %}
+            {% set user_last = null %}
+        {% endif %}
+        <div class="col-12 kl-connexion">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-body p-4">
+                            <div class="mb-4">
+                                <label for="id-ip" class="form-label fw-semibold">Adresse IP</label>
+                                <input type="text" value="{{(user_ip) ? user_ip : '' }}" class="form-control" id="id-ip" disabled="disabled">
+                            </div>
+                            <div class="mb-4">
+                                <label for="id-connexion" class="form-label fw-semibold">Dernière connexion</label>
+                                <input type="text" value="{{(user_last) ? user_last|date('d-m-Y H:i') : '' }}" class="form-control" id="id-connexion" disabled="disabled">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% if boutique.user %}
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-body p-4 d-flex align-items-center justify-content-center flex-column">
+                                <div class="icon-active-user">
+                                    <label class="label-is-user cursor-pointer {{ boutique.user.isActif ? 'text-success' : 'text-danger'}}" for="id-is-user">
+                                        <i class="ti {{ boutique.user.isActif ? 'ti-lock-open' : 'ti-lock'}} fs-13"></i>
+                                    </label>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <label class="form-check-label check-label-is-user" for="id-is-user">
+                                        {{ boutique.user.isActif ? 'Boutique activer' : 'Boutique bloquer'}}
+                                    </label>
+                                    <input class="form-check-input check-success js-switch-is-user" type="checkbox" name="if_connecter" id="id-is-user" {% if boutique.user.isActif %} checked {% endif %} />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body p-4">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-check form-switch">
+                                <label class="form-check-label" for="id-modif-user">
+                                    Modifier le Caissier
+                                </label>
+                                <input class="form-check-input js-switch" type="checkbox" id="id-modif-user"/>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-check form-switch">
+                                <label class="form-check-label" for="id-modif-mdp">
+                                    Modifier le mot de passe
+                                </label>
+                                <input class="form-check-input check-danger js-switch" type="checkbox" id="id-modif-mdp"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-12">
+            <div class="row">
+                <div class="col-lg-6 kl-modif-user d-none">
+                    <div class="card">
+                        <div class="card-body p-4">
+                            <div class="mb-4">
+                                <label for="id-nom" class="form-label fw-semibold">Nom d'utilisateur</label>
+                                <input type="text" value="{{user ? user.nom : ''}}" class="form-control" id="id-nom" name="name_user" required="required" placeholder="Tapez le nom...">
+                            </div>
+                            <div class="mb-4">
+                                <label for="id-email" class="form-label fw-semibold">Prenom d'utilisateur</label>
+                                <input type="text" value="{{user ? user.prenom : ''}}" class="form-control" id="id-Pnom" name="firstName_user" required="required" placeholder="Adresse email...">
+                            </div>
+                            <div class="mb-4">
+                                <label for="id-email" class="form-label fw-semibold">Email</label>
+                                <input type="email" value="{{user ? user.email : ''}}" class="form-control" id="id-email" name="email_user" required="required" placeholder="Adresse email...">
+                            </div>
+                            <div class="mb-4">
+                                <label for="id-tel" class="form-label fw-semibold">Téléphone</label>
+                                <input type="tel" value="{{user ? user.tel : ''}}" class="form-control" id="id-tel" name="tel_user" required="required" placeholder="Adresse email...">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 kl-modif-mpd d-none">
+                    <div class="card">
+                        <div class="card-body p-4">
+                            <div class="mb-4">
+                                <label for="new-Password" class="form-label fw-semibold">Nouveau mot de passe</label>
+                                <input type="password" class="form-control" id="new-Password" name="new_mdp" minlength="6" required="required" placeholder="Tapez le nouveau mot de passe..." autocomplete="new-password">
+                            </div>
+                            <div class="mb-4">
+                                <label for="confirm-Password" class="form-label fw-semibold">Confirmer le mot de passe</label>
+                                <input type="password" class="form-control" id="confirm-Password" name="conf_new_mdp" minlength="6" required="required" placeholder="Confirmez le nouveau mot de passe...">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-12">
+            <div class="d-flex align-items-center justify-content-end mt-4 gap-3">
+                <button class="btn btn-primary">Modifier</button>
+                <a href="{{ path('liste_admin')}}" class="btn btn-light-danger text-danger">Annuler</a>
+            </div>
+        </div>
+    </div>
+{{ form_end(form) }}
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('modernize/libs/select2/dist/js/select2.full.min.js') }}"></script>
+    <script src="{{ asset('modernize/libs/select2/dist/js/select2.min.js') }}"></script>
+    <script>
+
+        $(document).ready(function(){
+
+             /* Image cabis */
+            const inputPicture = document.getElementById("bout_preuveCabis");
+            const img_prev = document.getElementById("img_prev");
+            const imgSrc = img_prev.getAttribute("src");
+
+            inputPicture.addEventListener('change', function(){
+                const fichier_categorie = this.files[0];
+                if (fichier_categorie) {
+                    const read_file_cate = new FileReader();
+                    const type_file = fichier_categorie.type;
+
+                    read_file_cate.addEventListener("load", function(e){
+                        switch (type_file) {
+                            case 'application/pdf':
+                                img_prev.setAttribute("src", "{{ asset('modernize/images/logos/filePdf.png') }}");
+                                break;
+                            default:
+                                img_prev.setAttribute("src", this.result);
+                                break;
+                        }
+                    });
+
+                    read_file_cate.readAsDataURL(fichier_categorie);
+                } else {
+                    img_prev.setAttribute("src", imgSrc);
+                }
+            });
+
+            /* Image identity */
+            const inputIdentity = document.getElementById("bout_pieceIdentity");
+            const img_prev_identity = document.getElementById("img_prev_identity");
+            const imgSrcIdentity = img_prev_identity.getAttribute("src");
+
+            inputIdentity.addEventListener('change', function(){
+                const fichier_identity = this.files[0];
+                if (fichier_identity) {
+                    const read_file_cate = new FileReader();
+                    const type_file = fichier_identity.type;
+
+                    read_file_cate.addEventListener("load", function(){
+                        switch (type_file) {
+                            case 'application/pdf':
+                                img_prev_identity.setAttribute("src", "{{ asset('modernize/images/logos/filePdf.png') }}");
+                                break;
+                            default:
+                                img_prev_identity.setAttribute("src", this.result);
+                                break;
+                        }
+                    });
+
+                    read_file_cate.readAsDataURL(fichier_identity);
+                } else {
+                    img_prev_identity.setAttribute("src", img_prev_identity);
+                }
+            });
+
+            $('#bout_preuveCabis').attr('required', false);
+
+            $(".chosen-select").select2();
+
+            $('#new-Password').attr('required', false);
+            $('#confirm-Password').attr('required', false);
+            $('#id-nom').attr('required', false);
+            $('#id-Pnom').attr('required', false);
+            $('#id-email').attr('required', false);
+            $('#id-tel').attr('required', false);
+
+            $(document).on('change','#id-modif-user', function(e) {
+                console.log('change id-modif-user');
+                if ($(this).is(':checked')) {
+                    $(this).attr('value', 'true');
+                }
+                else {
+                   $(this).attr('value', 'false');
+                }
+
+                var check = $(this).val(); 
+                (check === 'false') ? $('.kl-modif-user').addClass('d-none') : $('.kl-modif-user').removeClass('d-none');
+                (check === 'false') ? $('#id-nom').attr('required', false) : $('#id-nom').attr('required', true); 
+                (check === 'false') ? $('#id-Pnom').attr('required', false) : $('#id-Pnom').attr('required', true);
+                (check === 'false') ? $('#id-email').attr('required', false) : $('#id-email').attr('required', true);
+                (check === 'false') ? $('#id-tel').attr('required', false) : $('#id-tel').attr('required', true);
+            });
+
+            $(document).on('change','.js-switch-is-user', function(e) {
+                if ($(this).is(':checked')) {
+                    $(this).attr('value', 'true');
+                }
+                else {
+                   $(this).attr('value', 'false');
+                }
+
+                var check = $(this).val(); 
+                (check === 'false') ? ($('.label-is-user').removeClass('text-success'), $('.label-is-user').addClass('text-danger'), $('.label-is-user').html(`<i class="ti ti-lock fs-13"></i>`)) : ($('.label-is-user').addClass('text-success'), $('.label-is-user').removeClass('text-danger'), $('.label-is-user').html(`<i class="ti ti-lock-open fs-13"></i>`));
+                (check === 'false') ? $('.check-label-is-user').text('Boutique bloquer') : $('.check-label-is-user').text('Boutique activer');
+            });
+
+            $(document).on('change','#id-modif-mdp', function(e) {
+                if ($(this).is(':checked')) {
+                    $(this).attr('value', 'true');
+                }
+                else {
+                   $(this).attr('value', 'false');
+                }
+
+                var check = $(this).val(); 
+                (check === 'false') ? $('.kl-modif-mpd').addClass('d-none') : $('.kl-modif-mpd').removeClass('d-none');
+                
+                (check === 'false') ? $('#new-Password').attr('required', false) : $('#new-Password').attr('required', true);
+                (check === 'false') ? $('#confirm-Password').attr('required', false) : $('#confirm-Password').attr('required', true); 
+                (check === 'false') ? $('#new-Password').val('') : '';
+                (check === 'false') ? $('#confirm-Password').val('') : '';
+            });
+
+        });
+    </script>
+{% endblock %}

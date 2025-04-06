@@ -1,0 +1,147 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}Liste des grilles tarifaires{% endblock %}
+
+{% set menu_grille_tarifaire = true %}
+{% set menu_standard = true %}
+
+{% block body %}
+
+    <div class="card bg-light-info shadow-none position-relative overflow-hidden">
+        <div class="card-body px-4 py-3">
+            <div class="row align-items-center">
+                <div class="col-9">
+                    <h4 class="fw-semibold mb-8">Liste des grilles tarifaires</h4>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                          <li class="breadcrumb-item"><a class="text-muted" href="javascript:void(0)">Grilles tarifaires</a></li>
+                          <li class="breadcrumb-item active" aria-current="page">Liste</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <form action="{{path('import_fichier_grille_tarifaire')}}" method="post" enctype="multipart/form-data">
+                            <div class="row mb-2">
+                                <div class="col-sm-4">
+                                        <input type="file" class="form-control" id="fileInput" name="fileInput" accept=".csv, .xlsx, .xls" required>
+                                    </div>
+                                    <div class="col-sm-8">
+                                        <button class="btn btn-success mb-2"> 
+                                            <i class="ti ti-file fs-4"></i> Importer Fichier
+                                        </button>
+                                    
+                        </form>
+                                    <a id="ajout_admin" href="#" class="btn btn-primary mb-2" style="margin-left: 20px;">
+                                        <i class="ti ti-plus fs-4"></i> Ajouter une grille tarifaire
+                                    </a>
+
+                            </div>
+                        <div class="table-responsive">
+                            <table class="table"  id="id-table">
+                                <thead>
+                                    <tr>
+                                        <td>Produit</td>
+                                        <td class="text-center">Famille</td>
+                                       {#  <td class="text-center">Ref</td>  #}
+                                        <td class="text-center">GenCode</td>
+                                        <td class="text-center">TVA</td>
+                                        <td class="text-center">PA</td>
+                                        <td class="text-center">Prix Yorsil</td>
+                                        <td class="text-center">Remise</td>
+                                        <td class="text-center">PV TTC</td>
+                                        <td class="text-center">Target</td>
+                                        <td class="text-center">Distrib</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for grille in grilles %}
+                                        <tr>
+                                            <td>{{grille.produit}}</td>
+                                            <td class="text-center">{{grille.famille}}</td>
+                                            {# <td class="text-center">{{grille.ref}}</td> #}
+                                            <td class="text-center">{{grille.gencode}}</td>
+                                            <td class="text-center"><strong>{{grille.tva}}%</strong></td>
+                                            <td class="text-center"><strong>{{grille.prixPdv}} &euro;</strong></td>
+                                            <td class="text-center"><strong>{{grille.prixYorsil}} &euro;</strong></td>
+                                            <td class="text-center"><strong>{{grille.remisePdv}}%</strong></td>
+                                            <td class="text-center"><strong>{{grille.prixPublicTtc}} &euro;</strong></td>
+                                            <td class="text-center"><strong>{{(grille.pourcentageYorsil) ? grille.pourcentageYorsil : 0}}%</strong></td>
+                                            <td class="text-center"><strong>{{grille.commissionDistrib}}%</strong></td>
+                                        </tr>
+                                    {% endfor %}
+                                    {# {% for produit in produits %}
+                                        <tr>
+                                            <td>{{produit.nom}}</td>
+                                            <td>{{produit.operateur.nom}}</td>
+                                                {% set type = '' %}
+                                                {% if(produit.categorie) %}
+                                                    {% set type = produit.categorie.nom %}
+                                                {% else %}
+                                                    {% set type = (produit.type == '2') ? 'Jeux' : 'Carte Recharges Mobiles' %}
+                                                    {% set type = (produit.type == '3') ? 'Paiement' : 'Carte Recharges Mobiles' %}
+                                                    {% set type = (produit.type == '4') ? 'Carte Cadeaux' : 'Carte Recharges Mobiles' %}
+                                                {% endif %}
+                                            <td>{{type}}</td> 
+                                            <td class="text-center"><strong>{{produit.prixAchat}} &euro;</strong></td>
+                                            <td class="text-center"><strong>{{produit.prixVente}} &euro;</strong></td>
+                                            <td class="text-center"><strong>{{soldeParProduitPhysique(produit.id)}} &euro;</strong></td>
+                                            <td class="text-center">
+                                                  <i class = "ti ti-eye fs-5 {{ (produit.isVisible == true) ? 'text-gray' : 'text-success'}}" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{{ (produit.isVisible == true) ? 'Caché' : 'Visible'}}"></i>
+                                            </td>
+                                            <td>{{produit.gencode}}</td>
+                                            <td class="text-center">
+                                                <div class="btn-group">
+                                                    <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                        Action
+                                                    </button>
+                                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                                        <li>
+                                                            <a class="dropdown-item" href="{{path('edit_produit_physique',{id:produit.id})}}">
+                                                                <i class="ti ti-edit"></i>
+                                                                Mettre à jour
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="dropdown-item" href="{{path('liste_code',{id:produit.id})}}">
+                                                                <i class="ti ti-cards"></i>
+                                                                Code PIN
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %} #}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+{% endblock %}
+{% block javascripts %}
+	{{ parent() }}
+    <script>
+        $(".select2-type").select2({
+            dropdownParent: $("#rechargeModal")
+        });
+    </script>
+    <script>
+        $('#id-table').DataTable({
+            language: { "url": global_utils.urls.datatable_fr },
+            "order": [[0, "asc"]],
+        });
+    </script>
+{% endblock %}

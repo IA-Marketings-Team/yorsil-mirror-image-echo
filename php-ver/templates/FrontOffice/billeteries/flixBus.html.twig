@@ -1,0 +1,1404 @@
+{% extends 'base_front.html.twig' %}
+
+{% set menu_billeteries = true %}
+
+{% block title %}FlixBus{% endblock %}
+
+{% block stylesheets %} 
+    {{ parent() }}
+    <style type="text/css">
+        #billeterie input:focus {
+            color: #FFC107;
+        }
+        #billeterie .header {
+            width: 100%;
+            position: relative;
+            margin-bottom: 90px;
+            transition: 0.3s;
+        }
+        #billeterie .header.aller-retour {
+            margin-bottom: 120px;
+        }
+        #billeterie .header .img-background{
+            width: 100%;
+            height: 265px;
+            overflow: hidden;
+            border-radius: 5px;
+        }
+        #billeterie .header .img-background img{
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        #billeterie .header .form-destination {
+            margin: 0 1rem;
+            position: absolute;
+            bottom: 0;
+            transform: translateY(50%);
+            width: calc(100% - 2rem);
+            box-shadow: 2px 2px 5px #0000007d;
+            background: #464242b5;
+            backdrop-filter: blur(3px);
+            border-radius: 5px;
+            z-index: 9;
+        }
+        #billeterie .header .form-destination h2{
+            position: absolute;
+            top: -30px;
+            color: #fff;
+            text-shadow: 1px 1px 1px BLACK;
+            font-size: 1.5rem;
+        }
+        .form-check.destination {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .form-check-input.green {
+            width: 2em;
+            height: 2em;
+        }
+        .form-check-input.green:checked {
+            background-color: #31a100;
+            border-color: #31a100;
+        }
+        .direction-form {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            transition: 0.4s;
+        }
+        .direction-form.aller-retour{
+            align-items: flex-start;
+        }
+
+        .direction-form.aller-retour .date-container:first-of-type {
+            margin-bottom: 30px;
+        }
+
+        .direction-control {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #fff;
+            border-radius: 6px;
+            position: relative;
+            padding: 2px 0px;
+        }
+        .direction-control::before {
+            content: "";
+            position: absolute;
+            width: 1px;
+            height: 100%;
+            background: #fff;
+        }
+        .direction-control .dropdown{
+            position: relative;
+            padding: 0 0px 0px 5px;
+        }
+        .dropdown .form-direction{
+            color: #fff;
+            background: transparent;
+            border: 1px solid transparent;
+            padding:  5px 5px 5px 0px;
+            width: 140px;
+        }
+        .direction-control .dropdown label,
+        .date-container label,
+        #passager-control #drop-control label{
+            position: absolute;
+            top: -25px;
+            left: 0;
+            color: #fff;
+        }
+        .direction-control #inversed {
+            border: 1px solid #fff;
+            width: 27px;
+            height: 27px;
+            min-width: 27px;
+            min-height: 27px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: #fff;
+            cursor: pointer;
+        }
+        .direction-control #inversed i {
+            font-size: 20px;
+            color: #0a7ea4;
+            transform: rotate(0deg);
+            padding: 0px 0px 2px 0px;
+            transition: transform 0.4s;
+        }
+        .direction-control #inversed.change i{
+            transform: rotate(360deg);
+        }
+        .dropdown-menu {
+            padding: 0 !important;
+        }
+        .dropdown-menu ul{
+            max-height: 220px;
+            overflow: hidden;
+            overflow-y: auto;
+            margin: 5px 0;
+        }
+        .direction-control .dropdown .dropdown-menu .head{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f7f7f7;
+            padding: 5px 0;
+            border-top-right-radius: inherit;
+            border-top-left-radius: inherit;
+            color: #595858;
+            font-weight: bold;
+            font-size: 15px;
+            gap: 5px;
+        }
+        .direction-control .dropdown .dropdown-menu .head i{
+            font-size: 20px;
+        }
+        .dropdown-menu ul .dropdown-item {
+            padding: 3px 5px;
+        }
+        .dropdown-menu ul .dropdown-item span:first-of-type {
+            display: flex;
+            font-size: 14px;
+            align-items: center;
+            gap: 5px;
+        }
+        .dropdown-menu ul .dropdown-item span {
+            display: block;
+            font-size: 11px;
+            color: black;
+        }
+
+        .dropdown-menu ul .dropdown-item span i {
+            font-size: 20px;
+        }
+
+        #dropdown-menu-arrive.cities li:has(.dropdown-item.stations) {
+            display: none !important;
+        }
+
+        #dropdown-menu-arrive.stations li:has(.dropdown-item.cities) {
+            display: none !important;
+        }
+
+        .dropdown .form-direction::placeholder{
+            color: #fff;
+        }
+        
+        .dropdown .form-direction:focus::placeholder{
+            font-style: italic;
+        }
+        .input-group-prepend,
+        .input-group-append {
+            cursor: pointer;
+        }
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            display: none;
+        }
+        .date-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #fff;
+            border-radius: 6px;
+        }
+        .date-container.retour {
+            display: none;
+        }
+        .direction-form.aller-retour .date-container.retour {
+            display: flex;
+        }
+        .dateInput {
+            position: absolute;
+            top: 0;
+            left: 20px;
+            opacity: 0;
+            pointer-events: none;
+            z-index: -1;
+        }
+        .date-container i{
+            color: #fff;
+            font-size: 25px;
+        }
+        .date-container .formattedDate{
+            color: #fff;
+            width: 160px;
+            border: none;
+        }
+        .date-container .prevDay,
+        .date-container .nextDay{
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.4s ease;
+        }
+        .date-container .prevDay:hover,
+        .date-container .nextDay:hover{
+            background: #8080806e;
+        }
+        .date-container .nextDay{
+            margin-right: 2px;
+        }
+        #passager-control {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        #passager-control #drop-control {
+            display: flex;
+            align-items: center;
+            border: 1px solid #fff;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        #passager-control #drop-control input {
+            border: none;
+            color: #fff;
+        }
+        #passager-control #drop-control input::placeholder {
+            color: red;
+            font-size: 12px;
+        }
+        #passager-control #drop-control i.ti-chevron-down{
+            color: #fff;
+            margin-left: auto;
+            margin-right: 5px;
+        }
+        #passager-control .drop {
+            position: absolute;
+            top: 50%;
+            right: 50%;
+            opacity: 0;
+            pointer-events: none;
+            transform: translate(50%, 2px);
+            width: 380px;
+            background: #fff;
+            z-index: 9;
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 1px 1px 5px #0000003d;
+            transition: 0.3s ease-in-out;
+        }
+        #passager-control.open .drop {
+            top: 100%;
+            opacity: 1;
+            pointer-events: all;
+        }
+        #passager-control .drop .drop-option {
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #ccc;
+            padding: 10px 5px;
+        }
+        #passager-control .drop .drop-option:last-of-type {
+            border-bottom: none;
+        }
+        #passager-control .drop .drop-option label {
+            font-weight: bold;
+            flex: 1 1 220px;
+            overflow: hidden;
+            position: relative;
+            top: auto;
+            left: auto;
+            color: black;
+        }
+        #passager-control .drop .drop-option label span{
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: #616161;
+        }
+        #passager-control .drop .drop-option .controls {
+            flex: 1 1 160px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            height: 35px;
+        }
+        #passager-control .drop .drop-option .controls button {
+            color: black;
+            font-size: 20px;
+            border: 1px solid #8b8b8b;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            background: transparent;
+            justify-content: center;
+            padding: 0 0px;
+            border-radius: 10px 0px 0 10px;
+        }
+        #passager-control .drop .drop-option .controls button:disabled {
+            background: #8b8b8b17;
+            border-color: #8b8b8b;
+            color: #8b8b8b;
+        }
+        #passager-control .drop .drop-option .controls button.ctrl-minus {
+            border-radius: 10px 0px 0 10px;
+            border-right: none;
+        }
+        #passager-control .drop .drop-option .controls button.ctrl-plus {
+            border-radius: 0px 10px 10px 0px;
+            border-left: none;
+        }
+        #passager-control .drop .drop-option .controls input {
+            border: 1px solid black;
+            width: 60px;
+            height: 35px;
+            color: black;
+            font-size: 20px;
+            text-align: center;
+        }
+        #service-menu-listes {
+            padding: 1rem 0px;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid #c8c8c8;
+            margin-bottom: 1rem;
+        }
+        .service-menu {
+            position: relative;
+        }
+        .service-menu .card {
+            border: 1px solid #c8c8c8;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .service-menu .card:hover {
+            border: 1px solid #c8c8c8;
+            box-shadow: 2px 2px 5px #0000007d;
+        }
+        
+        .service-menu .card-body {
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .service-menu .card-body h5{
+            margin: 0;
+        }
+        .service-menu .card-body i{
+            font-size: 30px;
+        }
+        #search-destination {
+            margin-left: auto;
+        }
+        .loadCity{
+            display: none;
+        }
+        
+        .direction-form.load {
+            pointer-events: none;
+        }
+        .direction-form.load .direction-control,
+        .direction-form.load .date-depart,
+        .direction-form.load #passager-control {
+            background: #d5d5d5;
+            animation: loadCity 1s cubic-bezier(0.445, 0.05, 0.55, 0.95) alternate infinite;
+        }
+
+        @keyframes loadCity {
+            from {
+                opacity: 0.3;
+            }
+        }
+
+        #banier {}
+        #banier .banier-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        #banier .banier-card i {
+            font-size: 35px;
+            color: #5cc500;
+            padding-bottom: 10px;
+        }
+        #banier .banier-card h2 {
+            font-size: 17px;
+            font-weight: 900;
+        }
+        #banier .banier-card p {
+            margin-bottom: 0;
+        }
+        #banier .banier-card a {
+            color: black;
+            display: flex;
+            align-items: center;
+        }
+        #banier .banier-card a i{
+            font-size: 20px;
+            color: #5cc500;
+            padding: 0;
+        }
+
+
+        @media screen and (width < 1308px){
+            #billeterie .header,
+            #billeterie .header.aller-retour {
+                margin: 0;
+            }
+            #billeterie .header .form-destination {
+                margin: 1rem 0;
+                position: relative;
+                bottom: auto;
+                transform: translateY(0%);
+                width: 100%;
+            }
+            #billeterie .header .form-destination h2 {
+                position: relative;
+                top: auto;
+            }
+        }
+        @media screen and (width < 1186px){
+            .direction-control {
+                order: 1;
+                flex: 1 0 45%;
+            }
+            #passager-control {
+                order: 2;
+                flex: 1 0 45%;
+            }
+            #passager-control #drop-control {
+                width: 100%;
+            }
+            .date-depart {
+                order: 3;
+                display: flex;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 10px;
+                margin-top: 20px;
+                width: 100%;
+            }
+            .date-container {
+                flex: 1 0 45%;
+                max-width: 50%;
+            }
+            .direction-form.aller-retour .date-container:first-of-type {
+                margin: 0;
+            }
+            #search-destination {
+                margin-left: auto;
+                margin-top: auto;
+                order: 4;
+            }
+        }
+        @media screen and (width >= 992px){
+            #billeterie .header .img-background img.bg-md,
+            #billeterie .header .img-background img.bg-sm{
+                display: none;
+            }
+        }
+        @media screen and (width < 812px){
+            .direction-control .dropdown {
+                white-space: nowrap;
+            }
+        }
+        @media screen and (768px < width < 992px){
+            #billeterie .header .img-background img.bg-lg,
+            #billeterie .header .img-background img.bg-sm{
+                display: none;
+            }
+        }
+        @media screen and (width < 768px){
+            #billeterie .header .img-background img.bg-lg,
+            #billeterie .header .img-background img.bg-md{
+                display: none;
+            }
+            .service-menu .row {
+                gap: .5rem;
+            }
+        }
+        @media screen and (width < 748px){
+            .direction-control {
+                flex: 1 0 100%;
+            }
+            .direction-control .dropdown {
+                width: 100%;
+            }
+            .dropdown .form-direction {
+                width: 100%;
+            }
+            #passager-control {
+                margin-top: 20px;
+            }
+        }
+        @media screen and (width < 579px){
+            .date-container {
+                max-width: 100%;
+            }
+            .date-container:last-of-type {
+                margin-top: 20px;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+
+  <section id="billeterie">
+    <div class="header">
+        <div class="img-background">
+            <img src="{{ asset('modernize/images/billeterie/img_lg.jpg') }}" class="bg-lg" alt="bg-lg">
+            <img src="{{ asset('modernize/images/billeterie/img_md.jpeg') }}" class="bg-md" alt="bg-md">
+            <img src="{{ asset('modernize/images/billeterie/img_sm.jpg') }}" class="bg-sm" alt="bg-sm">
+        </div>
+        <div class="form-destination p-3">
+            <h2>Voyages en bus pas chers à partir de 2,99€</h2>
+            <div class="row mb-3">
+                <div class="col-md-12 d-flex align-items-center gap-3">
+                    <div class="form-check destination">
+                        <input class="form-check-input green cursor-pointer" type="radio" name="checkDirection" id="allerSimple" checked>
+                        <label class="form-check-label cursor-pointer fw-bolder text-white" for="allerSimple">
+                            Aller simple
+                        </label>
+                    </div>
+                    <div class="form-check destination">
+                        <input class="form-check-input green cursor-pointer" type="radio" name="checkDirection" id="allerRetour">
+                        <label class="form-check-label cursor-pointer fw-bolder text-white" for="allerRetour">
+                            Aller-retour
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <form class="direction-form pt-3">
+                <div class="direction-control">
+                    <div class="dropdown">
+                        <label for="direx-depart">De</label>
+                        <i class="ti ti-map-pin text-white"></i>
+                        <input type="text" class="form-direction" id="direx-depart" placeholder="Paris" data-bs-toggle="dropdown" data-liste="#dropdown-menu-depart" aria-expanded="false">
+                        <input type="hidden" id="direx-depart-result" required>
+                        <div class="dropdown-menu">
+                            <div class="head lieuxPopulaire">
+                                <i class="ti ti-building-skyscraper"></i> Lieux populaires
+                            </div>
+                            <ul class="dropdown-menu-all" id="dropdown-menu-depart"></ul>
+                        </div>
+                    </div>
+                    <div id="inversed">
+                        <i class="ti ti-arrows-left-right"></i>
+                    </div>
+                    <div class="dropdown">
+                        <label for="direx-arrive">À</label>
+                        <i class="ti ti-map-pin text-white"></i>
+                        <input type="text" class="form-direction" id="direx-arrive" placeholder="Lyon" data-bs-toggle="dropdown" data-liste="#dropdown-menu-arrive" aria-expanded="false">
+                        <input type="hidden" id="direx-arrive-result" required>
+                        <div class="dropdown-menu">
+                            <div class="head lieuxPopulaire">
+                                <i class="ti ti-building-skyscraper"></i> Lieux populaires
+                            </div>
+                            <ul class="dropdown-menu-all" id="dropdown-menu-arrive"></ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="date-depart">
+                    <div class="date-container" data-date="#dateInputDepart">
+                        <label for="formattedDateDepart">Départ</label>
+                        <i class="ti ti-calendar-event"></i>
+                        <input type="text" class="form-control formattedDate" id="formattedDateDepart" readonly required>
+                        <i class="ti ti-chevron-left prevDay prevDayDepart"></i>
+                        <i class="ti ti-chevron-right nextDay nextDayDepart"></i>
+                        <input type="date" class="form-control dateInput" id="dateInputDepart">
+                    </div>
+                    <div class="date-container retour" data-date="#dateInputRetour">
+                        <label for="formattedRetour">Retour</label>
+                        <i class="ti ti-calendar-event"></i>
+                        <input type="text" class="form-control formattedDate" id="formattedRetour" readonly>
+                        <i class="ti ti-chevron-left prevDay prevDayRetour"></i>
+                        <i class="ti ti-chevron-right nextDay nextDayRetour"></i>
+                        <input type="date" class="form-control dateInput" id="dateInputRetour">
+                    </div>
+                </div>
+                <div id="passager-control">
+                    <div id="drop-control">
+                        <label for="passager">Passagers</label>
+                        <input type="text" value="1 adulte" placeholder="Veuillez ajouter des passagers" class="form-control" id="passager" required readonly>
+                        <i class="ti ti-chevron-down"></i>
+                    </div>
+                    <div class="drop" id="drop-modal">
+                        <div class="drop-option">
+                            <label for="adultes">Adultes</label>
+                            <div class="controls">
+                                <button type="button" class="ctrl-passager ctrl-minus" id="ctrl-minus-adult" data-input="#adultes" data-control="minus">
+                                    <i class="ti ti-minus"></i>
+                                </button>
+                                <input type="text" class="inputControlPassager" value="1" id="adultes" data-ctrlminus="#ctrl-minus-adult" data-ctrlplus="#ctrl-plus-adult">
+                                <button type="button" class="ctrl-passager ctrl-plus" id="ctrl-plus-adult" data-input="#adultes" data-control="plus">
+                                    <i class="ti ti-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="drop-option">
+                            <label for="adultes">Enfants <span>de 0 à 15 ans</span></label>
+                            <div class="controls">
+                                <button type="button" class="ctrl-passager ctrl-minus" id="ctrl-minus-enfant" data-input="#enfant" data-control="minus">
+                                    <i class="ti ti-minus"></i>
+                                </button>
+                                <input type="text" class="inputControlPassager" value="0" id="enfant" data-ctrlminus="#ctrl-minus-enfant" data-ctrlplus="#ctrl-plus-enfant">
+                                <button type="button" class="ctrl-passager ctrl-plus" id="ctrl-plus-enfant" data-input="#enfant" data-control="plus">
+                                    <i class="ti ti-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="drop-option">
+                            <label for="adultes">Vélos <span>Les trottinettes et vélos électriques ne sont pas autorisés dans les bus.</span></label>
+                            <div class="controls">
+                                <button type="button" class="ctrl-passager ctrl-minus" id="ctrl-minus-velo" data-input="#velo" data-control="minus">
+                                    <i class="ti ti-minus"></i>
+                                </button>
+                                <input type="text" class="inputControlPassager" value="0" id="velo" data-ctrlminus="#ctrl-minus-velo" data-ctrlplus="#ctrl-plus-velo">
+                                <button type="button" class="ctrl-passager ctrl-plus" id="ctrl-minus-velo" data-input="#velo" data-control="plus">
+                                    <i class="ti ti-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button id="search-destination" class="btn btn-sn btn-warning">Chercher</button>
+            </form>
+        </div>
+    </div>
+  </section>
+
+    <section id="service-menu-listes">
+        <div class="service-menu">
+            <div class="row">
+                <div class="col-md-4">
+                    <a href="{{ path('gerer_reservation') }}" class="card h-100">
+                        <div class="card-body">
+                            <i class="ti ti-ticket text-body"></i>
+                            <h5 class="card-title">Gérer ma réservation</h5>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <i class="ti ti-clock"></i>
+                            <h5 class="card-title">Suivre un trajet</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <i class="ti ti-help"></i>
+                            <h5 class="card-title">Aide</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="banier">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="banier-card">
+                    <i class="ti ti-shield-check"></i>
+                    <h2>Santé et sécurité</h2>
+                    <p>Préservez votre sécurité et celle des autres lorsque vous voyagez avec nous.</p>
+                    <a href="javascript:void(0)">
+                        En savoir plus <i class="ti ti-chevron-right"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="banier-card">
+                    <i class="ti ti-devices"></i>
+                    <h2>Téléchargez l’app FlixBus</h2>
+                    <p>Toutes les infos sur votre voyage ainsi que des offres et remises exclusives directement sur votre smartphone.</p>
+                    <a href="javascript:void(0)">
+                        Voir notre app <i class="ti ti-chevron-right"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="banier-card">
+                    <i class="ti ti-user-check"></i>
+                    <h2>Confort à bord</h2>
+                    <p>Nos bus sont équipés de sièges larges et confortables, de toilettes, du Wi-Fi et de prises électriques.</p>
+                    <a href="javascript:void(0)">
+                        Nos services à bord <i class="ti ti-chevron-right"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="banier-card">
+                    <i class="ti ti-clock"></i>
+                    <h2>Info en temps réel</h2>
+                    <p>Choisissez un arrêt de bus et trouvez toutes les infos sur les trajets en cours depuis ou vers cet arrêt.</p>
+                    <a href="javascript:void(0)">
+                        Informations trajets en cours <i class="ti ti-chevron-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+{% endblock %}
+
+{% block javascripts %}
+  {{ parent() }}
+    <script>
+        $(document).ready(function() {
+            const $cities     = {{ cities|json_encode|raw }};
+            const $stations   = {{ stations|json_encode|raw }};
+            let $type = "cities" // stations
+            const pays = [
+                {afghanistan:"af"},{albania:"al"},{algeria:"dz"},{andorra:"ad"},{angola:"ao"},{argentina:"ar"},{armenia:"am"},{australia:"au"},{austria:"at"},{azerbaijan:"az"},{bahamas:"bs"},{bahrain:"bh"},{bangladesh:"bd"},{barbados:"bb"},{belarus:"by"},{belgium:"be"},{belize:"bz"},{benin:"bj"},{bhutan:"bt"},{bolivia:"bo"},{bosnia_and_herzegovina:"ba"},{botswana:"bw"},{brazil:"br"},{brunei:"bn"},{bulgaria:"bg"},{burkina_faso:"bf"},{burundi:"bi"},{cabo_verde:"cv"},{cambodia:"kh"},{cameroon:"cm"},{canada:"ca"},{central_african_republic:"cf"},{chad:"td"},{chile:"cl"},{china:"cn"},{colombia:"co"},{comoros:"km"},{congo_democratic_republic:"cd"},{congo_republic:"cg"},{costa_rica:"cr"},{cote_d_ivoire:"ci"},{croatia:"hr"},{cuba:"cu"},{cyprus:"cy"},{czech_republic:"cz"},{denmark:"dk"},{djibouti:"dj"},{dominica:"dm"},{dominican_republic:"do"},{east_timor:"tl"},{ecuador:"ec"},{egypt:"eg"},{el_salvador:"sv"},{equatorial_guinea:"gq"},{eritrea:"er"},{estonia:"ee"},{eswatini:"sz"},{ethiopia:"et"},{fiji:"fj"},{finland:"fi"},{france:"fr"},{gabon:"ga"},{gambia:"gm"},{georgia:"ge"},{germany:"de"},{ghana:"gh"},{greece:"gr"},{grenada:"gd"},{guatemala:"gt"},{guinea:"gn"},{guinea_bissau:"gw"},{guyana:"gy"},{haiti:"ht"},{honduras:"hn"},{hungary:"hu"},{iceland:"is"},{india:"in"},{indonesia:"id"},{iran:"ir"},{iraq:"iq"},{ireland:"ie"},{israel:"il"},{italy:"it"},{jamaica:"jm"},{japan:"jp"},{jordan:"jo"},{kazakhstan:"kz"},{kenya:"ke"},{kiribati:"ki"},{korea_north:"kp"},{korea_south:"kr"},{kosovo:"xk"},{kuwait:"kw"},{kyrgyzstan:"kg"},{laos:"la"},{latvia:"lv"},{lebanon:"lb"},{lesotho:"ls"},{liberia:"lr"},{libya:"ly"},{liechtenstein:"li"},{lithuania:"lt"},{luxembourg:"lu"},{madagascar:"mg"},{malawi:"mw"},{malaysia:"my"},{maldives:"mv"},{mali:"ml"},{malta:"mt"},{marshall_islands:"mh"},{mauritania:"mr"},{mauritius:"mu"},{mexico:"mx"},{micronesia:"fm"},{moldova:"md"},{monaco:"mc"},{mongolia:"mn"},{montenegro:"me"},{morocco:"ma"},{mozambique:"mz"},{myanmar:"mm"},{namibia:"na"},{nauru:"nr"},{nepal:"np"},{netherlands:"nl"},{new_zealand:"nz"},{nicaragua:"ni"},{niger:"ne"},{nigeria:"ng"},{north_macedonia:"mk"},{norway:"no"},{oman:"om"},{pakistan:"pk"},{palau:"pw"},{panama:"pa"},{papua_new_guinea:"pg"},{paraguay:"py"},{peru:"pe"},{philippines:"ph"},{poland:"pl"},{portugal:"pt"},{qatar:"qa"},{romania:"ro"},{russia:"ru"},{rwanda:"rw"},{saint_kitts_and_nevis:"kn"},{saint_lucia:"lc"},{saint_vincent_and_the_grenadines:"vc"},{samoa:"ws"},{san_marino:"sm"},{sao_tome_and_principe:"st"},{saudi_arabia:"sa"},{senegal:"sn"},{serbia:"rs"},{seychelles:"sc"},{sierra_leone:"sl"},{singapore:"sg"},{slovakia:"sk"},{slovenia:"si"},{solomon_islands:"sb"},{somalia:"so"},{south_africa:"za"},{south_sudan:"ss"},{spain:"es"},{sri_lanka:"lk"},{sudan:"sd"},{suriname:"sr"},{sweden:"se"},{switzerland:"ch"},{syria:"sy"},{taiwan:"tw"},{tajikistan:"tj"},{tanzania:"tz"},{thailand:"th"},{timor_leste:"tl"},{togo:"tg"},{tonga:"to"},{trinidad_and_tobago:"tt"},{tunisia:"tn"},{turkey:"tr"},{turkmenistan:"tm"},{tuvalu:"tv"},{uganda:"ug"},{ukraine:"ua"},{united_arab_emirates:"ae"},{united_kingdom:"gb"},{united_states:"us"},{uruguay:"uy"},{uzbekistan:"uz"},{vanuatu:"vu"},{vatican_city:"va"},{venezuela:"ve"},{vietnam:"vn"},{yemen:"ye"},{zambia:"zm"},{zimbabwe:"z"}
+            ];
+            const $initBest = ["Paris", "Lyon", "Marseille", "Lille", "Strasbourg", "Berlin", "Munich", "Milan"]
+            const $initCity = ["Paris", "Lyon"]
+            let $bestLieux;
+
+            let $codePaysPasseport = {
+                depart: "",
+                arriver: ""
+            }
+
+            let isRequestInProgress = false;
+
+            (async function() {
+                $bestLieux = findBestLieux($cities, $initBest);
+                let city = findBestLieux($cities, $initCity);
+
+                initInputCitie(city[0], city[1])
+                $.each($bestLieux, function(index, best) {
+                    $('.dropdown-menu-all').append(`
+                    <li>
+                        <a class="dropdown-item" data-code="${best.country.alpha2_code}" data-id="${best.id}" data-type="cities" data-name="${best.name}" href="javascript:void(0)">
+                            <span>${best.name}</span>
+                            <span>${nomPays(best.country.alpha2_code)}</span>
+                        </a>
+                    </li>`);
+                });
+                $('#allerRetour').is(':checked') ? $('.direction-form, .header').addClass('aller-retour') : $('.direction-form, .header').removeClass('aller-retour')
+            })();
+
+            function initInputCitie(depart, arriver){
+                $codePaysPasseport.depart = depart.country.alpha2_code;
+                $codePaysPasseport.arriver = arriver.country.alpha2_code;
+                
+                $("#direx-depart").attr('placeholder', depart.name)
+                $("#direx-depart-result").val(depart.name)
+                $('#direx-depart-result').data("id", depart.id)
+                $('#direx-depart-result').data("type", 'city')
+                $('#direx-depart-result').data("name", depart.name)
+
+                $("#direx-arrive").attr('placeholder', arriver.name)
+                $("#direx-arrive-result").val(arriver.name)
+                $('#direx-arrive-result').data("id", arriver.id)
+                $('#direx-arrive-result').data("type", 'citie')
+                $('#direx-arrive-result').data("name", arriver.name)
+            }
+
+            function nomPays(code) {
+                let nomPays = "";
+                $.each(pays, function (index, obj) {
+                    if (Object.values(obj).includes(code.toLowerCase())) {
+                        nomPays = Object.keys(obj)[0];
+                        return false;
+                    }
+                });
+                return nomPays;
+            }
+
+            function codePays(nom) {
+                let code = "";
+                $.each(pays, function (index, obj) {
+                    if (Object.keys(obj).includes(nom)) {
+                        code = obj[nom];
+                        return false;
+                    }
+                });
+                return code;
+            }
+
+            // select direction
+            $('#allerSimple, #allerRetour').change(function() {
+                $('#allerRetour').is(':checked') ? $('.direction-form, .header').addClass('aller-retour') : $('.direction-form, .header').removeClass('aller-retour')
+            });
+            // datepicker
+            function formatDate(date) {
+                const daysOfWeek = ["di", "lu", "ma", "me", "je", "ve", "sa"];
+                const months = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
+
+                const dayOfWeek = daysOfWeek[date.getDay()];
+                const dayOfMonth = date.getDate();
+                const month = months[date.getMonth()];
+
+                return `${dayOfWeek}, ${dayOfMonth} ${month}`;
+            }
+
+            function setDateLimits() {
+                var today = new Date();
+                var todayISO = today.toISOString().split('T')[0];
+                $('#dateInputDepart').attr('min', todayISO);
+                $('#dateInputDepart').val(todayISO); 
+                $('#formattedDateDepart').val(formatDate(today));
+                
+                var nextDay = new Date(today);
+                nextDay.setDate(today.getDate() + 1);
+                $('#dateInputRetour').attr('min', nextDay.toISOString().split('T')[0]);
+                $('#dateInputRetour').val(nextDay.toISOString().split('T')[0]);
+                $('#formattedRetour').val(formatDate(nextDay));
+            }
+
+            function adjustDate(days, inputId, formattedId) {
+                var dateValue = $(`#${inputId}`).val();
+                var minDate = new Date($(`#${inputId}`).attr('min'));
+
+                if (dateValue) {
+                    var currentDate = new Date(dateValue);
+                    if (!isNaN(currentDate.getTime())) { 
+                        currentDate.setDate(currentDate.getDate() + days);
+
+                        if (currentDate < minDate) {
+                            currentDate = minDate; 
+                        }
+
+                        $(`#${inputId}`).val(currentDate.toISOString().split('T')[0]);
+                        $(`#${formattedId}`).val(formatDate(currentDate));
+                    } else {
+                        $(`#${inputId}`).val(minDate.toISOString().split('T')[0]);
+                        $(`#${formattedId}`).val(formatDate(minDate));
+                    }
+                } else {
+                    $(`#${inputId}`).val(minDate.toISOString().split('T')[0]);
+                    $(`#${formattedId}`).val(formatDate(minDate));
+                }
+
+                if (inputId === 'dateInputDepart') {
+                    updateRetourMinDate(currentDate);
+                }
+            }
+
+            function updateRetourMinDate(departDate) {
+                var retourMinDate = new Date(departDate);
+                retourMinDate.setDate(retourMinDate.getDate() + 1);
+                $('#dateInputRetour').attr('min', retourMinDate.toISOString().split('T')[0]);
+
+                var retourDate = new Date($('#dateInputRetour').val());
+                if (retourDate < retourMinDate) {
+                    $('#dateInputRetour').val(retourMinDate.toISOString().split('T')[0]);
+                    $('#formattedRetour').val(formatDate(retourMinDate));
+                }
+            }
+
+            function updateFormattedDate(inputId, formattedId) {
+                var dateValue = $(`#${inputId}`).val();
+                if (dateValue) {
+                    var selectedDate = new Date(dateValue);
+                    if (!isNaN(selectedDate.getTime())) { 
+                        $(`#${formattedId}`).val(formatDate(selectedDate));
+                    } else {
+                        $(`#${formattedId}`).val(""); 
+                    }
+                } else {
+                    $(`#${formattedId}`).val(""); 
+                }
+            }
+
+            function findBestLieux(tableau, motsCles) {
+                let regex = new RegExp(`^(${motsCles.join('|')})$`, 'i');
+                return $(tableau).filter(function() {
+                    return regex.test(this.name);
+                }).get();
+            }
+
+            function filterLieux(query, ...arrays) {
+                let regex = new RegExp(query, 'i'); // Expression régulière insensible à la casse
+                let combinedResults = [];
+
+                arrays.forEach(array => {
+                    array.forEach(item => {
+                        if (regex.test(item.name) && !combinedResults.some(result => result.name === item.name)) {
+                            combinedResults.push(item);
+                        }
+                    });
+                });
+
+                return combinedResults.slice(0, 20);
+            }
+
+            function filterListeLieux(search, cities, stations) {
+                let regex = new RegExp(search, 'i'); // Expression régulière insensible à la casse
+                const limit = 20;
+                const limitPerArray = limit / 2;
+
+                let filteredCities = cities.filter(citie => regex.test(citie.name));
+                let filteredStations = stations.filter(station => regex.test(station.name));
+
+                // Limiter les résultats à 10 par tableau
+                let citiesLimit = Math.min(filteredCities.length, limitPerArray);
+                let stationsLimit = Math.min(filteredStations.length, limitPerArray);
+
+                // Ajuster la limite pour compléter jusqu'à 20 résultats au total si possible
+                if (citiesLimit < limitPerArray) {
+                    stationsLimit = Math.min(filteredStations.length, limit - citiesLimit);
+                } else if (stationsLimit < limitPerArray) {
+                    citiesLimit = Math.min(filteredCities.length, limit - stationsLimit);
+                }
+
+                // Extraire les résultats filtrés avec la limite ajustée
+                filteredCities = filteredCities.slice(0, citiesLimit);
+                filteredStations = filteredStations.slice(0, stationsLimit);
+
+                return {
+                    cities: filteredCities,
+                    stations: filteredStations
+                };
+            }
+
+            function updateResults(content, cities, stations) {
+                let $resultsContainer = $(content);
+
+                $resultsContainer.empty(); // Vider les résultats précédents
+
+                cities.forEach(citie => {
+                    $resultsContainer.append(`
+                    <li>
+                        <a class="dropdown-item cities" data-code="${citie.country.alpha2_code}" data-id="${citie.id}" data-type="cities" data-name="${citie.name}" href="javascript:void(0)">
+                            <span>${citie.name}</span>
+                            <span>${nomPays(citie.country.alpha2_code)}</span>
+                        </a>
+                    </li>`);
+                });
+
+                stations.forEach(station => {
+                    $resultsContainer.append(`
+                    <li>
+                        <a class="dropdown-item stations px-3" data-code="${station.country.alpha2_code}" data-id="${station.id}" data-type="stations" data-name="${station.name}" href="javascript:void(0)">
+                            <span><i class="ti ti-${station.train_station ? 'train' : 'bus'}"></i> ${station.name}</span>
+                        </a>
+                    </li>`);
+                });
+            }
+
+            // Fonction à exécuter lors de l'événement keyup
+            function handleKeyup(event) {
+
+                let search       = $(this).val();
+                let contentListe = $(this).data('liste');
+
+                $('.lieuxPopulaire').html('<i class="ti ti-building-skyscraper"></i>Recherche lieux')
+                
+                let filteredResults = filterListeLieux(search, $cities, $stations);
+                updateResults(contentListe, filteredResults.cities, filteredResults.stations);
+            }
+
+            function dateFormat(date) {
+                let dateformated = new Date(date);
+
+                let Y = dateformated.getFullYear();
+                let m = ("0" + (dateformated.getMonth() + 1)).slice(-2);
+                let d = ("0" + dateformated.getDate()).slice(-2);
+
+                return `${d}.${m}.${Y}`
+            }
+
+            setDateLimits();
+
+            $('.prevDayDepart').click(function() {
+                adjustDate(-1, 'dateInputDepart', 'formattedDateDepart');
+            });
+
+            $('.nextDayDepart').click(function() {
+                adjustDate(1, 'dateInputDepart', 'formattedDateDepart');
+            });
+
+            $('.prevDayRetour').click(function() {
+                adjustDate(-1, 'dateInputRetour', 'formattedRetour');
+            });
+
+            $('.nextDayRetour').click(function() {
+                adjustDate(1, 'dateInputRetour', 'formattedRetour');
+            });
+
+            $('#dateInputDepart').change(function() {
+                updateFormattedDate('dateInputDepart', 'formattedDateDepart');
+                updateRetourMinDate(new Date($(this).val()));
+            });
+
+            $('#dateInputRetour').change(function() {
+                updateFormattedDate('dateInputRetour', 'formattedRetour');
+            });
+
+            $('.date-container').click(function() {
+                const date = $(this).data('date')
+                $(date)[0].showPicker();
+            });
+
+            // direction
+            $('#inversed').click(function() {
+                $(this).toggleClass('change');
+                inverseDirection()
+            });
+
+            $(document).on('click', '#dropdown-menu-depart .dropdown-item', function() {
+                const direx = $(this).data('name');
+                const id = $(this).data('id');
+                const type = $(this).data('type');
+                const name = $(this).data('name');
+                const code = $(this).data('code');
+
+                $codePaysPasseport.depart = code;
+
+                $('#direx-depart').val("")
+                $('#direx-depart').attr('placeholder', direx);
+
+                $('#direx-depart-result').val(direx)
+                $('#direx-depart-result').data("id", id)
+                $('#direx-depart-result').data("type", type)
+                $('#direx-depart-result').data("name", name)
+
+                verifType(type)
+                verifDirex("direx-depart", direx)
+            });
+            
+            $(document).on('click', '#dropdown-menu-arrive .dropdown-item', function() {
+                const direx = $(this).data('name');
+                const id = $(this).data('id');
+                const type = $(this).data('type');
+                const name = $(this).data('name');
+                const code = $(this).data('code');
+
+                $codePaysPasseport.arriver = code;
+                
+                $('#direx-arrive').val("")
+                $('#direx-arrive').attr('placeholder', direx);
+
+                $('#direx-arrive-result').val(direx)
+                $('#direx-arrive-result').data("id", id)
+                $('#direx-arrive-result').data("type", type)
+                $('#direx-arrive-result').data("name", name)
+
+                verifDirex("direx-arrive", direx)
+            });
+
+            function verifType(type) {
+                $type = type
+                if (type === "cities") {
+                    $(`#dropdown-menu-arrive`).addClass(`${type}`);
+                    $(`#dropdown-menu-arrive`).removeClass(`stations`);
+                }
+
+                if (type === "stations") {
+                    $(`#dropdown-menu-arrive`).addClass(`${type}`);
+                    $(`#dropdown-menu-arrive`).removeClass(`cities`);
+                }
+            }
+
+            function verifDirex(direx, val) {
+                const valDe = $("#direx-depart").attr('placeholder')
+                const valDa = $("#direx-arrive").attr('placeholder')
+                
+                let newVal;
+
+                if (direx === "direx-depart") {
+                    if (val === valDa) {
+                        do {
+                            newVal = $bestLieux[Math.floor(Math.random() * $bestLieux.length)];
+                        } while (newVal === val);
+                        $("#direx-arrive").attr('placeholder', newVal.name)
+                        $('direx-arrive-result').val(newVal.name)
+                        $('direx-arrive-result').data("id", newVal.id)
+                        $('direx-arrive-result').data("type", 'cities')
+                        $('direx-arrive-result').data("name", newVal.name)
+                    }
+                } else {
+                    if (val === valDe) {
+                        do {
+                            newVal = $bestLieux[Math.floor(Math.random() * $bestLieux.length)];
+                        } while (newVal === val);
+                        $("#direx-depart").attr('placeholder', newVal.name)
+                        $('#direx-depart-result').val(newVal.name)
+                        $('#direx-depart-result').data("id", newVal.id)
+                        $('#direx-depart-result').data("type", 'cities')
+                        $('#direx-depart-result').data("name", newVal.name)
+                    }
+                }
+            }
+
+            function inverseDirection() {
+                const placeholderDirexDe = $("#direx-depart").attr('placeholder')
+                const direxDe = $("#direx-depart-result").val()
+                const idDe    = $('#direx-depart-result').data("id")
+                const typeDe  = $('#direx-depart-result').data("type")
+                const nameDe  = $('#direx-depart-result').data("name")
+                
+                const placeholderDirexA = $("#direx-arrive").attr('placeholder')
+                const direxA = $("#direx-arrive-result").val()
+                const idA    = $('#direx-arrive-result').data("id")
+                const typeA  = $('#direx-arrive-result').data("type")
+                const nameA  = $('#direx-arrive-result').data("name")
+
+                $("#direx-depart").attr('placeholder', placeholderDirexA)
+                $("#direx-depart-result").val(direxA)
+                $('#direx-depart-result').data("id", idA)
+                $('#direx-depart-result').data("type", typeA)
+                $('#direx-depart-result').data("name", nameA)
+
+                $("#direx-arrive").attr('placeholder', placeholderDirexDe)
+                $("#direx-arrive-result").val(direxDe)
+                $('#direx-arrive-result').data("id", idDe)
+                $('#direx-arrive-result').data("type", typeDe)
+                $('#direx-arrive-result').data("name", nameDe)
+            }
+
+            $('#direx-depart, #direx-arrive').on('click', function() {
+                $(this).dropdown('show');
+            });
+
+            $('#direx-depart').on('keyup', handleKeyup);
+
+            $('#direx-arrive').on('keyup', handleKeyup);
+            
+            // passager
+            $('#drop-control').click(function(e) {
+                $('#passager-control').toggleClass('open');
+                e.stopPropagation();
+            });
+
+            $('.ctrl-passager').click(function() {
+                const input = $(this).data('input');
+                const control = $(this).data('control');
+                const passager = parseInt($(input).val());
+                if(control == "plus") {
+                    $(input).val(passager + 1);
+                    checkPassager();
+                } else  {
+                    if (passager > 0) {
+                        $(input).val(passager - 1);
+                    }
+                    checkPassager();
+                }
+            });
+
+            function checkPassager() {
+                $('.inputControlPassager').each(function(){
+                    const value = parseInt($(this).val());
+                    const controlMinus = $(this).data('ctrlminus');
+                    $(controlMinus).prop('disabled', value <= 0);
+                });
+                listPassagerValue()
+            }
+
+            function listPassagerValue() {
+                const adulte = parseInt($("#adultes").val())
+                const enfant = parseInt($("#enfant").val())
+                const velo = parseInt($("#velo").val())
+
+                let resultArray = [];
+
+                if (adulte > 0) {
+                    resultArray.push(`${adulte} adulte${adulte > 1 ? 's' : ''}`);
+                }
+                if (enfant > 0) {
+                    resultArray.push(`${enfant} enfant${enfant > 1 ? 's' : ''}`);
+                }
+                if (velo > 0) {
+                    resultArray.push(`${velo} vélo${velo > 1 ? 's' : ''}`);
+                }
+
+                const resultText = resultArray.join(', ');
+
+                $("#passager").val(resultText);
+            }
+
+            checkPassager();
+
+            $(document).on('click', function(event) {
+                if (!$(event.target).closest('#drop-modal').length) {
+                    $('#passager-control').removeClass('open');
+                }
+            });
+
+            $('.inputControlPassager').on('blur', function () {
+                if($.isNumeric($(this).val())) {
+                    checkPassager()
+                } else {
+                    $(this).val(0)
+                }
+            })
+
+            $('.inputControlPassager').on('input', function () {
+                checkPassager()
+            })
+
+            /* traitement d'api */
+
+            /* send request */
+            function sendRequest(method = "POST", url, data = null) {
+                return new Promise((resolve, reject) => {
+                    const request = $.ajax({
+                        type: method,
+                        url: url,
+                        data: data,
+                        // beforeSend: function () {
+                        //     $('.direction-form').addClass("load")
+                        // }
+                    });
+
+                    request.done(function (response) {
+                        resolve(response);
+                    });
+
+                    request.fail(function (error) {
+                        reject(error);
+                    });
+
+                    request.always(function () {
+                        // $('.direction-form').removeClass("load")
+                    });
+                });
+            }
+
+            /* get liste villes */
+            async function getListeville() {
+                try {
+                    const response = await sendRequest("POST", "/liste-villes");
+                    if (response) {
+                        $('.loadCity').hide()
+                        return response.villes
+                    } else {
+                        notification('warning', "Erreur lors de la récupération des listes des villes.")
+                        console.warn("Erreur lors de la récupération des listes des villes.");
+                    }
+                } catch (error) {
+                    notification('warning', "Erreur lors de la récupération des listes des villes.")
+                    console.error("Erreur lors de la récupération des listes des villes :", error);
+                }
+            }
+
+            /* get liste station par villes */
+            async function getListeStationParVilles() {
+                try {
+                    const response = await sendRequest("POST", "/liste-station-par-villes");
+                    if (response) {
+                        console.log(response);
+                        return response.stations
+                    } else {
+                        notification('warning', "Erreur lors de la récupération des listes des stations par villes.")
+                        console.warn("Erreur lors de la récupération des listes des stations par villes.");
+                    }
+                } catch (error) {
+                    notification('warning', "Erreur lors de la récupération des listes des stations par villes.")
+                    console.error("Erreur lors de la récupération des listes des stations par villes :", error);
+                }
+            }
+
+            /* get liste station par villes */
+            async function getListeStationParVilles() {
+                try {
+                    const response = await sendRequest("POST", "/liste-station-par-villes");
+                    if (response) {
+                        console.log(response);
+                        return response.stations
+                    } else {
+                        notification('warning', "Erreur lors de la récupération des listes des stations par villes.")
+                        console.warn("Erreur lors de la récupération des listes des stations par villes.");
+                    }
+                } catch (error) {
+                    notification('warning', "Erreur lors de la récupération des listes des stations par villes.")
+                    console.error("Erreur lors de la récupération des listes des stations par villes :", error);
+                }
+            }
+
+            /* get trajet */
+            async function getTrajet(infoTrajet) {
+                $('.direction-form').addClass("load")
+
+                dataTrajet = {
+                    type       : infoTrajet.type,
+                    depart     : infoTrajet.city.depart.id,
+                    arrive     : infoTrajet.city.arrive.id,
+                    dateDepart : infoTrajet.date.aller,
+                    dateArrive : infoTrajet.date.retour,
+                    nbrAdult   : infoTrajet.passager.adulte,
+                    nbrChild   : infoTrajet.passager.enfant,
+                    nbrBike    : infoTrajet.passager.velo,
+                    passeport  : infoTrajet.passeport
+                }
+
+                try {
+                    const response = await sendRequest("POST", "/liste-recherche-voyage", dataTrajet);
+                    if (response.voyages) {
+                        redirectWithData("/listes-trajet", infoTrajet, response.voyages, response.passeport, response.suggest)
+                    } else {
+                        $('.direction-form').removeClass("load")
+                        notification('warning', "Erreur lors de la récupération des listes des trajets.")
+                        console.warn("Erreur lors de la récupération des listes des trajets.");
+                    }
+                } catch (error) {
+                    $('.direction-form').removeClass("load")
+                    notification('warning', "Erreur lors de la récupération des listes des trajets.")
+                    console.error("Erreur lors de la récupération des listes des trajets :", error);
+                }
+            }
+
+            function redirectWithData(url, data, trajet, passeport, suggest) {
+                // Créer un formulaire temporaire
+                var form = $('<form>', {
+                    'method': 'POST',
+                    'action': url
+                });
+
+                $('<input>').attr({'type': 'hidden','name': 'data','value': JSON.stringify(data)}).appendTo(form);
+                $('<input>').attr({'type': 'hidden','name': 'trajet','value': JSON.stringify(trajet)}).appendTo(form);
+                $('<input>').attr({'type': 'hidden','name': 'passeport','value': JSON.stringify(passeport)}).appendTo(form);
+                $('<input>').attr({'type': 'hidden','name': 'suggest','value': JSON.stringify(suggest)}).appendTo(form);
+
+                form.appendTo('body').submit();
+            }
+
+            $(document).on('submit', '.direction-form', function (e) {
+                e.preventDefault();
+
+                const dataTrajet = {
+                    type : $type,
+                    city : {
+                        depart: {
+                            id   : $('#direx-depart-result').data("id"),
+                            name : $('#direx-depart-result').data("name"),
+                        },
+                        arrive: {
+                            id   : $('#direx-arrive-result').data("id"),
+                            name : $('#direx-arrive-result').data("name"),
+                        },
+                    },
+                    date : {
+                        aller  : dateFormat($('#dateInputDepart').val()),
+                        retour : $('#allerRetour').is(':checked') ? dateFormat($('#dateInputRetour').val()) : ""
+                    },
+                    passager : {
+                        adulte : $('#adultes').val(),
+                        enfant : $('#enfant').val(),
+                        velo   : $('#velo').val()
+                    },
+                    passeport: $codePaysPasseport
+                }
+                getTrajet(dataTrajet)
+            })
+
+
+        });
+
+    </script>
+{% endblock %}

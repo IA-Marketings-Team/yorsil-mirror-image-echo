@@ -1,0 +1,161 @@
+{% extends 'base_admin.html.twig' %}
+{% block title %}Modification de profil{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('plugins/inspinia/css/inputFile.css') }}" rel="stylesheet">
+
+{% endblock %}
+
+{% block body %}
+
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <div class="col-lg-10">
+            <h2>Profil</h2>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="{{path('profil_edit')}}">Profil</a>
+                </li>
+                <li class="breadcrumb-item active">
+                    <strong>Modification de profil</strong>
+                </li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="ibox ">
+                    <div class="ibox-title">
+                        <h5>Mon Profil</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        {{ form_start(form) }}
+                         <div class="row">
+                            <div class="col-lg-12">
+                                <div class="ibox ">
+
+                                    <div class="ibox-title  back-change">
+                                        <h5>Photo de profil</h5>
+                                        <div class="ibox-tools">
+                                            <a class="collapse-link">
+                                                <i class="fa fa-chevron-up"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    <div class="ibox-content">
+                                        <div class="row">
+                                            <div class="col-md-6 text-center">
+                                                <div class="img_prev" id="img_prev">
+                                                    {{ form_row(form.picture) }}
+                                                    {% if app.user.picture != NULL %}
+                                                        <img src="{{ asset('uploads/images/users/' ~ app.user.picture) }}" alt="{{app.user.nom}}" class="image_default">
+                                                        <span class="add_img">
+                                                            <p>Modifier le profil</p>
+                                                            <i class="fa fa-camera fa-2x"></i>
+                                                        </span>
+                                                    {% else %}
+                                                        <img src="{{ asset('plugins/inspinia/logo/no-image.png') }}" alt="profil" class="image_default">
+                                                        <span class="add_img">
+                                                            <p>Ajouter un profil</p>
+                                                            <i class="fa fa-camera fa-2x"></i>
+                                                        </span>
+                                                    {% endif %}
+                                                    <span class="modif_Img">
+                                                        <p>Modifier l'image</p>
+                                                        <i class="fa fa-camera fa-2x"></i>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {# <div>
+                            <a href="{{ asset('uploads/images/users/' ~ app.user.picture) }}" target="_blank">
+                                {% if app.user.picture != NULL %}
+                                <img src="{{ asset('uploads/images/users/' ~ app.user.picture) }}" alt="picture teacher" class="rounded-circle thumb-xl">
+                            </a>
+                            {% else %}
+                            <a href="{{ asset('img/no-image.png') }}" target="_blank">
+                                <img src="{{ asset('img/no-image.png') }}" alt="No image" class="rounded-circle thumb-xl">
+                            </a>
+                            {% endif %}
+                            <div class="row">
+                                <div class="col-md-5">{{ form_row(form.picture, {'attr': {'class': 'form-custom'}}) }}</div>
+                            </div>
+                        </div> #}
+
+                        <div class="row">
+                            <div class="col-sm-6">{{ form_row(form.nom, {'attr': {'class': 'form-custom'}}) }}</div>
+                            <div class="col-sm-6">{{ form_row(form.prenom, {'attr': {'class': 'form-custom'}}) }}</div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-sm-6">{{ form_row(form.tel, {'attr': {'class': 'form-custom'}}) }}</div>
+                                <div class="col-sm-6">{{ form_row(form.email, {'attr': {'class': 'form-custom'}}) }}</div>
+                        </div>
+
+                        <div class="flex float-left ">
+                            <a href="{{path('password')}}" class="btn btn-secondary form-custom">Changer le mot de passe</a>
+                        </div>
+                        <div class="flex float-right">
+                            <Button class="btn btn-primary form-custom"><i class="fa fa-check"></i> Modifier</Button>
+                            <a href="{{path('home_back')}}" class="btn btn-warning form-custom">
+                                <i class="fa fa-times"></i>
+                                Annuler
+                            </a>
+                        </div>
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $("#profil_numMob").removeAttr('required') ;
+
+
+        const inputPicture = document.getElementById("profil_picture");
+        const img_prev = document.getElementById("img_prev");
+        const image_default = img_prev.querySelector(".image_default");
+        const AjoutImage = img_prev.querySelector(".add_img");
+        const modif_Img = img_prev.querySelector(".modif_Img"); 
+        const imgSrc = image_default.getAttribute("src");
+
+        inputPicture.addEventListener('change', function(){
+            const fichier_categorie = this.files[0];
+            if (fichier_categorie) {
+                const read_file_cate = new FileReader();
+
+                AjoutImage.style.display = "none";
+                modif_Img.style.display = "flex";
+                image_default.style.display = "block"; 
+
+                read_file_cate.addEventListener("load", function(){
+                    image_default.setAttribute("src", this.result);
+                });
+
+                read_file_cate.readAsDataURL(fichier_categorie);
+            } else {
+                AjoutImage.style.display = null;
+                modif_Img.style.display = null;
+                image_default.style.display = null;
+                image_default.setAttribute("src", imgSrc);
+            }
+        });
+
+
+    </script>
+{% endblock %}

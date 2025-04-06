@@ -1,0 +1,217 @@
+{% extends 'base_front.html.twig' %}
+
+{% set menu_journal = true %}
+{% set menu_rechargement = true %}
+
+{% block title %} Journal de Rechargement{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        
+        #imageModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        #modalImage {
+            max-width: 80%;
+            max-height: 80%;
+        }
+
+        #imageModal span {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 30px;
+            color: white;
+            cursor: pointer;
+        }
+
+    </style>
+{% endblock %}
+
+{% block body %}
+
+    <div class="card bg-light-info shadow-none position-relative overflow-hidden">
+        <div class="card-body px-4 py-3">
+            <div class="row align-items-center">
+                <div class="col-9">
+                    <h4 class="fw-semibold mb-8">Liste des rechargements</h4>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                          <li class="breadcrumb-item"><a class="text-muted" href="javascript:void(0)">Rechargement</a></li>
+                          <li class="breadcrumb-item active" aria-current="page">Liste</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row mb-2">
+                            <div class="col-sm-4">
+                                <input type="date" id="id-date-debut" class="form-control" name="date_debut">
+                            </div>
+                            <div class="col-sm-4">
+                                <input type="date" id="id-date-fin" class="form-control" name="date_fin">
+                            </div>
+                            <div class="col-sm-4">
+                                <a id="id-facture" href="javascript:void(0)" class="kl-facture btn btn-danger mb-2">
+                                    <i class="ti ti-file fs-4"></i> Exporter Facture
+                                </a>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-light"  id="id-credit-liste">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th class="text-center">Réf</th>
+                                        <th class="text-center">Montant</th>
+                                        <th class="text-center">Type</th>
+                                        <th class="text-center">Percepteur</th>
+                                        <th class="text-center">Status</th>
+                                        <th class="text-center">Justificatif</th>
+                                        <th>Note</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for rechargement in rechargements %}
+                                        {% set bout = rechargement.bout %}
+                                        {% set admin = rechargement.admin %}
+                                        {% if rechargement.percept %}
+                                            {% set percept = rechargement.percept.nom %}
+                                        {% else %}
+                                            {% set percept = "Aucun" %}
+                                        {% endif %}
+
+                                        {% set type = '--' %}
+                                        {% if (rechargement.type == '1') %} {% set type = 'Espèces' %} {% endif %}
+                                        {% if (rechargement.type == '2') %} {% set type = 'Cartes CB' %} {% endif %}
+                                        {% if (rechargement.type == '3') %} {% set type = 'Virement bancaire' %} {% endif %}
+                                        {% if (rechargement.type == '4') %} {% set type = 'Dépôt bancaire' %} {% endif %}
+
+                                        {% if rechargement.isdelete is null or rechargement.isdelete == false %}    
+                                            <tr>
+                                                <td data-order="{{ rechargement.date | date('Y-m-d H:i') }}">{{ rechargement.date | date('d/m/Y') }}</td>
+                                                <td class="text-center">{{ (rechargement.ref) ? rechargement.ref : '--'}}</td>
+                        						<td class="text-center"><b>{{ rechargement.montant }}  &euro;</b></td>
+                                                <td class="text-center">{{ type }}</td>
+                        						<td class="text-center">{{ percept }}</td>
+                                                <td class="text-center">
+                                                    {% if rechargement.isvalid == 1  %}
+                                                        <i class = "ti ti-circle-check fs-5 text-success" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Validé"></i>
+                                                    {% else %}
+                                                        {% if rechargement.isvalid is null %}
+                                                            <i class = "ti ti-clock fs-5 text-warning" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="En attente de validation"></i>
+                                                        {% else %}
+                                                             <i class = "ti ti-x fs-5 text-danger" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Rejeté"></i>
+                                                        {% endif %}
+                                                    {% endif %}
+                                                </td>
+                                                <td class="text-center">
+                                                    {% if rechargement.file %}
+                                                        {% set file = getOneFile(rechargement.file.id)%}
+                                                        <a href="javascript:void(0)" onclick="showImageModal('{{ asset(file.urlFichier) }}')">
+                                                            <i class="ti ti-eye fs-5 text-primary" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Voir justificatif"></i></i>
+                                                        </a>
+                                                    {% else %}
+                                                        <i class = "ti ti-eye fs-5 text-gray" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Pas de justificatif"></i>
+                                                    {% endif %}
+                                                </td>
+                        						<td>{{ rechargement.note }}</td>
+                                            </tr>
+                                        {% endif %}
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal pour afficher l'image -->
+        <div id="imageModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.8); justify-content:center; align-items:center;">
+            <span style="position:absolute; top:10px; right:20px; font-size:30px; cursor:pointer;" onclick="closeModal()">&times;</span>
+            <img id="modalImage" src="" alt="Image" style="max-width:80%; max-height:80%;">
+        </div>
+
+    </section>
+                    
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+
+        $('#id-credit-liste').DataTable({
+            language: { "url": global_utils.urls.datatable_fr },
+            "order": [[0, "desc"]],
+        });
+
+        // Fonction pour afficher l'image dans le modal
+        function showImageModal(imageUrl) {
+            // Récupère l'élément du modal et l'élément image
+            var modal = document.getElementById("imageModal");
+            var modalImage = document.getElementById("modalImage");
+
+            // Définit la source de l'image avec l'URL fournie
+            modalImage.src = imageUrl;
+
+            // Affiche le modal
+            modal.style.display = "flex";
+        }
+
+        // Fonction pour fermer le modal
+        function closeModal() {
+            var modal = document.getElementById("imageModal");
+            modal.style.display = "none";
+        }
+
+        $(document).on('click','.kl-facture', function() {
+            var debut = $('#id-date-debut').val();
+            var fin   = $('#id-date-fin').val();
+            if (debut != '' && fin != '') {
+                //console.log("Mety")
+                $.ajax({
+                    url: '/generate-facture',
+                    method: 'POST',
+                    data: {
+                        debut: debut,
+                        fin: fin
+                    },
+                    success: function (response) {
+
+                        // $('#id-date-debut').val('');
+                        // $('#id-date-fin').val('');
+                        if(response.response == null){
+                            notification('danger', "Facture indisponible pour cette période");
+                        }
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+                })
+            }else{
+                notification('warning', "Veuillez choisir les dates pour la période du facture");
+            }
+        });
+
+    </script>
+
+{% endblock %}

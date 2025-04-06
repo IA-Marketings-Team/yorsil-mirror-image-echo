@@ -1,0 +1,126 @@
+{% extends 'base_front.html.twig' %}
+
+{% block title %}Fawatir{% endblock %}
+
+{% block stylesheets %}
+	{{ parent() }}
+	<style type="text/css">
+        .card-creancier {
+            width: 100%;
+            cursor: pointer;
+            height: 240px;
+            border-radius: 10px;
+            box-shadow: 1px 1px 2px #0000006e;
+        }
+        .card-creancier a{
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+            border-radius: inherit;
+            text-decoration: none;
+        }
+        .card-creancier .card-logo{
+            position: relative;
+            width: 100%;
+            height: 170px;
+            padding: 10px;
+            background: #fcfefc;
+            --background: #0a7ea4;
+            border-radius: inherit;
+            border-bottom-left-radius: 0px;
+            border-bottom-right-radius: 0px;
+            box-shadow: 0 0 0px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        .card-creancier.fawatir .card-logo{
+            --background: #feae00;
+        }
+        .card-creancier .card-logo img{
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        .card-creancier .title-card-creancier {
+            width: 100%;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+        .card-creancier:hover .card-logo{
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+            box-shadow: 0 0 5px #ccc;
+            transform: scale(1.03);
+        }
+        .card-creancier .title-card-creancier{
+            --color: #0a7ea4;
+        }
+        .card-creancier .title-card-creancier h2{
+            text-transform: uppercase;
+            color: var(--color);
+            font-weight: 900;
+            font-family: sans-serif;
+            font-size: 12px;
+			text-align: center;
+			padding: 1rem;
+        }
+        .card-creancier.fawatir .title-card-creancier{
+            --color: #fb453a;
+        }
+        .header-title {
+            box-shadow: 0px 1px 5px #ccc;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 1rem 0;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+        .header-title h2{
+            color: #0a7ea4;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+	<div class="container">
+
+        <div class="header-title">
+            <img src="{{ asset('images/fawatir.jpg') }}" width="60" class="img-fluid ${3|rounded-top,rounded-right,rounded-bottom,rounded-left,rounded-circle,|}" alt="">
+            <h2>Liste des créanciers</h2>
+        </div>
+
+		<div class="row">
+            {% if(response.nbreCreancier > 0) %} 
+    			{% for creancier in response.listeCreanciers.item %}
+
+    				<div class="col-md-3 mb-3">
+    					<div data-code="{{ creancier.codeCreancier }}" class="card-creancier">
+
+                            <a href="{{ path('liste_creances', { 'id':  creancier.codeCreancier }) }}">
+        						<div class="card-logo">
+        							<img src="{{ "https://www.fatourati.ma/"~creancier.logoPath  }}" alt="">
+        						</div>
+        						<div class="title-card-creancier">
+        							<h2>{{ creancier.nomCreancier }}</h2>
+        						</div>
+                            </a>
+    					</div>
+    				</div>
+               	{% endfor %}
+            {% else %}
+                <div class="col-md-3 mb-3">
+                    Aucun créancier(s)
+                </div>
+            {% endif %}
+		</div>
+
+		{# {{ dump(response) }} #}
+		
+	</div>
+{% endblock %}

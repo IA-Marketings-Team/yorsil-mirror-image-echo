@@ -1,0 +1,303 @@
+{% extends 'base_front.html.twig' %}
+
+{% set menu_transfert_credit = true %}
+
+{% block title %}Transfert crédit{% endblock %}
+
+{% block stylesheets %} 
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('modernize/libs/select2/dist/css/select2.min.css') }}">
+{% endblock %}
+
+{% block body %}
+
+    <div class="card bg-light-info shadow-none position-relative overflow-hidden">
+        <div class="card-body px-4 py-3">
+          <div class="row">
+            <div class="col-md-9">
+              <h4 class="fw-semibold mb-8">Transfert crédit</h4>
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a class="text-muted" href="{{ path('boutique')}}">Transfert</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Rechargement</li>
+                </ol>
+              </nav>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <div class="transfertCredit">
+        <div class="row">
+            <div class="col-md-7">
+                <div class="card">
+                    <form role="form" id="formTransfert" method="POST" action="{{path('auto_detect_operator')}}">
+                        <div class="px-4 py-3 border-bottom">
+                            <h5 class="card-title fw-semibold mb-0">Recharge mobile</h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p class="card-subtitle mb-4">Veuillez définir le numéro de téléphone du destinataire ci-dessous :</p>
+                                    <div class="mb-4">
+                                        {% include 'FrontOffice/transfert/countryArgent.html.twig' %}
+                                    </div>
+                                    <div>
+                                        <label for="id-tel" class="form-label fw-semibold">Téléphone</label>
+                                        <input type="tel" name="tel" placeholder="Entrez le numéro de téléphone" class="form-control" id="id-tel" required>
+                                        <input type="hidden" name="tokken" id="id-tokken" value="{{response is defined ? response.access_token}}">
+                                    </div>
+                                </div>
+                                <div class="col-md-6 border-start align-self-center">
+                                    <div class="operateurDetect d-flex flex-column justify-content-center align-items-center">
+                                        <p class="operateurName text-center card-subtitle mb-4">Vous avez la possibilité de transférer de crédit partout et à tout moment</p>
+                                        <p class="iconLogo">
+                                            <i class="ti ti-brand-google-analytics text-primary fs-12"></i>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        <div class="card-footer d-flex justify-content-end">
+                            <button class="btn btn-primary"><i class="ti ti-search"></i> Rechercher</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+                <div class="col-md-5 forfaitResult d-none">
+                    <div class="card">
+                        <div class="px-4 py-3 border-bottom">
+                            <h5 class="card-title fw-semibold mb-0">Montant à transmetre</h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="mb-4">
+                                        <div class="input-group mb-3">
+                                            <input type="number" class="form-control" id="id-montant" placeholder="Montant...">
+                                            <span class="input-group-text"><i class="ti ti-currency-euro fs-4"></i></span>
+                                        </div>
+                                    </div>
+                                    <p class="card-subtitle mb-4">Confirmez-vous le transfert du montant ?</p>
+                                </div>
+                                <div class="col-12">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="form-check form-switch">
+                                                <label class="form-check-label" for="id-sms">
+                                                    Envoyer une notification SMS à l'expediteur
+                                                </label>
+                                                <input type="checkbox" class="form-check-input js-switch-sms" id="id-sms"  name="sms"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="form-check form-switch">
+                                                <label class="form-check-label" for="id-imprim">
+                                                    Imprimer le ticket
+                                                </label>
+                                                <input type="checkbox" class="form-check-input js-switch-imprim" id="id-imprim" name="imprim"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        <div class="card-footer d-flex justify-content-end gap-3">
+                            <button id="id-btn-transfert" class="btn btn-primary">Confirmer</button>
+                            <a href="{{path('transfert_credit')}}" class="btn btn-light-danger text-danger">Annuler</a>
+                        </div>
+                    </div>
+                </div> 
+                {# 
+                <div class="col-12 mb-4">
+                    <div class="d-flex align-items-center justify-content-end mt-4 gap-3">
+                        <button class="btn btn-primary"><i class="ti ti-search"></i> Rechercher</button>
+                        <a href="javascript:void(0)" class="btn btn-light-danger annuler text-danger">Annuler</a>
+                    </div>
+                </div>#}
+            </div>
+        
+	</div>
+
+    <div class="col-12 MontantResult d-flex align-items-strech">
+        
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('modernize/libs/select2/dist/js/select2.full.min.js') }}"></script>
+    <script src="{{ asset('modernize/libs/select2/dist/js/select2.min.js') }}"></script>
+ <script>
+
+    $(document).ready(function(){
+        $("#countries").select2();
+        $(document).on('input', "#id-tel", (e) => {
+            var numericValue = e.target.value.replace(/[^0-9\s]/g, ''); // Supprimer les non-chiffres
+            var plusAtBeginning = e.target.value.startsWith('+');
+
+            if (plusAtBeginning) {
+                e.target.value = '+' + numericValue; // Conserver le signe + au début
+            } else {
+                e.target.value = numericValue; // Supprimer le signe + s'il n'est pas au début
+            }
+        })
+        $(document).on('change', "#countries", (e) => {
+            var select = $('#countries').find('option:selected');
+            let prefix = select.data('prefix');
+            $("#id-tel").val(prefix);
+        })
+
+        //$('.chosen-select').chosen({width: "100%"});
+        $(document).on('submit','#formTransfert', function(e){
+            e.preventDefault()
+            e.stopPropagation()
+            $(".preloading").fadeIn();
+
+            let tel = $('#id-tel').val();
+            let countries = $('#countries').val();
+            let tokken = $('#id-tokken').val();
+            let url = $(this).attr('action');
+            var select = $('#countries').find('option:selected');
+            let numero = select.attr('data-title')+tel;
+
+            $('.iconLogo').html('<i class="ti ti-search text-success fs-12"></i>')
+            $('.operateurName').text('Traitement...')
+            //$('#ibox-num').children('.ibox-content').addClass('sk-loading');
+            
+            $.ajax({
+                url: url,
+                method: 'POST',
+                data: {
+                    tel : tel,
+                    countries : countries,
+                    tokken : tokken,
+                    numero: numero
+                },
+                success: function (response) {
+                    if(response.status){
+                        $(".preloading").fadeOut();
+                        $('.operateurDetect').html(response.operateur)
+                        $('.forfaitResult').removeClass('d-none')
+                        $('.MontantResult').html(response.forfait)
+                        $('#formTransfert').addClass('was-validated');
+                    } else {
+                        $(".preloading").fadeOut();
+                        showError(response.message || 'Numéro invalide');
+                        resetForm();
+                    }
+                },
+                error: function (error) {
+                    $(".preloading").fadeOut();
+                    
+                    let errorMessage = 'Erreur technique';
+                    if (error.response) {
+                        // Erreur API Reloadly
+                        if (error.response.data && error.response.data.message) {
+                            errorMessage = error.response.data.message;
+                        }
+                        // Erreur de validation
+                        else if (error.status === 422) {
+                            errorMessage = 'Données invalides';
+                        }
+                    } else if (error.status === 0) {
+                        errorMessage = 'Problème de connexion';
+                    }
+
+                    showError(errorMessage);
+                    logError(error);
+                }
+            });
+
+            function showError(message) {
+                // Créer ou mettre à jour la zone d'erreur
+                if (!$('#error-container').length) {
+                    $('.card-body').prepend(
+                        '<div id="error-container" class="alert alert-danger alert-dismissible fade show mb-4">' +
+                        '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>' +
+                        '<strong>Erreur:</strong> <span class="error-message"></span>' +
+                        '</div>'
+                    );
+                }
+                
+                $('#error-container .error-message').text(message);
+                $('#error-container').show();
+            }
+
+            function resetForm() {
+                $('.operateurName').text('Numéro invalide')
+                    .addClass('text-warning');
+                $('.iconLogo').html('<i class="ti ti-brand-google-analytics text-danger fs-12"></i>');
+                $('#id-tel').val('').addClass('was-invalide');
+            }
+
+            function logError(error) {
+                console.group("Erreur Transfert");
+                console.error("Détails:", error);
+                if(error.response) {
+                    console.log("Status:", error.status);
+                    console.log("Data:", error.response.data);
+                }
+                console.groupEnd();
+            }
+            })
+        });
+
+        $(document).on('click','#id-btn-transfert', function(e){
+            e.preventDefault()
+            e.stopPropagation()
+            $(".preloading").show();
+
+            let tel = $('#id-tel').val();
+            let operateur = $('#id-operateur').val();
+            let code = $('#id-code-pays').val();
+            let montant = parseFloat($('#id-montant').val());
+            var select = $('#countries').find('option:selected');
+            let numero = select.attr('data-title')+tel;
+
+            // Validation du montant minimum
+            const MONTANT_MINIMUM = 5; // 5€ comme exemple
+            if (isNaN(montant) || montant < MONTANT_MINIMUM) {
+                alert(`Le montant minimum est de ${MONTANT_MINIMUM}€`);
+                $(".preloading").fadeOut();
+                return false;
+            }
+
+            console.log("Transfert initié:", {tel, operateur, code, montant});
+
+            $.ajax({
+                url: global_utils.urls.ajax_ajout_transfert,
+                method: 'POST',
+                data: {
+                    numero : numero,
+                    operateur : operateur,
+                    code : code,
+                    montant : montant
+                },
+                success: function (response) {
+                    $(".preloading").fadeOut();
+                    window.location.pathname = '/transfert-credit';
+                },
+                error: function (error) {
+                    $(".preloading").fadeOut();
+                    console.group("Erreur Transfert - Validation");
+                    console.error("Détails:", error);
+                    if(error.response) {
+                        console.log("Status:", error.status);
+                        console.log("Data:", error.response.data);
+                        if(error.response.data && error.response.data.message) {
+                            alert(`Erreur: ${error.response.data.message}\nCode: ${error.status}`);
+                        } else {
+                            alert("Erreur technique - Voir console pour détails");
+                        }
+                    } else {
+                        alert("Erreur réseau - Vérifiez votre connexion");
+                    }
+                    console.groupEnd();
+                }
+            })
+        });
+    });

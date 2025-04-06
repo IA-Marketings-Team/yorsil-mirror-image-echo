@@ -1,0 +1,193 @@
+<header class="app-header"> 
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link sidebartoggler nav-icon-hover ms-n3" id="headerCollapse" href="javascript:void(0)">
+                    <i class="ti ti-menu-2"></i>
+                </a>
+            </li>
+        </ul>
+
+        <div class="d-block d-lg-none">
+            <img src="{{ asset('modernize/images/logos/favicon.svg') }}" width="50" alt="" />
+        </div>
+
+        <div class="btn-close-option d-lg-none">
+            <button class="collapse navbar-toggler d-lg-none p-0 border-0" id="toggle-solde" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSold, #toggle-solde" aria-controls="navbarSold" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="p-2" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Solde">
+                    <i class="ti ti-coin-euro fs-7"></i>
+                </span>
+            </button>
+            <button class="navbar-toggler p-0 border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="p-2">
+                <i class="ti ti-dots fs-7"></i>
+                </span>
+            </button>
+        </div>
+        
+        <div class="collapse navbar-collapse justify-content-center show" id="navbarSold">
+            <div class="align-items-center d-flex justify-content-between py-2 w-100">
+                {# <a href="javascript:void(0)" class="nav-link d-flex d-lg-none align-items-center justify-content-center" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobilenavbar" aria-controls="offcanvasWithBothOptions">
+                    <i class="ti ti ti-x fs-7"></i>
+                </a> #}
+                <button class="navbar-toggler d-lg-none p-0 border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSold, #toggle-solde" aria-controls="navbarSold" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="p-2">
+                    <i class="ti ti-x fs-7"></i>
+                    </span>
+                </button>
+                <ul class="align-items-center flex-row justify-content-between ms-auto navbar-nav flex-wrap justify-content-around gap-1 w-100">
+                    <li class="nav-item">
+                        <div class="d-flex">
+                            <div class="align-items-center d-none d-sm-flex justify-content-center me-1">
+                                <img src="{{ asset('images/whatsapp.png')}}" alt="" class="img-fluid" width="35" height="35">
+                            </div>
+                            <div>
+                                <h6 class="mb-1 fs-4 fw-semibold">Nous contacter</h6>
+                                <a class="fs-3 mb-0 text-dark" href="mailto:serviceclient@yorsil.com">support@yorsil.com</a>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="nav-item order-first order-sm-last">
+                        <div class="d-flex flex-column align-items-center justify-content-between">
+                            {% set credit = creditBoutique(app.user) %}
+                            {% set debit  = debitBoutique(app.user) %}
+                            {% set geste  = gesteBoutique(app.user) %}
+                            {% set solde  = credit+geste-debit %}
+                            <h6 class="mb-1 fs-4 fw-semibold d-flex align-items-center gap-2">
+                                Solde <i id="toggle-sold" data-sold="{{ solde|number_format(2, '.', '') }} €" class="hide-sold ti ti-eye-off ti-eye fs-6 cursor-pointer"></i>
+                            </h6>
+                            <p class="fs-3 mb-0 solde-js fw-bolder" id="solde-js">--- €</p>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <div class="d-flex">
+                            <div class="d-flex flex-column align-items-center justify-content-between">
+                                <a href="tel:+33155820000" class="text-dark fw-bolder"><i class="ti ti-phone"></i>  01 88 61 16 20 </a>
+                            </div>
+                        </div>
+                    </li>
+                    {# <li class="nav-item">
+                        <div class="d-flex">
+                            <div class="p-8 bg-light-primary rounded-2 d-flex align-items-center justify-content-center me-6">
+                                <img src="{{ asset('modernize/images/logos/euro.png')}}" alt="" class="img-fluid" width="24" height="24">
+                            </div>
+                            <div>
+                                <h6 class="mb-1 fs-4 fw-semibold">Seuil</h6>
+                                <p class="fs-3 mb-0 text-warning">{{seuilBoutique(app.user)|number_format(2, '.', '')}}</p>
+                            </div>
+                        </div>
+                    </li> #}
+                </ul>
+            </div>
+        </div>
+
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <div class="d-flex align-items-center justify-content-between">
+                {# <a href="javascript:void(0)" class="nav-link d-flex d-lg-none align-items-center justify-content-center" type="button" data-bs-toggle="offcanvas" data-bs-target="#navbarSold" aria-controls="offcanvasWithBothOptions">
+                    <i class="ti ti-align-justified fs-7"></i>
+                </a> #}
+                <button class="navbar-toggler d-lg-none p-0 border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="p-2">
+                    <i class="ti ti-x fs-7"></i>
+                    </span>
+                </button>
+                <ul class="navbar-nav flex-row ms-auto align-items-center justify-content-center">
+                    {% set notifiListe = notifiListeBoutique(app.user) %}
+                    {% set notifTrxs = notifTrxBoutNotRead(app.user) %}
+                    <li class="nav-item">
+                        <a class="nav-link nav-icon-hover" href="{{ path('paiement_form') }}" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Recharger le compte">
+                            <img src="{{asset('images/icon-credit-card.svg')}}" alt="">
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link notify-badge nav-icon-hover" href="javascript:void(0)">
+                            <i class="ti ti ti-basket"></i>
+                            <span class="badge rounded-pill bg-danger fs-2 count-notif">0</span>
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link notify-badge nav-icon-hover" href="javascript:void(0)" id="drop2" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="ti ti-bell-ringing"></i>
+                            <span class="badge rounded-pill bg-danger fs-2 count-notif">{{notifiCountBoutique(app.user) + notifiCountTrxBout(app.user)}}</span>
+                        </a>
+                        <div class="dropdown-menu content-dd dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop2">
+                            <div class="d-flex align-items-center justify-content-between py-3 px-7">
+                                <h5 class="mb-0 fs-5 fw-semibold">Notifications</h5>
+                                <span class="badge bg-primary rounded-4 px-3 py-1 lh-sm">Status</span>
+                            </div>
+                            <div class="message-body" id="notifBody" data-simplebar>
+                                {# --- #}
+                                {% for notif in notifiListe %}
+                                    <a href="{{ path('detail_notif', {id:notif.id}) }}" class="py-6 px-7 d-flex align-items-center dropdown-item">
+                                        <span class="me-3">
+                                            <i class="ti ti-bell-ringing fs-12"></i>
+                                        </span>
+                                        <div class="w-75 d-inline-block v-middle">
+                                            <h6 class="mb-1 fw-semibold">Validation de Transfert de crédit</h6>
+                                            <span class="d-block text-muted">{{ notif.message | length > 30 ? notif.message | slice(0, 30) ~ '...' : notif.message }}</span>
+                                        </div>
+                                    </a> 
+                                {% endfor %}
+                                {% for notif in notifTrxs %}
+                                    <a href="{{ path('detail_notif_trx', {id:notif.id}) }}" class="py-6 px-7 d-flex align-items-center dropdown-item">
+                                        <span class="me-3">
+                                            <i class="ti ti-bell-ringing fs-12"></i>
+                                        </span>
+                                        <div class="w-75 d-inline-block v-middle">
+                                            <h6 class="mb-1 fw-semibold">Validation de Transfert de crédit</h6>
+                                            <span class="d-block text-muted">{{ notif.message | length > 30 ? notif.message | slice(0, 30) ~ '...' : notif.message }}</span>
+                                        </div>
+                                    </a> 
+                                {% endfor %}
+                            </div>
+                            <div class="py-6 px-7 mb-1">
+                                <a href="{{ path('detail_notif') }}" class="btn btn-outline-primary w-100 test-trx">Voir toutes</a>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link pe-0" href="javascript:void(0)" id="drop1" data-bs-toggle="dropdown" aria-expanded="false">
+                            <div class="d-flex align-items-center">
+                                <div class="user-profile-img">
+                                    {% if app.user.picture != NULL %}
+                                        <img src="{{ asset('uploads/images/users/' ~ app.user.picture) }}"  class="rounded-circle" width="35" height="35" alt="" >
+                                    {% else %}
+                                        <img src="{{ asset('modernize/images/profile/user-1.jpg') }}" class="rounded-circle" width="35" height="35" alt=""  />
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </a>
+                        <div class="dropdown-menu content-dd dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop1">
+                            <div class="profile-dropdown position-relative" data-simplebar>
+                                <div class="py-3 px-7 pb-0">
+                                    <h5 class="mb-0 fs-5 fw-semibold">Profil de l'utilisateur</h5>
+                                </div>
+                                <div class="d-flex align-items-center flex-wrap justify-content-between pt-3 mx-7 border-bottom">
+                                    {% if app.user.picture != NULL %}
+                                        <img src="{{ asset('uploads/images/users/' ~ app.user.picture) }}"  class="image-profil-header rounded-circle" width="80" height="80" alt="">
+                                    {% else %}
+                                        <img src="{{ asset('modernize/images/profile/user-1.jpg') }}" class="image-profil-header rounded-circle" width="80" height="80" alt="" />
+                                    {% endif %}
+                                    <div class="ms-3">
+                                        <h5 class="mb-1 fs-3">{{ app.user ? app.user.nom|title ~ ' '~ app.user.prenom|title  : "Mathew Anderson"}}</h5>
+                                        <span class="mb-1 d-block text-dark">Boutique</span>
+                                        <p class="mb-0 d-flex text-dark align-items-center gap-2">
+                                            {# <i class="ti ti-mail fs-4"></i>  #}
+                                            {{ app.user ? app.user.email : "info@modernize.com"}}
+                                        </p>
+                                    </div>
+                                    <a href="{{path('edit_my_profil')}}" class="w-100 m-2 text-dark d-flex align-items-center justify-content-center text-center">
+                                        <i class="ti ti-edit fs-6 text-success"></i> Modifier le profil
+                                    </a>
+                                </div>
+                                <a href="javascript:void(0)" class="text-dark pt-1 logout d-flex align-items-center justify-content-center text-center">
+                                    <i class="ti ti-power fs-6 text-danger"></i> Déconnexion
+                                </a>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>

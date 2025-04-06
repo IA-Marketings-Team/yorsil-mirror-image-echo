@@ -1,0 +1,158 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}Liste des produits virtuels{% endblock %}
+
+{% set menu_produit = true %}
+{% set menu_produit_physique_liste = true %}
+
+{% block body %}
+
+    <div class="card bg-light-info shadow-none position-relative overflow-hidden">
+        <div class="card-body px-4 py-3">
+            <div class="row align-items-center">
+                <div class="col-9">
+                    <h4 class="fw-semibold mb-8">Liste des produits virtuels</h4>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                          <li class="breadcrumb-item"><a class="text-muted" href="javascript:void(0)">Produits virtuels</a></li>
+                          <li class="breadcrumb-item active" aria-current="page">Liste</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="mb-2">
+                            <a id="ajout_admin" href="{{ path('new_produit_physique') }}" class="btn btn-primary mb-2">
+                                <i class="ti ti-plus fs-4"></i> Ajouter un produit virtuel
+                            </a>
+                            <a class="btn btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#rechargeModal">
+                                <i class="ti ti-plus fs-4"></i> Saisie Manuelle de CODEPIN
+                            </a>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table"  id="id-produit-physique-liste">
+                                <thead>
+                                    <tr>
+                                        <td>Nom</td>
+                                        <td>Opérateur</td>
+                                        <td class="text-center">Catalogue</td> 
+                                        <td>Prix d'achat</td>
+                                        <td>Prix de vente</td>
+                                        <td>Solde</td>
+                                        <td>Visibilité</td>
+                                        <td>GenCode</td>
+                                        <td></td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for produit in produits %}
+                                        <tr>
+                                            <td>{{produit.nom}}</td>
+                                            <td>{{produit.operateur.nom}}</td>
+                                                {% set type = '' %}
+                                                {% if(produit.categorie) %}
+                                                    {% set type = produit.categorie.nom %}
+                                                {% else %}
+                                                    {% set type = (produit.type == '2') ? 'Jeux' : 'Carte Recharges Mobiles' %}
+                                                    {% set type = (produit.type == '3') ? 'Paiement' : 'Carte Recharges Mobiles' %}
+                                                    {% set type = (produit.type == '4') ? 'Carte Cadeaux' : 'Carte Recharges Mobiles' %}
+                                                {% endif %}
+                                            <td>{{type}}</td> 
+                                            <td class="text-center"><strong>{{produit.prixAchat}} &euro;</strong></td>
+                                            <td class="text-center"><strong>{{produit.prixVente}} &euro;</strong></td>
+                                            <td class="text-center"><strong>{{soldeParProduitPhysique(produit.id)}} &euro;</strong></td>
+                                            <td class="text-center">
+                                                  <i class = "ti ti-eye fs-5 {{ (produit.isVisible == true) ? 'text-gray' : 'text-success'}}" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{{ (produit.isVisible == true) ? 'Caché' : 'Visible'}}"></i>
+                                            </td>
+                                            <td>{{produit.gencode}}</td>
+                                            <td class="text-center">
+                                                <div class="btn-group">
+                                                    <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                        Action
+                                                    </button>
+                                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                                        <li>
+                                                            <a class="dropdown-item" href="{{path('edit_produit_physique',{id:produit.id})}}">
+                                                                <i class="ti ti-edit"></i>
+                                                                Mettre à jour
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="dropdown-item" href="{{path('liste_code',{id:produit.id})}}">
+                                                                <i class="ti ti-cards"></i>
+                                                                Code PIN
+                                                            </a>
+                                                        </li>
+                                                        {# <li>
+                                                            <a class="dropdown-item" href="#">
+                                                                <i class="ti ti-trash"></i>
+                                                                Supprimer
+                                                            </a>
+                                                        </li> #}
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="rechargeModal" tabindex="-1" aria-labelledby="rechargeModalLabel">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="rechargeModalLabel">Saisie manuelle des codes</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                </button>
+              </div>
+              <div class="modal-body">
+                <form method="POST" action="{{ path('save_code_pin') }}">
+                  <div class="mb-2">
+                    <label for="designation">Produit virtuel</label>
+                    <select name="produit" id="id-prod" class="form-control select2-type" data-placeholder="Veuillez choisir le produit virtuel" tabindex="2" style="width: 100%; height: 36px">
+                            <option></option>
+                        {% for produit in produits %}
+                            <option value="{{produit.id}}">{{produit.nom}}</option>
+                        {% endfor %}
+                    </select>
+                  </div>
+                  <div class="mb-2 mt-2">
+                    <label for="codes">Code Pin</label>
+                    <textarea class="form-control" id="codes" name="codes" rows="6" placeholder="Entrez les codes séparés par une nouvelle ligne" required></textarea>
+                    <small class="form-text text-danger">* Veuillez entrer chaque code sur une nouvelle ligne.</small>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+    </section>
+
+{% endblock %}
+{% block javascripts %}
+	{{ parent() }}
+    <script>
+        $(".select2-type").select2({
+            dropdownParent: $("#rechargeModal")
+        });
+    </script>
+    <script src="{{ asset('backoffice/produit/produit.physique.list.js') }}"></script>
+{% endblock %}

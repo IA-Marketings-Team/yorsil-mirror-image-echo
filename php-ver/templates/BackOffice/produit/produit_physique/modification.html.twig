@@ -1,0 +1,98 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}Modification d'un produit virtuel{% endblock %}
+
+{% set menu_produit = true %}
+{% set menu_produit_liste = true %}
+
+{% block body %}
+
+    <div class="card bg-light-info shadow-none position-relative overflow-hidden">
+        <div class="card-body px-4 py-3">
+          <div class="row align-items-center">
+            <div class="col-9">
+              <h4 class="fw-semibold mb-8">Produit</h4>
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a class="text-muted" href="javascript:void(0)">Produits virtuels</a></li>
+                  <li class="breadcrumb-item"><a class="text-muted" href="{{ path('produit_physique')}}">Liste</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Ajout</li>
+                </ol>
+              </nav>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    {{ form_start(edit_form,{attr:{'enctype':'multipart/form-data'}}) }}
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body p-4">
+                        <div class="form">
+                                <div class="row mb-4">
+                                    <div class="col-sm-6">{{ form_row(edit_form.nom) }}</div>
+                                    <div class="col-sm-6">{{ form_row(edit_form.operateur) }}</div>
+                                </div>
+                                <div class="row mb-4">
+                                    <div class="col-sm-6">{{ form_row(edit_form.prixAchat) }}</div>
+                                    <div class="col-sm-6">{{ form_row(edit_form.prixVente) }}</div>
+                                </div>
+                                <div class="row mb-4">
+                                    <div class="col-sm-6 kl-type {% if(produit.categorie != null) %} d-none {% endif %}">{{ form_row(edit_form.type)}}</div>
+                                    <div class="col-sm-6">{{ form_row(edit_form.gencode)}}</div>
+                                </div>
+                                <div class="row mb-4">
+                                    <div class="col-sm-4">
+                                        <label>Cacher le produit ?</label>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input kl-check" type="checkbox"  id="flexSwitchCheckDefault" name="is_visible" {% if(produit.isVisible == true) %} checked="checked" {% endif %} />
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label>Produit hors API ?</label>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input kl-check" type="checkbox"  id="flexSwitchCheckDefault" name="is_product_new" {% if(produit.isProductNew == true) %} checked="checked" {% endif %} />
+                                        </div>
+                                    </div>
+                                     <div class="col-sm-4">
+                                        <label>Catalogue hors API ?</label>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input kl-check kl-catalogue" type="checkbox"  id="id-catalogue flexSwitchCheckDefault " name="is_catalogue" {% if(produit.categorie != null) %} checked="checked" {% endif %}/>
+                                        </div>
+                                        <div class="kl-promo row mt-1 {% if(produit.categorie == null) %} d-none {% endif %}">
+                                            <div class="col-sm-6">{{ form_row(edit_form.categorie) }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mb-4">
+                                    <div class="col-sm-6">{{ form_row(edit_form.description) }}</div>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="d-flex align-items-center justify-content-end gap-3">
+                    <button class="btn btn-success">Modifier</button>
+                    <a href="{{ path('produit_physique')}}" class="btn btn-danger">Annuler</a>
+                </div>
+            </div>
+        </div>
+    {{ form_end(edit_form) }}
+                   
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent()}}
+    <script>
+        $(document).on('change','.kl-catalogue', function(e) {
+            var check = $('input[name="is_catalogue"]:checked').val(); 
+
+            (check === undefined) ? $('.kl-promo').addClass('d-none') : $('.kl-promo').removeClass('d-none');
+            (check === undefined) ? $('.kl-type').removeClass('d-none') : $('.kl-type').addClass('d-none');
+            
+        });
+    </script>
+{% endblock %}

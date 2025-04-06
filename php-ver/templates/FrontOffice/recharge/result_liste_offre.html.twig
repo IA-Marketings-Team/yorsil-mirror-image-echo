@@ -1,0 +1,65 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="card animated fadeInRight">
+      <div class="px-4 py-3 border-bottom">
+          <h5 class="card-title fw-semibold mb-0">E-recharge {{off}}</h5>
+          <div class="d-flex justify-content-end" style="margin-top: -30px;">
+              <a href="javascript:void(0)" class="btn btn-sm btn-outline-danger kl-fermer-offre">
+                  <i class="ti ti-x fs-4"></i>
+              </a>
+          </div>
+      </div>
+      <div class="card-body p-4">
+        <div class="row">
+          {% for i in 0..5 %}
+            {% set op = 'o-4'%}
+            {% set logo = 'uploads/operateurs/' ~ op ~ '.gif'%}
+            <div class="col-md-6">
+              <div class="card kl-box">
+                <div class="row no-gutters">
+                  <div class="col-sm-4">
+                    <img src="{{ asset(logo) }}" class="card-img kl-pad" alt="..." width="200" height="200">
+                  </div>
+                  <div class="col-sm-8">
+                    <div class="card-body">
+                      {% set rand = random(1,30) %}
+                      <h5 class="card-title fw-semibold mb-3">{{off}}  {{rand}}€ </h5>
+                      <p class="card-text">FORFAIT {{rand}}€</p>
+                      <div class="overflowcard">
+                        <p class="card-text"> 
+                          Appels/SMS illimités en France métropolitaine et en Europe (hors numéros spéciaux et surtaxés)
+                          Options incluses : Appels illimités vers 100 destinations internationales
+                          180 Go d’internet mobile en 3G+/4G vers la France et 10 Go vers Europe et DOM
+                          L’accès au portail Syma news est inclus
+                          {% if i == 3 %}
+                            Options incluses : Appels illimités vers 100 destinations internationales
+                          180 Go d’internet mobile en 3G+/4G vers la France et 10 Go vers Europe et DOM
+                          L’accès au portail Syma news est inclus
+                          {% endif %}
+                        </p>
+                        <p class="card-text">Validité : 1 mois</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="d-flex justify-content-between col-sm-6" style="padding-left: 20px;">
+                    <div  class="operators-single-offer__price">
+                      <div class="label-tiny">Tarif unitaire</div>
+                      <div class="price">{{rand}}€</div>
+                    </div>
+                  </div>
+                  <div class="d-flex justify-content-end col-sm-6">
+                    <div  class="quantity-selector me-6">
+                      <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#id-modal-confirmation" class="btn btn-primary kl-vente" data-opera="{{off}}" data-montant="{{rand}}"> Vendre </a>
+                    </div>
+                  </div>
+                </div> 
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

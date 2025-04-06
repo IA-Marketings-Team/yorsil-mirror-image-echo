@@ -1,0 +1,235 @@
+{% extends 'base_front.html.twig' %}
+
+    {% set menu_hist_recharges = true %}
+    
+    {% block title %}Historique des recharges{% endblock %}
+    
+    {% block stylesheets %}
+        {{ parent() }}
+        <link rel="stylesheet" href="{{ asset('modernize/libs/select2/dist/css/select2.min.css') }}">
+        <style>
+            .table-responsive::-webkit-scrollbar {
+                width: 5px;
+            }
+            .table-responsive::-webkit-scrollbar-track {
+                background: #f1f1f1;
+                border-radius: 10px;
+            }
+            .table-responsive::-webkit-scrollbar-thumb {
+                background: #c1c1c1;
+                border-radius: 10px;
+            }
+            .imprimeer-ticket {
+                border: none;
+                color: green;
+                background: transparent;
+            }
+        </style>
+    {% endblock %}
+    
+    {% block body %}
+        <div class="card bg-light-info shadow-none position-relative overflow-hidden">
+            <div class="card-body px-4 py-3">
+              <div class="row align-items-center">
+                <div class="col-9">
+                  <h4 class="fw-semibold mb-8">Historique des recharges</h4>
+                  <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                      <li class="breadcrumb-item"><a class="text-muted" href="javascript:void(0)">Recharges</a></li>
+                      <li class="breadcrumb-item active" aria-current="page">Liste</li>
+                    </ol>
+                  </nav>
+                </div>
+              </div>
+            </div>
+        </div>
+    
+        <section>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <form id="exportForm" action="{{ path('facture_services_boutique') }}" method="post" target="_blank">
+                                <input type="hidden" name="type" value="4">
+                                <div class="row mb-2">
+                                    <div class="col-sm-3">
+                                        <input type="date" id="id-date-debut" class="form-control" name="date_debut" required="Valeur requis">
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <input type="date" id="id-date-fin" class="form-control" name="date_fin" required="Valeur requis">
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <button onclick="submitFormInNewTab()" class="btn btn-danger mb-2"> 
+                                            <i class="ti ti-file fs-4"></i> Exporter Facture Recharge
+                                        </button>
+                            </form>
+                                        <a id="ajout_recharge" href="{{ path('recharge') }}" class="btn btn-primary mb-2" style="margin-left: 20px;">
+                                            <i class="ti ti-plus fs-4"></i> Vendre du recharge
+                                        </a>
+                                    </div>
+                                </div>
+                            <div class="mb-2">
+                                
+                            </div>
+                            <div class="table-responsive p-1">
+                                <table id="id-recharge-liste" class="table table-light">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            {# <th class="text-center">PV</th> #}
+                                            <th class="text-center">Operateur</th>
+                                            <th class="text-center">Désignation</th>
+                                            <th class="text-center">Prix d'Achat</th>
+                                            {# <th class="text-center">Remise</th> #}
+                                            {# <th class="text-center">Quantité</th> #}
+                                            <th class="text-center">Process state</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for recharge in recharges %}
+                                            <tr>
+                                                <td data-order="{{ recharge.saleDate | date('Y-m-d H:i') }}"><small class="fs-1 text-nowrap">{{ recharge.saleDate | date('d-m-Y') }} <sup class="fs-1"> | {{ recharge.saleDate | date('H:m') }}</sup></small></td>
+                                                <td class="text-center fs-1">{{ recharge.productInformations.productInformations.operator }}</td>
+                                                <td class="fs-1 text-center">{{ recharge.productInformations.productInformations.description }}</td>
+                                                {# <td class="text-center"><b>{{ recharge.montant|number_format(2, '.', '') }} &euro;</b></td> #}
+                                                {% set ca = (recharge.fraisBoutique) ? recharge.fraisBoutique|number_format(2, '.', '') : 0 %}
+                                                <td class="text-center"><b>{{ (recharge.montant-ca)|number_format(2, '.', '') }} &euro;</b></td>
+                                                {# <td class="text-center"><b>{{ (recharge.fraisBoutique) ? recharge.fraisBoutique|number_format(2, '.', '') : 0 }} &euro;</b></td> #}
+                                                {#   #}
+                                                <td class="text-center">{{ recharge.processState }}</td>
+                                                <td class="text-end">
+                                                    <div class="d-flex align-items-center gap-1">
+                                                        {% if recharge.voucher.voucher.base64Content %}
+                                                            <a title="Télécharger" href="data:application/pdf;base64,{{ recharge.voucher.voucher.base64Content }}" target="_blank" download="recharche_{{recharge.saleRef}}.pdf"><i class="ti ti-download fs-4"></i></a>
+                                                            <button type="button" class="imprimeer-ticket" data-ticket="{{ recharge.voucher.voucher.base64Content }}"><i class="ti ti-printer fs-4"></i></button>
+                                                        {% endif %}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    
+    {% endblock %}
+    
+    {% block javascripts %}
+        {{ parent() }}
+        <script src="//cdn.datatables.net/plug-ins/1.10.11/sorting/date-eu.js"></script>
+        <script src="{{ asset('modernize/libs/select2/dist/js/select2.full.min.js') }}"></script>
+        <script src="{{ asset('modernize/libs/select2/dist/js/select2.min.js') }}"></script>
+        <script>
+            $(document).ready(function() {
+                $('#id-recharge-liste').DataTable({
+                    language: { "url": global_utils.urls.datatable_fr },
+                    "order": [[0, "desc"]],
+                });
+
+                function submitFormInNewTab() {
+                    const form = document.getElementById('exportForm');
+
+                    var debut = $('#id-date-debut').val();
+                    var fin   = $('#id-date-fin').val();
+                    if (debut != '' && fin != '') {
+                      // Crée un nouvel onglet
+                        const newTab = window.open('', '_blank');
+                        form.target = newTab.name;
+                        form.submit();
+                    } else {
+                        notification('warning', "Veuillez choisir les dates pour la période du facture");
+                    }
+                }
+
+                function sendRequest(method = "POST", url, data = null) {
+                    return new Promise((resolve, reject) => {
+                        const request = $.ajax({
+                            type: method,
+                            url: url,
+                            data: data,
+                            // beforeSend: function () {
+                            //     loading
+                            // }
+                        });
+
+                        request.done(function (response) {
+                            resolve(response);
+                        });
+
+                        request.fail(function (error) {
+                            reject(error);
+                        });
+
+                        request.always(function () {
+                            // removeLoading
+                        });
+                    });
+                }
+
+                $(document).on('click', '.annuler-recharge', async function (e) {
+                    const $this = e.currentTarget
+                    $('.loding-page').removeClass('d-none')
+                    let idRecharge = $($this).data('id')
+                    let dataAnnulation = {
+                        saleRef: $($this).data('sale-ref'),
+                        serialNumber: $($this).data('serial-number')
+                    }
+
+                    try {
+                        const response = await sendRequest("POST", "/annulation-vente", dataAnnulation);
+                        if (response) {
+                            console.log(response);
+                            notification('success', "Recharge annulée avec succès");
+                            editRecharge(response.ventes, idRecharge)
+                        } else {
+                            $('.loding-page').addClass('d-none')
+                            notification('warning', "Erreur lors de l'annulation");
+                            console.log("Erreur lors de l'annulation: ", response);
+                        }
+                    } catch (error) {
+                        $('.loding-page').addClass('d-none')
+                        console.log("Erreur lors de l'annulation: ", error);
+                    }
+                })
+
+                $(document).on('click', '.imprimeer-ticket', function (e) {
+                    const byteCharacters = atob($(this).data("ticket"));
+                    const byteNumbers = new Array(byteCharacters.length);
+                    for (let i = 0; i < byteCharacters.length; i++) {
+                        byteNumbers[i] = byteCharacters.charCodeAt(i);
+                    }
+                    const byteArray = new Uint8Array(byteNumbers);
+                    
+                    // Création du Blob pour afficher le PDF
+                    const file = new Blob([byteArray], { type: 'application/pdf' });
+                    const fileURL = URL.createObjectURL(file);
+                    
+                    // Ouvrir le PDF dans une nouvelle fenêtre
+                    window.open(fileURL);
+                })
+
+                async function editRecharge(recharge, id) {
+                    let dataSave = {
+                        recharge: recharge,
+                        idRecharge: id
+                    }
+                    try {
+                        const response = await sendRequest("POST", "/edit-rechargement-telephonie", dataSave);
+                        if (response) {
+                            window.location.reload();
+                            notification('success', "sauvegarder, avec succès");
+                        } else {
+                            console.log("Erreur lors de sauvegarde le rechargement: ", response);
+                        }
+                        } catch (error) {
+                        console.log("Erreur lors de de sauvegarde le rechargement: ", error);
+                    }
+                }
+            });
+        </script>
+    {% endblock %}

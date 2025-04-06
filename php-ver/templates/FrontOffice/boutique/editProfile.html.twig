@@ -1,0 +1,123 @@
+{% set extendss = (app.user.roles[0] == 'ROLE_BOUT') ? 'base_front.html.twig' : 'base_admin.html.twig' %}
+
+{% extends extendss %}
+
+{% block title %}Modification de profil{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        img.img-profil {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+
+    <div class="card bg-light-info shadow-none position-relative overflow-hidden">
+        <div class="card-body px-4 py-3">
+            <div class="row align-items-center">
+                <div class="col-9">
+                    <h4 class="fw-semibold mb-8">Paramétrage du compte</h4>
+                    <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item" aria-current="page">Modification de profil</li>
+                    </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{ form_start(form) }}
+        <div class="card-body">
+            <div class="tab-content" id="pills-tabContent">
+                <div class="tab-pane fade show active" id="pills-account" role="tabpanel" aria-labelledby="pills-account-tab" tabindex="0">
+                    <div class="row">
+                        <div class="col-12 d-flex align-items-stretch">
+                            <div class="card w-100 position-relative overflow-hidden">
+                                <div class="card-body p-4">
+                                    <h5 class="card-title fw-semibold">Changer le mot de passe</h5>
+                                    <p class="card-subtitle mb-4">Pour changer votre mot de passe, veuillez cliquer ici</p>
+                                    <a href="{{path('edit_my_password')}}" class="btn btn-warning">Changer le mot de passe</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 d-flex align-items-stretch">
+                            <div class="card w-100 position-relative overflow-hidden">
+                                <div class="card-body p-4">
+                                    <h5 class="card-title fw-semibold">Changer de profil</h5>
+                                    <p class="card-subtitle mb-4">Changez votre photo de profil à partir d'ici</p>
+                                    <div class="text-center">
+                                        {% if app.user.picture != NULL %}
+                                            <img src="{{ asset('uploads/images/users/' ~ app.user.picture) }}" alt="" id="image-prev" class="img-fluid img-profil rounded-circle" width="120" height="120" />
+                                        {% else %}
+                                            <img src="{{ asset('modernize/images/profile/user-1.jpg') }}" alt="" id="image-prev" class="img-fluid img-profil rounded-circle" width="120" height="120" />
+                                        {% endif %}
+                                        <div class="d-flex align-items-center justify-content-center my-4 gap-3">
+                                            {{ form_row(form.picture, {'attr': {'class': 'form-control'} }) }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 d-flex align-items-stretch">
+                            <div class="card w-100 position-relative overflow-hidden">
+                                <div class="card-body p-4">
+                                    <h5 class="card-title fw-semibold">Détails personnels</h5>
+                                    <p class="card-subtitle mb-4">Pour modifier vos informations personnelles, modifiez-les et enregistrez-les à partir d'ici</p>
+                                    <div class="mb-4">
+                                        {{ form_row(form.nom, {'attr': {'class': 'form-control'} }) }}
+                                    </div>
+                                    <div class="mb-4">
+                                        {{ form_row(form.prenom, {'attr': {'class': 'form-control'} }) }}
+                                    </div>
+                                    <div class="mb-4">
+                                        {{ form_row(form.tel, {'attr': {'class': 'form-control'} }) }}
+                                    </div>
+                                    <div>
+                                        {{ form_row(form.email, {'attr': {'class': 'form-control'} }) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <div class="d-flex align-items-center justify-content-end gap-3">
+                                <button class="btn btn-primary">Modifier</button>
+                                <a href="{{path('home_office')}}" class="btn btn-light-danger text-danger">Annuler</a>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    {{ form_end(form) }}
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        const inputPicture = document.getElementById("profil_picture");
+        const img_prev = document.getElementById("image-prev");
+        const imgSrc = img_prev.getAttribute("src");
+
+        inputPicture.addEventListener('change', function(){
+            const fichier = this.files[0];
+            if (fichier) {
+                const read_file = new FileReader();
+
+                read_file.addEventListener("load", function(){
+                    img_prev.setAttribute("src", this.result);
+                });
+
+                read_file.readAsDataURL(fichier);
+            } else {
+                img_prev.setAttribute("src", imgSrc);
+            }
+        });
+
+
+    </script>
+{% endblock %}

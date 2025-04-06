@@ -1,0 +1,957 @@
+{% extends 'base_front.html.twig' %}
+
+{% set menu_billeteries = true %}
+
+{% block title %}billeteries{% endblock %}
+
+{% block stylesheets %} 
+    {{ parent() }}
+    <style type="text/css">
+    input[type="date"] {
+        appearance: none;
+        -webkit-appearance: none;
+        position: relative;
+    }
+
+    input[type="date"]::before {
+        content: "📅";
+        position: absolute;
+        right: 1rem;
+        pointer-events: none;
+        cursor: pointer;
+    }
+    .body-maritime {
+        position: relative;
+        width: 100%;
+        min-height: 70vh;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .body-maritime .bg-img,
+    .body-maritime .bg-img-m {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: inherit;
+        z-index: 0;
+    }
+    .body-maritime .bg-img-m {
+        display: none;
+    }
+    .card-check-trx {
+        z-index: 1;
+        background-color: #0000002e !important;
+        backdrop-filter: blur(3px);
+    }
+    .card-check-trx .card-body{
+        background-color: #0000002e !important;
+        backdrop-filter: blur(3px);
+    }
+    .passager-content-modal {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 5px;
+    }
+    .card-passagers-modal {
+        min-width: 120px;
+        border: 1px solid white;
+        border-radius: 10px;
+        box-shadow: 0 0 5px #000;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        cursor: pointer;
+    }
+    .card-passagers-modal i,
+    .card-passagers-modal h5,
+    .card-passagers-modal p {
+        color: white;
+        margin: 0;
+        padding: 0;
+    }
+    .card-passagers-modal i {
+        font-size: 35px;
+    }
+    #age-enfant {
+        display: none;
+    }
+    #info-route-retour {
+        display: none;
+    }
+    .input-searche-route::placeholder {
+        color: #fff !important;
+    }
+    .dropdown-item {
+        cursor: pointer;
+    }
+    .form-input-select {
+        position: relative;
+        display: inline-block;
+    }
+
+    .form-input-select input {
+        padding-right: 30px;
+    }
+
+    .form-input-select::after {
+        content: "▼";
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 14px;
+        color: #ccc;
+        pointer-events: none;
+        transition: all 0.4s ease;
+    }
+    .form-input-select:hover::after {
+        color: #fff;
+    }
+    .dropdown-route {
+        max-height: 215px;
+        overflow-y: auto;
+    }
+    @media screen and (width < 500px) {
+        .check-aller-retour .check-aller {
+            width: 100%;
+        }
+        .check-aller-retour .check-retour {
+            width: 100%;
+        }
+        .body-maritime .bg-img {
+            display: none;
+        }
+        .body-maritime .bg-img-m {
+            display: block;
+        }
+    }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="card maritime">
+        <div class="card-body body-maritime">
+            <img src="{{asset('modernize/images/billeterie/ferry4you.png')}}" class="bg-img" alt="">
+            <img src="{{asset('modernize/images/billeterie/ferry4youMobile.png')}}" class="bg-img-m" alt="">
+
+            <div class="card mb-0 w-100 position-relative overflow-hidden card-check-trx">
+                <div class="card-body p-4">
+                    <h5 class="card-title fw-semibold text-white text-center">Réservez votre voyage</h5>
+                    <p class="card-subtitle mb-4 text-white text-center">Tout est plus simple et plus rapide.</p>
+                    <form action="/traverses" id="form-check-route" method="POST">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="check-aller-retour mb-4 d-flex flex-wrap gap-1">
+                                    <div class="check-aller">
+                                        <input type="radio" name="check-aller-retour" value="1" class="btn-check" id="btn-check-2" checked autocomplete="off" />
+                                        <label class="btn btn-outline-info text-white font-medium rounded-pill w-100" for="btn-check-2">Aller-simple</label>
+                                    </div>
+                                    <div class="check-retour">
+                                        <input type="radio" name="check-aller-retour" value="2" class="btn-check" id="btn-check" autocomplete="off" />
+                                        <label class="btn btn-outline-info text-white font-medium rounded-pill w-100" for="btn-check">Aller - retour</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-4 btn-group w-100">
+                                    <label for="inputRouteAller" class="w-100" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <span class="form-label text-white d-block">Route Aller</span>
+                                        <div class="form-input-select w-100">
+                                            <input type="text" class="input-searche-route aller form-control text-white" id="inputRouteAller" placeholder="Route Aller">
+                                            <input type="hidden" name="inputRouteAller">
+                                        </div>
+                                    </label>
+                                    <ul class="dropdown-menu dropdown-route aller p-2" id="dropdown-route-aller"></ul>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="dateAller" class="form-label text-white fw-semibold">Date Aller</label>
+                                    <input type="date" class="form-control text-white" name="dateDeparture" id="dateAller" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6" id="info-route-retour">
+                                <div class="mb-4">
+                                    <label for="inputRouteRetour" class="w-100" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <span class="form-label text-white d-block">Route Retour</span>
+                                        <div class="form-input-select w-100">
+                                            <input type="text" class="input-searche-route retour form-control text-white" name="routeRetour" id="inputRouteRetour" placeholder="Route Retour">
+                                        </div>
+                                    </label>
+                                    <ul class="dropdown-menu dropdown-route retour p-2" id="dropdown-route-retour"></ul>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="dateRetour" class="form-label text-white fw-semibold">Date Retour</label>
+                                    <input type="date" class="form-control text-white" name="dateReturn" id="dateRetour">
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="row">
+                                    <div class="col-md-6 d-flex justify-content-center">
+                                        <div class="passager-content-modal">
+                                            <div class="card-passagers-modal" data-bs-toggle="modal" data-bs-target="#passagersModal">
+                                                <i class="ti ti-friends"></i>
+                                                <h5>Passagers</h5>
+                                                <p id="count-passager">0</p>
+                                            </div>
+                                            <div class="card-passagers-modal" data-bs-toggle="modal" data-bs-target="#vehiculeModal">
+                                                <i class="ti ti-car"></i>
+                                                <h5 class="carSelected">Véhicule</h5>
+                                                <p id="count-car">0</p>
+                                            </div>
+                                            <div class="card-passagers-modal" data-bs-toggle="modal" data-bs-target="#animauModal">
+                                                <i class="ti ti-paw"></i>
+                                                <h5>Animaux</h5>
+                                                <p id="count-paw">0</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 d-flex justify-content-center mt-3">
+                                <button class="btn btn-danger">Continuer</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- passagersModal -->
+    <div class="modal fade" id="passagersModal" tabindex="-1" aria-labelledby="passagersModal">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="passagersModal">Passagers</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row align-items-center justify-content-center mb-3">
+                    <div class="col-6 col-md-4"><h5 class="m-0">Senior (61+)</h5></div>
+                    <div class="col-4">
+                        <div class="input-group input-group-sm">
+                            <button class="btn border-0 btn-moins bg-success d-flex align-items-center justify-content-center" type="button" id="add1"><span class="text-white fs-5 p-0 m-0">-</span></button>
+                            <input type="text" class="form-control bg-transparent text-muted fs-5 border-0  text-center qty nbrPassagerInput" placeholder="" name="nbr-senior" aria-label="Example text with button addon" aria-describedby="add1" value="0" />
+                            <button class="btn text-success bg-success border-0 btn-plus" type="button" id="addo2"><span class="text-white fs-5 p-0 m-0">+</span></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row align-items-center justify-content-center mb-3">
+                    <div class="col-6 col-md-4"><h5 class="m-0">Adultes (25-60)</h5></div>
+                    <div class="col-4">
+                        <div class="input-group input-group-sm">
+                            <button class="btn border-0 btn-moins bg-success d-flex align-items-center justify-content-center" type="button" id="add1"><span class="text-white fs-5 p-0 m-0">-</span></button>
+                            <input type="text" class="form-control bg-transparent text-muted fs-5 border-0  text-center qty nbrPassagerInput" placeholder="" name="nbr-adulte" aria-label="Example text with button addon" aria-describedby="add1" value="0" />
+                            <button class="btn text-success bg-success border-0 btn-plus" type="button" id="addo2"><span class="text-white fs-5 p-0 m-0">+</span></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row align-items-center justify-content-center mb-3">
+                    <div class="col-6 col-md-4"><h5 class="m-0">Jeune (18-24)</h5></div>
+                    <div class="col-4">
+                        <div class="input-group input-group-sm">
+                            <button class="btn border-0 btn-moins bg-success d-flex align-items-center justify-content-center" type="button" id="add1"><span class="text-white fs-5 p-0 m-0">-</span></button>
+                            <input type="text" class="form-control bg-transparent text-muted fs-5 border-0  text-center qty nbrPassagerInput" placeholder="" name="nbr-jeune" aria-label="Example text with button addon" aria-describedby="add1" value="0" />
+                            <button class="btn text-success bg-success border-0 btn-plus" type="button" id="addo2"><span class="text-white fs-5 p-0 m-0">+</span></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row align-items-center justify-content-center mb-3">
+                    <div class="col-6 col-md-4"><h5 class="m-0">Enfant (0-17)</h5></div>
+                    <div class="col-4">
+                        <div class="input-group input-group-sm">
+                            <button class="btn border-0 btn-moins bg-success d-flex align-items-center justify-content-center" type="button" id="add1"><span class="text-white fs-5 p-0 m-0">-</span></button>
+                            <input type="text" class="form-control bg-transparent text-muted fs-5 border-0  text-center qty nbrPassagerInput" placeholder="" name="nbr-enfant" aria-label="Example text with button addon" aria-describedby="add1" value="0" />
+                            <button class="btn text-success bg-success border-0 btn-plus" type="button" id="addo2"><span class="text-white fs-5 p-0 m-0">+</span></button>
+                        </div>
+                    </div>
+                    <div class="col-12 mt-3">
+                        <div id="age-enfant">
+                            <div class="d-flex align-items-center justify-content-center age-enfant flex-column gap-2">
+                                <label for="selectAgeEnfant" class="form-label fw-semibold">Choisir âge des enfants :</label>
+                                <div class="row w-100 justify-content-center" id="age-enfant-listes"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-primary validerNbrPassager" data-bs-dismiss="modal">Continuer</button>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- véhiculeModal -->
+    <div class="modal fade" id="vehiculeModal" tabindex="-1" aria-labelledby="vehiculeModal">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="vehiculeModal">Choisissez le moyen de voyage</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <select class="form-select selectTypeCar" id="selectTypeCar" aria-label="select type car" style="width: 100%; height: 36px">
+                    <option value="0">aucun</option>
+                    <option value="1">Vélo</option>
+                    <option value="2">Voiture</option>
+                    <option value="3">Camping-car</option>
+                    <option value="4">Motor</option>
+                    <option value="5">Minibus</option>
+                    <option value="6">Fourgonette</option>
+                </select>
+                <div class="mt-3" id="info-car"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-primary valideVehicule" data-bs-dismiss="modal">Continuer</button>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- animauModal -->
+    <div class="modal fade" id="animauModal" tabindex="-1" aria-labelledby="animauModal">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="animauModal">Animaux</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row align-items-center justify-content-center mb-3">
+                    <div class="col-2"><h5 class="m-0">Chien</h5></div>
+                    <div class="col-4">
+                        <div class="input-group input-group-sm">
+                            <button class="btn border-0 btn-moins bg-success d-flex align-items-center justify-content-center" type="button" id="add1"><span class="text-white fs-5 p-0 m-0">-</span></button>
+                            <input type="text" class="form-control bg-transparent text-muted fs-5 border-0  text-center qty nbranimauxInput" placeholder="" name="nbr-dog" aria-label="Example text with button addon" aria-describedby="add1" value="0" />
+                            <button class="btn text-success bg-success border-0 btn-plus" type="button" id="addo2"><span class="text-white fs-5 p-0 m-0">+</span></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row align-items-center justify-content-center mb-3">
+                    <div class="col-2"><h5 class="m-0">Chat</h5></div>
+                    <div class="col-4">
+                        <div class="input-group input-group-sm">
+                            <button class="btn border-0 btn-moins bg-success d-flex align-items-center justify-content-center" type="button" id="add1"><span class="text-white fs-5 p-0 m-0">-</span></button>
+                            <input type="text" class="form-control bg-transparent text-muted fs-5 border-0  text-center qty nbranimauxInput" placeholder="" name="nbr-cat" aria-label="Example text with button addon" aria-describedby="add1" value="0" />
+                            <button class="btn text-success bg-success border-0 btn-plus" type="button" id="addo2"><span class="text-white fs-5 p-0 m-0">+</span></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-primary valideNbrAnimaux" data-bs-dismiss="modal">Continuer</button>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(document).ready(function(){
+            let $routes = {{ routes|json_encode|raw }},
+            $listeRoutes = $routes.data,
+            $bestRoutes = $listeRoutes.sort(() => 0.5 - Math.random()).slice(0, 6),
+            $listeRouteAller = $("#dropdown-route-aller"),
+            $listeRouteRetour = $("#dropdown-route-retour"),
+            $inputRouteAller = $("#inputRouteAller"),
+            $inputRouteRetour = $("#inputRouteRetour"),
+            carBrands = [];
+
+            console.log($bestRoutes);
+
+            initListRout()
+
+            function initListRout() {
+                $listeRouteAller.empty();
+                $listeRouteAller.empty();
+
+                $.each($bestRoutes, function(index, route) {
+                    $listeRouteAller.append(`
+                        <li class="dropdown-item dropdown-item-route aller" data-id="${route.routeId}" data-code="${route.CodeRoute}">${route.DepartNameF} - ${route.DestinationNameF}</li>
+                    `);
+
+                    $listeRouteRetour.append(`
+                        <li class="dropdown-item dropdown-item-route retour" data-id="${route.routeId}" data-code="${route.CodeRoute}">${route.DepartNameF} - ${route.DestinationNameF}</li>
+                    `);
+                });
+            }
+
+            $.getJSON('{{ asset("js/listeMarqueVoiture.json") }}', function (data) {
+                carBrands = data
+            });
+
+            $('#selectTypeCar').select2({
+                dropdownParent: $("#vehiculeModal")
+            });
+
+            $(document).on("submit", "#form-check-route", function (e) {
+                e.preventDefault()
+                const inputRouteAller = $('input[name="inputRouteAller"]'),
+                checkAllerRetour = $('input[name="check-aller-retour"]:checked').val() == 2;
+
+                let dateDeparture = $('input[name="dateDeparture"]').val(),
+                dateReturn = checkAllerRetour ? $('input[name="dateReturn"]').val() : '';
+
+                let codeRoute = $('input[name="inputRouteAller"]').val(),
+                departureName = inputRouteAller.data('departure'),
+                destinationName = inputRouteAller.data('destination');
+
+                let dog = $('input[name="nbr-dog"]').val(),
+                cat = $('input[name="nbr-cat"]').val();
+
+                let nbrSenior = parseInt($('input[name="nbr-senior"]').val()),
+                nbrAdulte = parseInt($('input[name="nbr-adulte"]').val()),
+                nbrJeune = parseInt($('input[name="nbr-jeune"]').val()),
+                adult = nbrSenior + nbrAdulte + nbrJeune;
+
+                let nbrchild = parseInt($('input[name="nbr-enfant"]').val()),
+                ageChild = [];
+
+                if (nbrchild > 0) {
+                    $('select[name^="selectAgeEnfant-"]').each(function (index) {
+                        let valeur = $(this).find('option:selected').val();
+                        if ($.isNumeric(valeur)) {
+                            ageChild.push(parseInt(valeur));
+                        }
+                    });
+                }
+
+                let transport = $("#selectTypeCar").find('option:selected').text(),
+                Height = $("input[name='carLength']").length ? $("input[name='carLength']").val() : 0,
+                Length = $("input[name='carHeight']").length ? $("input[name='carHeight']").val() : 0,
+                TrailerL = $("input[name='longRemorqueCheck']").length ? $("input[name='longRemorqueCheck']:checked").val() : 0,
+                TrailerH = $("input[name='hautRemorqueCheck']").length ? $("input[name='hautRemorqueCheck']:checked").val() : 0;
+
+                const data = {
+                    "CodeRoute": codeRoute,
+                    "DateDeparture": dateDeparture,
+                    "DateReturn": dateReturn,
+                    "Dog": dog,
+                    "Cat": cat,
+                    "Height": Height,
+                    "Length": Length,
+                    "Adult": adult,
+                    "Child": nbrchild,
+                    "AgeChild": ageChild,
+                    "transport": transport,
+                    "TrailerL": TrailerL,
+                    "TrailerH": TrailerH,
+                    "DepartureName": departureName,
+                    "DestinationName": destinationName,
+                    "language": "fr"
+                }
+
+                $.ajax({
+                    url: "/liste-traversees",
+                    type: "POST",
+                    data: JSON.stringify(data),
+                    contentType: "application/json",
+                    success: function(response) {
+                        if (response && response.traversee && response.traversee.data) {
+                            let form = $('<form>', {
+                                'method': 'POST',
+                                'action': "/traverses"
+                            });
+
+                            $('<input>').attr({'type': 'hidden','name': 'route','value': JSON.stringify(data)}).appendTo(form);
+                            $('<input>').attr({'type': 'hidden','name': 'traversee','value': JSON.stringify(response.traversee.data)}).appendTo(form);
+
+                            form.appendTo('body').submit();
+                        }
+                        console.log("traversee :", response.traversee);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Erreur :", response.status);
+                    }
+                });
+
+            });
+
+            $(document).on("click", ".btn-moins,.btn-plus", function (e) {
+                let step = $(this).attr('data-step') !== undefined ? $(this).data("step") : 1
+                var $qty = $(this).closest("div").find(".qty"),
+                currentVal = parseInt($qty.val()),
+                isAdd = $(this).hasClass("btn-plus");
+                !isNaN(currentVal) &&
+                $qty.val(
+                    isAdd ? currentVal += step : currentVal > 0 ? currentVal -= step : currentVal
+                ).trigger("change");
+            });
+
+            $(document).on("input", ".input-searche-route", function (e) {
+                const inputSearch = $(this)
+                let isAller = inputSearch.hasClass('aller'),
+                searchText = inputSearch.val().toLowerCase(),
+                filteredRoute = $listeRoutes.filter(route =>
+                    route.DepartNameF.toLowerCase().includes(searchText) ||
+                    route.DestinationNameF.toLowerCase().includes(searchText)
+                );
+
+                if (isAller) {
+                    $listeRouteAller.empty();
+
+                    $.each(filteredRoute, function(index, route) {
+                        $listeRouteAller.append(`
+                            <li class="dropdown-item dropdown-item-route aller" data-id="${route.routeId}" data-code="${route.CodeRoute}">${route.DepartNameF} - ${route.DestinationNameF}</li>
+                        `);
+                    });
+                } else {
+                    $listeRouteRetour.empty();
+
+                    $.each(filteredRoute, function(index, route) {
+                        $listeRouteRetour.append(`
+                            <li class="dropdown-item dropdown-item-route retour" data-id="${route.routeId}" data-code="${route.CodeRoute}">${route.DepartNameF} - ${route.DestinationNameF}</li>
+                        `);
+                    });
+                }
+            });
+
+            $(document).on("click", ".dropdown-item-route", function (e) {
+                let itemRoute = $(this),
+                inputRouteAller = $('input[name="inputRouteAller"]'),
+                isAller = itemRoute.hasClass('aller'),
+                routeId = itemRoute.data('id'),
+                routeCode = itemRoute.data('code'),
+                filteredRoute = $listeRoutes.find(route => route.routeId === routeId),
+                routeSelected = `${filteredRoute.DepartNameF} - ${filteredRoute.DestinationNameF}`,
+                routeinversed = `${filteredRoute.DestinationNameF} - ${filteredRoute.DepartNameF}`;
+
+                inputRouteAller.val(routeCode)
+                inputRouteAller.attr("data-departure", filteredRoute.DepartNameF)
+                inputRouteAller.attr("data-destination", filteredRoute.DestinationNameF)
+
+                if (isAller) {
+                    $inputRouteAller.attr('placeholder', routeSelected).val('')
+                    $inputRouteRetour.attr('placeholder', routeinversed).val('')
+                } else {
+                    $inputRouteRetour.attr('placeholder', routeSelected).val('')
+                    $inputRouteAller.attr('placeholder', routeinversed).val('')
+                }
+
+                initListRout()
+            });
+
+            $(document).on('change', "#selectTypeCar", function (e) {
+                $("#info-car").empty()
+                $('.valideVehicule').removeClass("disabled")
+                const typeCar = $(this).find('option:selected').val();
+                switch (typeCar) {
+                    case "0":
+                    case "1":
+                        break;
+                    case "2":
+                        typeVoiture()
+                        break;
+                    case "4":
+                        addMarqueModel()
+                        break;
+                    default:
+                        addMarqueModel()
+                        addLangeurHauteur()
+                        addRemorque()
+                }
+            })
+            
+            $(document).on('click', ".validerNbrPassager", function (e) {
+                let totalPassagers = 0;
+                $(".nbrPassagerInput").each(function () {
+                    let valeur = parseInt($(this).val()) || 0;
+                    totalPassagers += valeur;
+                });
+                $("#count-passager").text(totalPassagers);
+            })
+            
+            $(document).on('click', ".valideNbrAnimaux", function (e) {
+                let totalAnimaux = 0;
+                $(".nbranimauxInput").each(function () {
+                    let valeur = parseInt($(this).val()) || 0;
+                    totalAnimaux += valeur;
+                });
+                $("#count-paw").text(totalAnimaux);
+            })
+            
+            $(document).on('click', ".valideVehicule", function (e) {
+
+                const typeCar = $("#selectTypeCar").find('option:selected')
+
+                $(".carSelected").text(typeCar.text())
+
+                switch (typeCar.val()) {
+                    case "0":
+                        $(".carSelected").text("Véhicule")
+                        $("#count-car").fadeIn().text("0")
+                    case "1":
+                        $("#count-car").fadeOut()
+                        break;
+                    case "2":
+                        const modelCar = $("#selectModelCar").find('option:selected').text()
+                        $("#count-car").fadeIn().text(modelCar)
+                        break;
+                    default:
+                        const marqueVehicule = $("#marqueVehicule").val()
+                        const modeleVehicule = $("#modeleVehicule").val()
+
+                        console.log(marqueVehicule, modeleVehicule);
+                        $("#count-car").fadeIn().text(`${marqueVehicule} ${modeleVehicule}`)
+                        break;
+                }
+            })
+
+            $("input[name='nbr-enfant']").on('change input', function (e) {
+                const inputNbr = $(this)
+                let nbrChild = parseInt(inputNbr.val());
+                if (nbrChild > 5) {
+                    inputNbr.val(5)
+                    nbrChild = 5
+                }
+
+                let currentDivs = $("#age-enfant-listes").children().length;
+
+                if (nbrChild > 0) {
+                    $("#age-enfant").fadeIn()
+                    if (currentDivs < nbrChild) {
+                        let optionsAge = ''
+
+                        for (let i = 1; i <= 17; i++) {
+                            optionsAge += `
+                                <option value="${i}">${i}</option>
+                            `
+                        }
+
+                        for (let i = currentDivs; i < nbrChild; i++) {
+                            
+                            $("#age-enfant-listes").append(`
+                                <div class="col-3 mb-3">
+                                    <select class="selectAgeEnfant text-center" name="selectAgeEnfant-${nbrChild}" style="width: 100%; height: 36px">
+                                        ${optionsAge}
+                                    </select>
+                                </div>
+                            `)
+                        }
+                    } else if (currentDivs > nbrChild) {
+                        $("#age-enfant-listes").children().slice(nbrChild).remove();
+                    }
+                } else {
+                    $("#age-enfant").fadeOut()
+                    $("#age-enfant-listes").empty()
+                }
+            })
+
+            function mettreAJourAgeEnfant(value) {
+                container.empty(); // Supprime tous les divs
+                for (var i = 0; i < value; i++) {
+                    container.append('<div class="box">Élément ' + (i + 1) + '</div>');
+                }
+            }
+
+            $(document).on('change', "#selectMaqueCar", function (e) {
+                const maqueCar = $(this)
+
+                const selectedBrand = maqueCar.val();
+                const models = carBrands[selectedBrand] || [];
+                
+                if (models.length > 0) {
+                    
+                    let carModel = `<option value="">Modèle du véhicule</option>`
+
+                    models.forEach(model => {
+                        carModel += `<option value="${model}">${model}</option>`;
+                    });
+
+                    if(!maqueCar.hasClass('selected')) {
+                        maqueCar.addClass('selected')
+
+                        $("#info-car").append(`
+                            <div class="mt-3">
+                                <select class="form-select" id="selectModelCar" aria-label="select type car" style="width: 100%; height: 36px">
+                                    ${carModel}
+                                </select>
+                            </div>
+                        `)
+
+                        $('#selectModelCar').select2({
+                            dropdownParent: $("#vehiculeModal"),
+                            placeholder: 'Modèle du véhicule'
+                        });
+                    } else {
+                        console.log(carModel);
+                        $('#selectModelCar').html(carModel)
+
+                        $('#selectModelCar').select2({
+                            dropdownParent: $("#vehiculeModal"),
+                            placeholder: 'Modèle du véhicule'
+                        });
+                    }
+                } else {
+                    $('#selectCarModel').remove();
+                }
+            })
+
+            $(document).on('change', "#selectModelCar", function (e) {
+                const modelCar = $(this)
+
+                if(!modelCar.hasClass('selected')) {
+                    modelCar.addClass('selected')
+
+                    $("#info-car").append(`
+                        <div class="mt-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="avecBagages" />
+                                <label class="form-check-label" for="avecBagages">
+                                    Avec bagages
+                                </label>
+                            </div>
+                            <div class="checked-bagage mt-3" id="checked-bagage"></div>
+                        </div>
+                        <div class="mt-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="avecRemorque" />
+                                <label class="form-check-label" for="avecRemorque">
+                                    Avec remorque
+                                </label>
+                            </div>
+                            <div class="checked-remorque mt-3" id="checked-remorque"></div>
+                        </div>
+                    `)
+                }
+
+                $('.valideVehicule').removeClass("disabled")
+            })
+
+            $(document).on('change', "input[name='check-aller-retour']", function (e){
+                if ($(this).val() == 2) {
+                    $("#info-route-retour").fadeIn(400)
+                    $("#dateRetour").attr("required", true)
+                } else {
+                    $("#info-route-retour").fadeOut(400)
+                    $("#dateRetour").attr("required", false)
+                }
+            });
+
+            $(document).on('change', "#avecBagages", function (e){
+                if ($(this).is(':checked')) {
+                    $('#checked-bagage').html(`
+                        <div class="row align-items-center">
+                            <div class="col-md-2">
+                                <i class="ti ti-truck-loading fs-13"></i>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="d-flex align-items-center justify-content-center gap-2 flex-column">
+                                    <h6 class="m-0 text-nowrap">Longeur (cm)</h6>
+                                    <div class="input-group input-group-sm">
+                                        <button data-step="5" class="btn border-0 btn-moins bg-primary d-flex align-items-center justify-content-center" type="button" id="long-bagge"><span class="text-white fs-5 p-0 m-0">-</span></button>
+                                        <input type="text" class="form-control bg-transparent text-muted fs-5 border-0  text-center qty" placeholder="" aria-label="Example text with button addon" aria-describedby="long-bagge" value="0" />
+                                        <button data-step="5" class="btn bg-primary border-0 btn-plus" type="button" id="addo2"><span class="text-white fs-5 p-0 m-0">+</span></button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="d-flex align-items-center justify-content-center gap-2 flex-column">
+                                    <h6 class="m-0 text-nowrap">Hauteur (cm)</h6>
+                                    <div class="input-group input-group-sm">
+                                        <button data-step="5" class="btn border-0 btn-moins bg-success d-flex align-items-center justify-content-center" type="button" id="haut-bagage"><span class="text-white fs-5 p-0 m-0">-</span></button>
+                                        <input type="text" class="form-control bg-transparent text-muted fs-5 border-0  text-center qty" placeholder="" aria-label="Example text with button addon" aria-describedby="haut-bagage" value="0" />
+                                        <button data-step="5" class="btn bg-success border-0 btn-plus" type="button" id="addo2"><span class="text-white fs-5 p-0 m-0">+</span></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `);
+                } else {
+                    $('#checked-bagage').empty();
+                }
+            });
+
+            $(document).on('change', "#avecRemorque", function (e){
+                if ($(this).is(':checked')) {
+                    $('#checked-remorque').html(`
+                        <div class="row align-items-center">
+                            <div class="col-md-2">
+                                <i class="ti ti-caravan fs-13"></i>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="d-flex align-items-center justify-content-center gap-2 flex-column">
+                                    <h6 class="m-0 text-nowrap">Longeur :</h6>
+                                    <div class="input-group input-group-sm">
+                                        <button data-step="5" class="btn border-0 btn-moins bg-primary d-flex align-items-center justify-content-center" type="button" id="long-remorque"><span class="text-white fs-5 p-0 m-0">-</span></button>
+                                        <input type="text" class="form-control bg-transparent text-muted fs-5 border-0  text-center qty long-remorque" placeholder="" aria-label="Example text with button addon" aria-describedby="long-remorque" value="0" />
+                                        <button data-step="5" class="btn bg-primary border-0 btn-plus" type="button" id="addo2"><span class="text-white fs-5 p-0 m-0">+</span></button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="d-flex align-items-center justify-content-center gap-2 flex-column">
+                                    <h6 class="m-0 text-nowrap">Hauteur :</h6>
+                                    <div class="input-group input-group-sm">
+                                        <button data-step="5" class="btn border-0 btn-moins bg-success d-flex align-items-center justify-content-center" type="button" id="haut-remorque"><span class="text-white fs-5 p-0 m-0">-</span></button>
+                                        <input type="text" class="form-control bg-transparent text-muted fs-5 border-0  text-center qty haute-remorque" placeholder="" aria-label="Example text with button addon" aria-describedby="haut-remorque" value="0" />
+                                        <button data-step="5" class="btn text-success bg-success border-0 btn-plus" type="button" id="addo2"><span class="text-white fs-5 p-0 m-0">+</span></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `);
+                } else {
+                    $('#checked-remorque').empty();
+                }
+            });
+
+            function typeVoiture() {
+                $('.valideVehicule').addClass("disabled")
+
+                let carMarque = `<option value="">Marque du véhicule</option>`
+
+                for (let brand in carBrands) {
+                    carMarque += `<option value="${brand}">${brand}</option>`;
+                }
+
+                $("#info-car").append(`
+                    <div class="mt-3">
+                        <select class="form-select" id="selectMaqueCar" aria-label="select type car" style="width: 100%; height: 36px">
+                            ${carMarque}
+                        </select>
+                    </div>
+                `)
+                
+                $('#selectMaqueCar').select2({
+                    dropdownParent: $("#vehiculeModal"),
+                    placeholder: 'Marque du véhicule'
+                });
+            }
+
+            function addMarqueModel() {
+                $("#info-car").append(`
+                    <div class="mb-3">
+                        <input type="text" class="form-control" id="marqueVehicule" placeholder="Marque du véhicule">
+                    </div>
+                    <div class="mb-3">
+                        <input type="text" class="form-control" id="modeleVehicule" placeholder="Modèle du véhicule">
+                    </div>
+                `)
+            }
+
+            function addLangeurHauteur() {
+                $("#info-car").append(`
+                    <div class="mb-3">
+                        <div class="d-flex align-items-center justify-content-center gap-2">
+                            <h6 class="m-0 text-nowrap">Longeur :</h6>
+                            <div class="input-group input-group-sm w-40">
+                                <button data-step="5" class="btn border-0 btn-moins bg-success d-flex align-items-center justify-content-center" type="button"><span class="text-white fs-5 p-0 m-0">-</span></button>
+                                <input type="text" name="carLength" class="form-control bg-transparent text-muted fs-5 border-0  text-center qty" placeholder="" aria-label="Example text with button addon" value="0" />
+                                <button data-step="5" class="btn text-success bg-success border-0 btn-plus" type="button" id="addo2"><span class="text-white fs-5 p-0 m-0">+</span></button>
+                            </div>
+                            <span>cm</span>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex align-items-center justify-content-center gap-2">
+                            <h6 class="m-0 text-nowrap">Hauteur :</h6>
+                            <div class="input-group input-group-sm w-40">
+                                <button data-step="5" class="btn border-0 btn-moins bg-success d-flex align-items-center justify-content-center" type="button"><span class="text-white fs-5 p-0 m-0">-</span></button>
+                                <input type="text" name="carHeight" class="form-control bg-transparent text-muted fs-5 border-0  text-center qty" placeholder="" aria-label="Example text with button addon" value="0" />
+                                <button data-step="5" class="btn text-success bg-success border-0 btn-plus" type="button" id="addo2"><span class="text-white fs-5 p-0 m-0">+</span></button>
+                            </div>
+                            <span>cm</span>
+                        </div>
+                    </div>
+                `)
+            }
+
+            function addRemorque() {
+                $("#info-car").append(`
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="addRemorque" />
+                            <label class="form-check-label" for="addRemorque">
+                                Avec remorque
+                            </label>
+                        </div>
+                        <div class="add-remorque mt-3" id="add-remorque"></div>
+                    </div>
+                `)
+            }
+
+            $(document).on('change', "#addRemorque", function (e){
+                if ($(this).is(':checked')) {
+                    let longRemoque = "";
+    
+                    for (let i = 200; i <= 800; i += 100) {
+                        longRemoque += `
+                            <label class="border p-2 d-flex align-items-center justify-content-center gap-2" for="longRemorqueCheck-${i}">
+                                <input type="radio" name="longRemorqueCheck" value="${i}" id="longRemorqueCheck-${i}">
+                                <span>${i} cm</span>   
+                            </label>
+                        `;
+                        if (i === 700) {
+                            longRemoque += `
+                                <label class="border p-2 d-flex align-items-center justify-content-center gap-2" for="longRemorqueCheck-750">
+                                    <input type="radio" name="longRemorqueCheck" value="750" id="longRemorqueCheck-750">
+                                    <span>750 cm</span>
+                                </label>
+                            `;
+                        }
+                    }
+
+                    let hautRemoque = "";
+    
+                    for (let i = 150; i <= 400; i += 50) {
+                        hautRemoque += `
+                            <label class="border p-2 d-flex align-items-center justify-content-center gap-2" for="hautRemorqueCheck-${i}">
+                                <input type="radio" name="hautRemorqueCheck" value="${i}" id="hautRemorqueCheck-${i}">
+                                <span>${i} cm</span>   
+                            </label>
+                        `;
+                    }
+
+                    $('#add-remorque').html(`
+                        <p class="form-label">Longeur :</p>
+                        <div class="d-flex align-items-center gap-2 flex-wrap mb-3">
+                            ${longRemoque}
+                        </div>
+                        <p class="form-label">Hauteur :</p>
+                        <div class="d-flex align-items-center gap-2 flex-wrap">
+                            ${hautRemoque}
+                        </div>
+                    `);
+                } else {
+                    $('#add-remorque').empty();
+                }
+            });
+
+            function dateFormat(date) {
+                let dateformated = new Date(date);
+
+                let Y = dateformated.getFullYear();
+                let m = ("0" + (dateformated.getMonth() + 1)).slice(-2);
+                let d = ("0" + dateformated.getDate()).slice(-2);
+
+                return `${Y}-${m}-${d}`
+            }
+
+            $(document).on('show.bs.modal', '#passagersModal', function () {
+                $(this).removeAttr('aria-hidden');
+            });
+
+            $(document).on('hidden.bs.modal', '#passagersModal', function () {
+                $(this).attr('aria-hidden', 'true');
+            });
+
+        });
+    </script>
+{% endblock %}

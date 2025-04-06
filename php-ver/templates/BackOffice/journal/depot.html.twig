@@ -1,0 +1,219 @@
+{% extends 'base_admin.html.twig' %}
+
+{% set menu_journal = true %}
+{% set menu_depot = true %}
+
+{% block title %} Journal de Dépôt{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        #imageModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        #modalImage {
+            max-width: 80%;
+            max-height: 80%;
+        }
+
+        #imageModal span {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 30px;
+            color: white;
+            cursor: pointer;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+
+    <div class="card bg-light-info shadow-none position-relative overflow-hidden">
+        <div class="card-body px-4 py-3">
+            <div class="row align-items-center">
+                <div class="col-9">
+                    <h4 class="fw-semibold mb-8">Liste Dépôt</h4>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                          <li class="breadcrumb-item"><a class="text-muted" href="javascript:void(0)">Dépôt</a></li>
+                          <li class="breadcrumb-item active" aria-current="page">Liste</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <section>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-light"  id="id-depot-liste">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+        		                        <th class="text-center">Percepteur</th>
+                                        <th class="text-center">Montant</th>
+                                        <th class="text-center">Note</th>
+                                        <th class="text-center">Status</th>
+                                        <th class="text-center">Justificatif</th>
+        								<th>Action</th>
+        		                    </tr>
+                                </thead>
+                                <tbody>
+                                    {# {% for depot in depots %}
+                                        <tr>
+                                            <td>{{ depot.date | date('d-m-Y') }}</td>
+                                            <th>{{ depot.percepteur.nom}}</th>
+                                            <th>{{ depot.montant | number_format(2, ',', ' ') }} €</th>
+                                            <th>{{ depot.note}}</th>
+                                            <th>
+                                                <span class="{{ depot.isvalid ? 'text-success' : 'text-warning' }}">
+                                                    {{ depot.isvalid ? 'Valider' : 'En attente' }}
+                                                </span>
+                                            </th>
+                                            <th>
+                                                <a href="javascript:void(0)" data-id="{{ depot.id}}" class="btn btn-{{ depot.isvalid ? 'success' : 'warning' }} btn-sm valider-depot {{ depot.isvalid ? 'disabled' : '' }}">Valider</a>
+                                            </th>
+                                        </tr>
+                                    {% endfor %} #}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="id-modal" tabindex="-1" aria-labelledby="modal-stock">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Validation d'un dépôt</h4>
+                        <button type="button" class="kl-close btn-close" data-bs-dismiss="modal" aria-label="Close"></button>                    
+                    </div>
+                    <div class="modal-body">
+                        <form action="{{path('valider_depot')}}" id="id-form-ajout" method="POST">
+                            <p class="kl-role-actuel mb-2"></p>
+                            <input type="hidden" name="id" id="id-depot">
+                            <div class="row py-2">
+                                <div class="col-md-8 col-xl-9">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input primary" type="radio" name="validation" id="secondary-radio" value="oui" checked="">
+                                        <label class="form-check-label" for="secondary-radio">OUI</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input primary" type="radio" name="validation" id="secondary2-radio" value="non">
+                                        <label class="form-check-label" for="secondary2-radio">NON</label>
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">Confirmer</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Annuler</button>
+                    </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal pour afficher l'image -->
+        <div id="imageModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.8); justify-content:center; align-items:center;">
+            <span style="position:absolute; top:10px; right:20px; font-size:30px; cursor:pointer;" onclick="closeModal()">&times;</span>
+            <img id="modalImage" src="" alt="Image" style="max-width:80%; max-height:80%;">
+        </div>
+
+    </section>
+                    
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+
+        // Fonction pour afficher l'image dans le modal
+        function showImageModal(imageUrl) {
+            // Récupère l'élément du modal et l'élément image
+            var modal = document.getElementById("imageModal");
+            var modalImage = document.getElementById("modalImage");
+
+            // Définit la source de l'image avec l'URL fournie
+            modalImage.src = imageUrl;
+
+            // Affiche le modal
+            modal.style.display = "flex";
+        }
+
+        // Fonction pour fermer le modal
+        function closeModal() {
+            var modal = document.getElementById("imageModal");
+            modal.style.display = "none";
+        }
+
+        $(document).on('click', '.valider-depot', function(e) {
+            const $id = $(this).data('id')
+            swal({
+                title: "Validation dépôt",
+                text: "Vous voulez vraiment valider ce dépôt ?",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: "#62e7d0",
+                confirmButtonText: "Oui",
+                cancelButtonText: "Non",
+                closeOnConfirm: true,
+                closeOnCancel: true },
+            function (isConfirm) {
+                if (isConfirm) {
+                    swal({
+                        title: "Traîtement",
+                        text: "Validation en cours",
+                        icon: "warning",
+                        confirmButtonColor: "#FFAE1F",
+                        confirmButtonText: "Chargement...",
+                        closeOnConfirm: false,
+                    });
+                    try {
+                        $.ajax({
+                            url: "/valider-depot",
+                            method: 'POST',
+                            data: {
+                                id  : $id
+                            },
+                            success: function (response) {
+                                if(response.status){
+                                    swal("Terminer", "Validation effectuée avec succès", "success");
+                                    window.location.reload()
+                                }else{
+                                    swal("Validation non effectuée", "Une erreur s'est produite lors de validation", "warning");
+                                }
+                            },
+                            error: function (error) {
+                                swal("Validation non effectuée", "Une erreur s'est produite lors de validation", "warning");
+                                console.log(error);
+                            }
+                        })
+                    } catch (error) {
+                        swal("Validation non effectuée", "Une erreur s'est produite lors de validation", "warning");
+                        console.log(error);
+                    }
+                }else{
+                    swal("Suppression non effectuée", "Vous n'avez supprimé le donnée", "error");
+                }
+            });
+        })
+    </script>
+    <script src="{{ asset('backoffice/journal/depot.liste.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,23 @@
+<div class="select-coutry">
+    <div class="form-country" type="button" id="dropdownCountrySelect">
+        <div class="toggle-country" id="toggleCountry">
+            <img src="{{ asset('images/globe.png') }}" class="country-default">
+            <span class="prefix">--</span>
+            <i class="ti ti-caret-down"></i>
+        </div>
+        <input type="text" name="tel" id="tel" required>
+        <input type="hidden" id="imgDefault" data-src="{{ asset('images/globe.png') }}">
+        <input type="hidden" name="code" id="countryCode">
+        <input type="hidden" name="pays" id="countryPays">
+        <input type="hidden" name="prefix" id="countryPrefix">
+        <input type="hidden" name="operateur" id="countryOperateur">
+    </div>
+    <div class="dropdown-country-menu" id="dropdownCountryListes">
+        <input type="search" class="form-control" id="searchCoutry" placeholder="Rechercher...">
+        <ul class="country-list" id="countryList" aria-labelledby="dropdownCountrySelect" >
+            {% for country in listeCountry %}
+                <li data-id='{{country.id}}' data-code="{{country.code}}" data-pays="{{country.nom}}" data-prefix="{{country.prefixe}}" data-api="{{country.typeApi}}"><i class="{{country.logo}} ps-2"></i> {{country.nom}} ({{country.prefixe}})</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>

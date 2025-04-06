@@ -1,0 +1,733 @@
+{% extends 'base_front.html.twig' %}
+
+{% set menu_dashboard = true %}
+
+{% block title %}Tableau de bord{% endblock %}
+
+{% set service = serviceBoutique(app.user) %}
+{% if service is not null and service.service|length > 0 %}
+    {% set menuTransfert  = service.service[0].status is defined ? service.service[0].status : true %}
+    {% set menuRecharge   = service.service[1].status is defined ? service.service[1].status : true %}
+    {% set menuService    = service.service[2].status is defined ? service.service[2].status : true %}
+    {% set menuBilleterie = service.service[3].status is defined ? service.service[3].status : true %}
+    {% set menuSiv        = service.service[2].status is defined ? (service.service[2].modules[0] is defined ? service.service[2].modules[0].status : true) : true %}
+{% else %}
+    {% set menuTransfert  = true %}
+    {% set menuRecharge   = true %}
+    {% set menuService    = true %}
+    {% set menuBilleterie = true %}
+    {% set menuSiv = true %}
+{% endif %}
+
+{% block stylesheets %} 
+  {{ parent() }}
+  <link rel="stylesheet" href="{{ asset('modernize/libs/select2/dist/css/select2.min.css') }}">
+  <style>
+    .input-flag{
+      position: relative;
+      background-color: #FFF!important;
+      padding: 4px;
+      border-radius: 4px;
+    }
+    .flag-select{
+      position: absolute;
+      width: 100%;
+      z-index: 1;
+      visibility: hidden;
+    }
+    .img-flag{
+      cursor: pointer;
+      min-height: 39px;
+      min-width: 40px;
+    }
+    .img-flag img{
+      width: 40px!important;
+    }
+    .phone-number{
+      flex: 1 1 auto;
+    }
+    .phone-number .form-control{
+      padding: 5px 5px 5px 5px;
+    }
+    .phone-number, .img-flag{
+      z-index: 3;
+    }
+    .phone-number .form-control{
+      border: #2a3447!important;
+    }
+    .amout-input{
+      flex: 1 1 auto;
+      padding: 4px 45px;
+    }
+    .amout-input input{
+      background-color: #2a3447!important;
+    }
+    body[data-theme="dark"] .select2-container--default{
+      border: #2a3447!important;
+    }
+    body[data-theme="dark"] .select2-container--default .select2-selection--single {
+      border: #2a3447!important;
+    }
+    .load-transfert {
+        display: none;
+        border-radius: inherit;
+    }
+
+    .load-transfert .load {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: inherit;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 99999;
+        background: #050d25b0;
+    }
+    .card-body-content {
+        border: 3px solid;
+        border-radius: 25px;
+        box-shadow: 0px 0px 15px #000000a3;
+        padding: 10px;
+      }
+      .card-body-content.solde {
+        border-color: #ffae1f;
+        background: #ffae1f3b;
+      }
+      .card-body-content.trx {
+        border-color: #5D87FF;
+        background: #5D87FF3b;
+      }
+      .card-body-content.history {
+        border-color: #13deb9;
+        background: #13deb93b;
+        padding: 15px;
+      }
+      .image-sd {
+        height: 150px;
+      }
+      .fluid-image {
+        object-fit: contain;
+        width: 100%;
+        height: 100%;
+      }
+  </style>
+{% endblock %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-12">
+      <div class="d-flex align-items-center gap-4 mb-4">
+        <div class="position-relative">
+          <div class="border border-2 border-primary rounded-circle">
+            <img src="{{asset('modernize/images/logos/favicon.svg')}}" class="rounded-circle m-1" alt="user1" width="60">
+          </div>
+        </div>
+        <div>
+          <h3 class="fw-semibold"><span class="text-dark">Gagnez en efficacité avec la nouvelle application de vente.</span></h3>
+          <span>Vous accompagner dans la gestion de votre commerce en vous proposant des solutions uniques et innovantes !</span>
+        </div>
+      </div>
+    </div>
+    
+    {# <div class="col-sm-6 col-xl-4">
+      <div class="card bg-light-warning shadow-none">
+        <div class="card-body p-4">
+          <div class="card-body-content solde">
+            <div class="d-flex align-items-center py-3">
+              <div class="round rounded bg-warning d-flex align-items-center justify-content-center">
+                <i class="ti ti-currency-euro text-white fs-7" title="solde"></i>
+              </div>
+              <h3 class="mb-0 ms-3">Solde</h3>
+            </div>
+            <div class="d-flex align-items-center justify-content-center">
+              {% set credit = creditBoutique(app.user) %}
+              {% set debit  = debitBoutique(app.user) %}
+              {% set geste  = gesteBoutique(app.user) %}
+              {% set solde  = credit+geste-debit %}
+              <h3 class="mb-0 fw-semibold fs-7 solde-js">{{ solde|number_format(2, '.', '') }} &euro;</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div> #}
+    {# <div class="col-sm-6 col-xl-4" id="card-number-country">
+        <div class="card bg-light-primary shadow-none">
+          <div class="card-body p-4">
+            <div class="card-body-content trx">
+              <div class="d-flex align-items-center py-3">
+                <div class="input-flag d-flex align-items-center justify-content-center w-100">
+                  <div class="flag-select">
+                    {% include 'FrontOffice/transfert/countryArgent.html.twig' %}
+                  </div>
+                  <div class="img-flag d-flex align-items-center justify-content-center">
+                    <img src="{{ asset('modernize/images/logos/flagDefault.png')}}" alt="C">
+                    <i class="ti ti-caret-down text-white"></i>
+                    <p class="mobil-prexif m-0">---</p>
+                  </div>
+                  <div class="phone-number">
+                    <input type="text" class="form-control" placeholder="Numéro mobile..." name="numero" autofocus required>
+                  </div>
+                </div>
+              </div>
+              <div class="d-flex align-items-center justify-content-end">
+                <button class="btn btn-outline-primary btn-sm btn-next">Suivant</button>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div> #}
+    {# <div class="col-sm-6 col-xl-4 position-relative hide" id="card-amount">
+        <div class="card bg-light-primary shadow-none">
+          <div class="card-body p-3">
+            <div class="card-body-content trx">
+              <div class="d-flex align-items-center flex-column gap-1 justify-content-center">
+                <div class="img-flag d-flex gap-2 align-items-center justify-content-center">
+                  <img class="flag-send" src="{{ asset('modernize/images/logos/flagDefault.png')}}" alt="C">
+                  <h3 class="phone-number-send m-0"></h3>
+                </div>
+                <div class="d-flex align-items-center justify-content-center w-100">
+                  <div class="amout-input">
+                    <input type="text" class="form-control" placeholder="Montant..." name="amount" autofocus required>
+                  </div>
+                </div>
+              </div>
+              <div class="d-flex align-items-center gap-2 justify-content-end mt-1">
+                <button class="btn btn-outline-warning btn-sm btn-annul">Annuler</button>
+                <button class="btn btn-outline-success btn-sm btn-validate">Valider</button>
+              </div>
+            </div>
+          </div>
+          <div class="load-transfert">
+            <div class="load">
+            </div>
+          </div>
+        </div>
+    </div> #}
+    {# <div class="col-sm-6 col-xl-4">
+      <div class="card bg-light-success shadow-none">
+        <div class="card-body p-4">
+          <div class="card-body-content history">
+            <a href="{{ path('hist_transf') }}" class="d-flex align-items-center justify-content-center flex-column cursor-pointer">
+              <div class="round rounded bg-success d-flex align-items-center justify-content-center">
+                <i class="ti ti-history text-white fs-7" title="historique"></i>
+              </div>
+              <div class="mt-4">
+                <h3 class="mb-0 fw-semibold fs-7">Historique</h3>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div> #}
+
+    <!-- Weekly Stats -->
+    {# <div class="col-12 d-flex align-items-strech">
+      <div class="card w-100">
+        <div class="card-body">
+          <h5 class="card-title fw-semibold">Transfert crédit</h5>
+          <div id="stats" class="my-4"></div>
+          <div class="position-relative">
+            <div class="d-flex align-items-center justify-content-between mb-7">
+              <div class="d-flex">
+                <div class="p-6 bg-light-primary rounded me-6 d-flex align-items-center justify-content-center">
+                  <i class="ti ti-grid-dots text-primary fs-6"></i>
+                </div>
+                <div>
+                 
+                </div>
+              </div>
+              <div class="bg-light-primary badge">
+                <p class="fs-3 text-primary fw-semibold mb-0">+68</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div> #}
+
+    {# <div class="col-md-6 col-lg-4 d-flex align-items-stretch">
+      <div class="card w-100">
+        <div class="card-body">
+          <h5 class="card-title fw-semibold">Méthodes de paiement</h5>
+          <p class="card-subtitle mb-7">Plateforme de revenus</p>
+          <div class="position-relative">
+            <div class="d-flex align-items-center justify-content-between mb-4">
+              <div class="d-flex">
+                <div class="p-8 bg-light-primary rounded-2 d-flex align-items-center justify-content-center me-6">
+                  <img src="{{asset('images/qr-code-scanner.svg')}}" alt="" class="img-fluid" width="24" height="24">
+                </div>
+                <div>
+                  <h6 class="mb-1 fs-4 fw-semibold">CODE QR</h6>
+                  <p class="fs-3 mb-0">Scannez simplement</p>
+                </div>
+              </div>
+            </div>
+            <div class="d-flex align-items-center justify-content-between mb-4">
+              <div class="d-flex">
+                <div class="p-8 bg-light-success rounded-2 d-flex align-items-center justify-content-center me-6">
+                  <img src="{{asset('images/icon-credit-card.svg')}}" alt="" class="img-fluid" width="24" height="24">
+                </div>
+                <div>
+                  <h6 class="mb-1 fs-4 fw-semibold">VISA</h6>
+                  <p class="fs-3 mb-0">Confirmez la transaction</p>
+                </div>
+              </div>
+            </div>
+            <div class="d-flex align-items-center justify-content-between mb-4">
+              <div class="d-flex">
+                <div class="p-8 bg-light-warning rounded-2 d-flex align-items-center justify-content-center me-6">
+                  <img src="{{asset('images/icon-wallet.svg')}}" alt="" class="img-fluid" width="24" height="24">
+                </div>
+                <div>
+                  <h6 class="mb-1 fs-4 fw-semibold">Virement</h6>
+                  <p class="fs-3 mb-0">Validez les informations</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div> #}
+    
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title fw-semibold">Services digitaux</h5>
+          <!-- <p class="card-subtitle">Qu'y a-t-il sur ma playlist cette semaine ?</p> -->
+          <div class="row mt-3 justify-content-center">
+            {% if menuTransfert %}
+              <div class="col-md-4 col-sm-6 mb-2">
+                <div class="card shadow-none border position-relative mb-md-0 h-100">
+                  <div class="overflow-hidden rounded">
+                    <a href="{{ path('transfert_credit') }}">
+                      <div class="hover-img image-sd">
+                        <img src="{{asset('images/transfert_credit.png')}}" class="rounded hover-img card-img fluid-image" alt="art">
+                      </div>
+                    </a>
+                  </div>
+                  <div class="p-2 d-flex">
+                    <div>
+                      <h6 class="mt-2 mb-0 fw-semibold">Transfert de crédit</h6>
+                      <span class="fs-2 text-nowrap">Transfert de crédit</span>
+                    </div>
+                    <div class="ms-auto">
+                      <a href="{{ path('transfert_credit') }}" class="z-1 btn bg-white text-primary round-sm rounded-circle mt-n4 shadow-sm p-0 d-flex align-items-center justify-content-center">
+                        <i class="ti ti-player-play text-primary fs-4"></i>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endif %}
+            {% if menuRecharge %}
+              <div class="col-md-4 col-sm-6 mb-2">
+                <div class="card shadow-none border position-relative mb-md-0 h-100">
+                  <div class="overflow-hidden rounded">
+                    <a href="{{ path('recharge') }}">
+                      <div class="hover-img image-sd">
+                        <img src="{{asset('images/recharge_mobile.png')}}" class="rounded hover-img card-img fluid-image" alt="art">
+                      </div>
+                    </a>
+                  </div>
+                  <div class="p-2 d-flex">
+                    <div>
+                      <h6 class="mt-2 mb-0 fw-semibold">Recharge mobile</h6>
+                      <span class="fs-2 text-nowrap">Recharge mobile</span>
+                    </div>
+                    <div class="ms-auto">
+                      <a href="{{ path('recharge') }}" class="z-1 btn bg-white text-primary round-sm rounded-circle mt-n4 shadow-sm p-0 d-flex align-items-center justify-content-center">
+                        <i class="ti ti-player-play text-primary fs-4"></i>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endif %}
+            {% if menuService %}
+              <div class="col-md-4 col-sm-6 mb-2">
+                <div class="card border shadow-none position-relative mb-0 h-100">
+                  <div class="overflow-hidden rounded">
+                    <a href="{{ path('services') }}">
+                      <div class="hover-img image-sd">
+                        <img src="{{asset('images/assurence.png')}}" class="rounded hover-img card-img fluid-image" alt="art">
+                      </div>
+                    </a>
+                  </div>
+                  <div class="p-2 d-flex">
+                    <div>
+                      <h6 class="mt-2 mb-0 fw-semibold text-truncate">Assurances</h6>
+                      <span class="fs-2 text-nowrap">Assurances</span>
+                    </div>
+                    <div class="ms-auto">
+                      <a href="{{ path('services') }}" class="z-1 btn bg-white text-primary round-sm rounded-circle mt-n4 shadow-sm p-0 d-flex align-items-center justify-content-center">
+                        <i class="ti ti-player-play text-primary fs-4"></i>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4 col-sm-6 mb-2">
+                <div class="card border shadow-none position-relative mb-0 h-100">
+                  <div class="overflow-hidden rounded">
+                    <a href="{{ path('liste_creanciers') }}">
+                      <div class="hover-img image-sd">
+                        <img src="{{asset('images/payement_facture.png')}}" class="rounded hover-img card-img fluid-image" alt="art">
+                      </div>
+                    </a>
+                  </div>
+                  <div class="p-2 d-flex">
+                    <div>
+                      <h6 class="mt-2 mb-0 fw-semibold text-truncate">Paiement de factures</h6>
+                      <span class="fs-2 text-nowrap">Paiement de factures</span>
+                    </div>
+                    <div class="ms-auto">
+                      <a href="{{ path('liste_creanciers') }}" class="z-1 btn bg-white text-primary round-sm rounded-circle mt-n4 shadow-sm p-0 d-flex align-items-center justify-content-center">
+                        <i class="ti ti-player-play text-primary fs-4"></i>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endif %}
+            {% if menuBilleterie %}
+              <div class="col-md-4 col-sm-6 mb-2">
+                <div class="card border shadow-none position-relative mb-0 h-100">
+                  <div class="overflow-hidden rounded">
+                    <a href="{{ path('billeteries') }}">
+                      <div class="hover-img image-sd">
+                        <img src="{{asset('images/Billetterie.png')}}" class="rounded hover-img card-img fluid-image" alt="art">
+                      </div>
+                    </a>
+                  </div>
+                  <div class="p-2 d-flex">
+                    <div>
+                      <h6 class="mt-2 mb-0 fw-semibold text-truncate">Billetterie</h6>
+                      <span class="fs-2 text-nowrap">Billetterie</span>
+                    </div>
+                    <div class="ms-auto">
+                      <a href="{{ path('billeteries') }}" class="z-1 btn bg-white text-primary round-sm rounded-circle mt-n4 shadow-sm p-0 d-flex align-items-center justify-content-center">
+                        <i class="ti ti-player-play text-primary fs-4"></i>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endif %}
+            {% if menuSiv %}
+              <div class="col-md-4 col-sm-6 mb-2">
+                <div class="card border shadow-none position-relative mb-0 h-100">
+                  <div class="overflow-hidden rounded">
+                    <a href="javascript:void(0)">
+                      <div class="hover-img image-sd">
+                        <img src="{{asset('modernize/images/service/SIV2.png')}}" class="rounded hover-img card-img fluid-image" alt="art">
+                      </div>
+                    </a>
+                  </div>
+                  <div class="p-2 d-flex">
+                    <div>
+                      <h6 class="mt-2 mb-0 fw-semibold text-truncate">SIV</h6>
+                      <span class="fs-2 text-nowrap">Système d'Immatriculation des Véhicules</span>
+                    </div>
+                    <div class="ms-auto">
+                      <a href="javascript:void(0)" class="z-1 btn bg-white text-primary round-sm rounded-circle mt-n4 shadow-sm p-0 d-flex align-items-center justify-content-center">
+                        <i class="ti ti-player-play text-primary fs-4"></i>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+
+<div class="row">
+
+  <div class="col-sm-6 col-xl-4">
+      <div class="card bg-light-success shadow-none">
+        <div class="card-body p-4">
+          <div class="card-body-content history">
+            <div class="d-flex align-items-center py-3">
+              <div class="round rounded bg-success d-flex align-items-center justify-content-center">
+                <i class="ti ti-currency-euro text-white fs-7" title="solde"></i>
+              </div>
+              <h5 class="mb-0 ms-3 align-items-center justify-content-center">Chiffre d'affaire / Jours <i id="toggle-sold-jour" data-sold-jour="{{ ca_days|number_format(2, '.', '') }} €" class="hide-sold-jour ti ti-eye-off ti-eye fs-6 ms-2 cursor-pointer"></i></h5>
+            </div>
+            <div class="d-flex align-items-center justify-content-center">
+              <h3 class="mb-0 fw-semibold fs-7 solde-jour-js"  id="sold-jour-js"> -- &euro;</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-6 col-xl-4">
+      <div class="card bg-light-success shadow-none">
+        <div class="card-body p-4">
+          <div class="card-body-content history">
+            <div class="d-flex align-items-center py-3">
+              <div class="round rounded bg-success d-flex align-items-center justify-content-center">
+                <i class="ti ti-currency-euro text-white fs-7" title="solde"></i>
+              </div>
+              <h5 class="mb-0 ms-3 align-items-center justify-content-center">Chiffre d'affaire / Mois <i id="toggle-sold-mois" data-sold-mois="{{ ca_months|number_format(2, '.', '') }} €" class="hide-sold-mois ti ti-eye-off ti-eye fs-6 ms-2 cursor-pointer"></i></h5>
+            </div>
+            <div class="d-flex align-items-center justify-content-center">
+              <h3 class="mb-0 fw-semibold fs-7 solde-mois-js" id="sold-mois-js"> -- &euro;</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-6 col-xl-4">
+      <div class="card bg-light-success shadow-none">
+        <div class="card-body p-4">
+          <div class="card-body-content history">
+            <div class="d-flex align-items-center py-3">
+              <div class="round rounded bg-success d-flex align-items-center justify-content-center">
+                <i class="ti ti-currency-euro text-white fs-7" title="solde"></i>
+              </div>
+              <h5 class="mb-0 ms-3 align-items-center justify-content-center">Chiffre d'affaire / Année <i id="toggle-sold-annee" data-sold-annee="{{ ca_years|number_format(2, '.', '') }} €" class="hide-sold-annee ti ti-eye-off ti-eye fs-6 ms-2 cursor-pointer"></i></h5>
+            </div>
+            <div class="d-flex align-items-center justify-content-center">
+              <h3 class="mb-0 fw-semibold fs-7 solde-annee-js" id="sold-annee-js"> -- &euro;</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+</div>
+
+{{ include('partials_office/footer.html.twig') }}
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('modernize/libs/select2/dist/js/select2.full.min.js') }}"></script>
+    <script src="{{ asset('modernize/libs/select2/dist/js/select2.min.js') }}"></script>
+    <script>
+      $(document).ready(function(){
+        $("#countries").select2({
+          dropdownParent: $('.input-flag'),
+        });
+
+        $(document).on('click', '.img-flag', function() {
+          $('#countries').select2('open');
+        });
+
+        $(document).on('click', '.btn-next', function() {
+          var numero    = $('.phone-number input').val()
+          var countries = $("#countries").val();
+          
+          if(numero == ""){
+            notification("warning", "Le champ numéro ne doit pas être vide")
+          } else if(numero.length < 9){
+            notification("warning", "Le champ numéro ne doit pas être inférieur à 9")
+          } else if(countries === null){
+            notification("warning", "Veuillez choisir le Pays")
+          } else {
+            $('#card-number-country').hide();
+            $('#card-amount').show();
+
+            var imgFlag = $(".img-flag img").attr("src")
+            var prefix  = $(".mobil-prexif").text()
+            $('.flag-send').attr("src", imgFlag);
+            $('.phone-number-send').text(`${prefix} ${numero}`);
+            $('.amout-input input[name="phone"]').val(numero);
+          }
+        });
+        $(document).on('click', '.btn-annul', function() {
+          $('#card-number-country').show();
+          $('#card-amount').hide();
+        });
+        $(document).on('click', '.btn-validate', function() {
+          var amount    = $(`.amout-input input`).val();
+          var phone     = $(`.phone-number input`).val();
+          var flag      = $("#countries").val();
+          var countries = $("#countries option:selected");
+          var pays      = countries.data('pays')
+          var prefix    = countries.data('prefix')
+          var solde     = parseFloat($('#solde-js').text())
+
+          if (solde == 0 || amount > solde){
+              notification("warning", "votre solde est insuffisant pour effectuer cette transaction")
+          } else {
+              validateTransfert(amount, phone, pays, prefix, flag)
+          }
+
+        });
+
+        $(document).on('input', ".phone-number input, .amout-input input", (e) => {
+            var numericValue = e.target.value.replace(/[^0-9\s]/g, ''); // Supprimer les non-chiffres
+            var plusAtBeginning = e.target.value.startsWith('+');
+
+            if (plusAtBeginning) {
+                e.target.value = '+' + numericValue; // Conserver le signe + au début
+            } else {
+                e.target.value = numericValue; // Supprimer le signe + s'il n'est pas au début
+            }
+        })
+
+        $("#countries").on("change", function() {
+          var flag      = $(this).val();
+          var prefix    = $(this).data('prefix');
+          var countries = $("#countries option:selected");
+    
+          if (countries.is(":selected")) {
+            var prefix = countries.data('prefix')
+            $(".mobil-prexif").text(prefix)
+          }
+          $(".img-flag img").attr("src", `https://flagcdn.com/w40/${flag}.png`)
+        });
+
+        function validateTransfert(amount, phone, pays, prefix, flag){
+          $('.btn-validate')
+                .html(`<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Chargement...`)
+                .prop("disabled", true);
+                
+          $.ajax({
+            url: "/transfert-credit-api",
+            method: 'POST',
+            data: {
+              phone  : phone,
+              amount : amount,
+              pays   : pays,
+              prefix : prefix,
+              flag   : flag
+            },
+            success: function (response) {
+              if(response.status){
+                  console.log(response.message)
+
+                  $('.btn-validate')
+                    .text(`Valider`)
+                    .prop("disabled", false);
+
+                  if(response.solde){
+                    var solde = $('.solde-js');
+  
+                    if(solde){
+                      $(".solde-js").each(function() {
+                          $(this).text(response.solde);
+                      });
+                    } else {
+                      console.log(`erreur : variable #solde-js introuvable`)
+                    }
+                  }
+
+                  notification("success", "Transfert éfféctué avec succès");
+
+                  $("#card-number-country").show();
+                  $("#card-amount").hide();
+                  $(".img-flag img").attr("src", "{{ asset('modernize/images/logos/flagDefault.png')}}")
+                  $(".mobil-prexif").text('---')
+                  $(".phone-number input").val("");
+
+              }else{
+                  notification("danger", "Une erreur s'est produite, veuillez réessayer plus tard.")
+
+                  console.log(response.message);
+                  console.log(response.data);
+                  console.log(response.error);
+
+                  $('.btn-validate')
+                    .text(`Valider`)
+                    .prop("disabled", false);
+
+                  $("#card-number-country").show();
+                  $("#card-amount").hide();
+                  $(".img-flag img").attr("src", "{{ asset('modernize/images/logos/flagDefault.png')}}")
+                  $(".mobil-prexif").text('---')
+                  $(".phone-number input").val("");
+              }
+            },
+            error: function (error) {
+                notification("danger", "Une erreur s'est produite, veuillez réessayer plus tard.")
+
+                console.log(error);
+
+                $('.btn-validate')
+                    .text(`Valider`)
+                    .prop("disabled", false);
+
+                $("#card-number-country").show();
+                $("#card-amount").hide();
+                $(".img-flag img").attr("src", "{{ asset('modernize/images/logos/flagDefault.png')}}")
+                $(".mobil-prexif").text('---')
+                $(".phone-number input").val("");
+                /* 
+                Une erreur est survenue, veuillez réessayer par la suite.
+                Une erreur est survenue, essayez de nouveau plus tard.
+                Une erreur est survenue, veuillez recommencer plus tard.
+                Une erreur s'est produite, veuillez recommencer ultérieurement.
+                Il y a eu une erreur, veuillez réessayer plus tard.
+                */
+            }
+          })
+        }
+
+        $(document).on('click','#toggle-sold-jour', function(e) {
+          const soldeControl = $(this)
+          const solde = soldeControl.data("sold-jour")
+          const affichage = $("#sold-jour-js")
+          soldeControl.fadeOut(100)
+          if (soldeControl.hasClass("hide-sold-jour")) {
+              soldeControl.removeClass("hide-sold-jour")
+              soldeControl.removeClass("ti-eye-off")
+              soldeControl.addClass("ti-eye")
+              affichage.html(solde)
+          } else {
+              soldeControl.addClass("hide-sold-jour")
+              soldeControl.removeClass("ti-eye")
+              soldeControl.addClass("ti-eye-off")
+              affichage.html("-- €")
+          }
+          soldeControl.fadeIn(100)
+        });
+
+        $(document).on('click','#toggle-sold-mois', function(e) {
+          const soldeControl = $(this)
+          const solde = soldeControl.data("sold-mois")
+          const affichage = $("#sold-mois-js")
+          soldeControl.fadeOut(100)
+          if (soldeControl.hasClass("hide-sold-mois")) {
+              soldeControl.removeClass("hide-sold-mois")
+              soldeControl.removeClass("ti-eye-off")
+              soldeControl.addClass("ti-eye")
+              affichage.html(solde)
+          } else {
+              soldeControl.addClass("hide-sold-mois")
+              soldeControl.removeClass("ti-eye")
+              soldeControl.addClass("ti-eye-off")
+              affichage.html("-- €")
+          }
+          soldeControl.fadeIn(100)
+        });
+
+        $(document).on('click','#toggle-sold-annee', function(e) {
+          const soldeControl = $(this)
+          const solde = soldeControl.data("sold-annee")
+          const affichage = $("#sold-annee-js")
+          soldeControl.fadeOut(100)
+          if (soldeControl.hasClass("hide-sold-annee")) {
+              soldeControl.removeClass("hide-sold-annee")
+              soldeControl.removeClass("ti-eye-off")
+              soldeControl.addClass("ti-eye")
+              affichage.html(solde)
+          } else {
+              soldeControl.addClass("hide-sold-annee")
+              soldeControl.removeClass("ti-eye")
+              soldeControl.addClass("ti-eye-off")
+              affichage.html("-- €")
+          }
+          soldeControl.fadeIn(100)
+        });
+
+      });
+    </script>
+{% endblock %}

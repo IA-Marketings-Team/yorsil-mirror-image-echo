@@ -1,0 +1,344 @@
+{% extends 'base_admin.html.twig' %}
+
+    {% set menu_transfert_argent = true %}
+    
+    {% block title %}Transfert de Crédit{% endblock %}
+    
+    {% block stylesheets %} 
+        {{ parent() }}
+        <link rel="stylesheet" href="{{ asset('modernize/libs/select2/dist/css/select2.min.css') }}">
+        <style>
+            p.iconLogo {
+                display: flex;
+                height: 100px;
+                align-items: center;
+            }
+            p.iconLogo i:nth-child(1){
+                align-self: end;
+            }
+            p.iconLogo i:nth-child(3){
+                align-self: start;
+            }
+            p.iconLogo.transfert i:nth-child(1){
+                animation: moveright 1s forwards infinite;
+            }
+            p.iconLogo.transfert i:nth-child(3){
+                animation: moveleft 1s forwards infinite;
+            }
+            body[data-theme="dark"] .select2-container--default{
+                border: #2a3447!important;
+            }
+            body[data-theme="dark"] .select2-container--default .select2-selection--single {
+                border: #2a3447!important;
+            }
+            .input-flags {
+                border: 1px solid #465670;
+                padding: 4px;
+                border-radius: 10px;
+            }
+            @keyframes moveleft{
+                0%{
+                    transform: translateX(0px);
+                }
+                50%{
+                    transform: translateX(-15px);
+                }
+                100%{
+                    transform: translateX(0px);
+                }
+            }
+            @keyframes moveright{
+                0%{
+                    transform: translateX(0px);
+                }
+                50%{
+                    transform: translateX(15px);
+                }
+                100%{
+                    transform: translateX(0px);
+                }
+            }
+        </style>
+    {% endblock %}
+    
+    {% block body %}
+    
+        <div class="card bg-light-info shadow-none position-relative overflow-hidden">
+            <div class="card-body px-4 py-3">
+              <div class="row">
+                <div class="col-md-9">
+                  <h4 class="fw-semibold mb-8">Transfert de Crédit</h4>
+                  <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                      <li class="breadcrumb-item"><a class="text-muted" href="{{ path('boutique')}}">Transfert</a></li>
+                      <li class="breadcrumb-item active" aria-current="page">Crédit</li>
+                    </ol>
+                  </nav>
+                </div>
+              </div>
+            </div>
+        </div>
+    
+        <div class="transfertCredit">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <form role="form" id="formTransfert" method="POST" action="{{path('transfert_argent_test')}}">
+                            <div class="px-4 py-3 border-bottom">
+                                <h5 class="card-title fw-semibold mb-0">Recharge mobile</h5>
+                            </div>
+                            <div class="card-body p-4">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <p class="card-subtitle mb-4">Veuillez définir le numéro de téléphone du destinataire ci-dessous :</p>
+                                        <div class="input-flags mb-4 d-flex align-items-center justify-content-center gap-2">
+                                            <img src="{{ asset('modernize/images/logos/flagDefault.png')}}" width="40" alt="C">
+                                            {% include 'FrontOffice/transfert/countryArgent.html.twig' %}
+                                        </div>
+                                        <div class="mb-4">
+                                            <label for="id-tel" class="form-label fw-semibold">Téléphone</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text tel-prefix"><i class="ti ti-phone-outgoing fs-4"></i></span>
+                                                <input type="text" id="id-tel" name="tel" placeholder="Entrez le numéro de téléphone" inputmode="numeric" class="form-control" title="Veuillez saisir un numéro de téléphone international valide." aria-label="tel" aria-describedby="tel" required>
+                                            </div>
+                                            <input type="hidden" name="tokken" id="id-tokken" value="token">
+                                        </div>
+                                        <div class="mb-4">
+                                            <label for="id-montant" class="form-label fw-semibold">Montant</label>
+                                            <input type="text" id="id-montant" name="montant" placeholder="Entrez le montant" inputmode="numeric" class="form-control" title="Veuillez saisir le montant" required>
+                                            <input type="hidden" name="tokken" id="id-tokken" value="token">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 border-start align-self-center">
+                                        <div class="operateurDetect mt-sm-3 mt-md-0 d-flex flex-column justify-content-center align-items-center">
+                                            <p class="operateurName text-center card-subtitle mb-4">Vous avez la possibilité de transférer de crédit partout et à tout moment</p>
+                                            <p class="iconLogo">
+                                                {# <i class="ti ti-arrow-big-right-line text-primary fs-12"></i> #}
+                                                <i class="ti ti-arrow-big-right text-primary fs-12"></i>
+                                                <i class="ti ti-currency-euro text-primary fs-12"></i>
+                                                <i class="ti ti-arrow-big-left text-primary fs-12"></i>
+                                                {# <i class="ti ti-arrow-big-left-line text-primary fs-12"></i> #}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                            <div class="card-footer d-flex justify-content-end">
+                                <button class="btn btn-success d-flex align-items-center gap-1 btn-valid-transfert">
+                                    {# <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                    Chargement...#}
+                                    <i class="ti ti-check fs-5"></i> Valider
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    
+        <div class="col-12 MontantResult d-flex align-items-strech">
+            
+        </div>
+    
+    {% endblock %}
+    
+    {% block javascripts %}
+        {{ parent() }}
+        <script src="{{ asset('modernize/libs/select2/dist/js/select2.full.min.js') }}"></script>
+        <script src="{{ asset('modernize/libs/select2/dist/js/select2.min.js') }}"></script>
+     <script>
+    
+        $(document).ready(function(){
+            $("#countries").select2();
+            $(document).on('input', "#id-tel", (e) => {
+                var numericValue = e.target.value.replace(/[^0-9\s]/g, ''); // Supprimer les non-chiffres
+                var plusAtBeginning = e.target.value.startsWith('+');
+    
+                if (plusAtBeginning) {
+                    e.target.value = '+' + numericValue; // Conserver le signe + au début
+                } else {
+                    e.target.value = numericValue; // Supprimer le signe + s'il n'est pas au début
+                }
+            })
+            $(document).on('input', "#id-montant", (e) => {
+                var validValue = e.target.value.replace(/[^0-9\s]/g, ''); // Supprimer les non-chiffres et non point
+                var pointCount = validValue.split('.').length - 1; // Compter le nombre de points
+                var plusAtBeginning = e.target.value.startsWith('+');
+                if (pointCount > 1) {
+                    var parts = validValue.split('.');
+                    validValue = parts[0] + '.' + parts.slice(1).join(''); // Supprimer les points supplémentaires
+                }
+                if (plusAtBeginning) {
+                    e.target.value = '+' + validValue; // Conserver le signe + au début
+                }
+                e.target.value = validValue;
+            })
+    
+            $(document).on('input', ".phone-number input, .amout-input input", (e) => {
+                var numericValue = e.target.value.replace(/[^0-9\s]/g, ''); // Supprimer les non-chiffres
+                var plusAtBeginning = e.target.value.startsWith('+');
+    
+                if (plusAtBeginning) {
+                    e.target.value = '+' + numericValue; // Conserver le signe + au début
+                } else {
+                    e.target.value = numericValue; // Supprimer le signe + s'il n'est pas au début
+                }
+            })
+    
+            $(document).on('change', "#countries", (e) => {
+                var select = $('#countries').find('option:selected');
+                let prefix = select.data('prefix');
+                var flag = $(select).val();
+                if(flag){
+                    $(".input-flags img").attr("src", `https://flagcdn.com/w40/${flag}.png`)
+                }
+                $(".tel-prefix").text(prefix);
+            })
+            //$('.chosen-select').chosen({width: "100%"});
+            $(document).on('submit','#formTransfert', function(e){
+                e.preventDefault()
+                e.stopPropagation()
+    
+                var numero = $('#id-tel').val()
+                var countries = $("#countries").val();
+    
+                if(numero == ""){
+                    notification("warning", "Le champ numéro ne doit pas être vide")
+                } else if(numero.length < 9){
+                    notification("warning", "Le champ numéro ne doit pas être inférieur à 9")
+                } else if(countries === null){
+                    notification("warning", "Veuillez choisir le Pays")
+                } else {
+                    let tel = $('#id-tel').val();
+                    let montant = $('#id-montant').val();
+                    let select = $('#countries').find('option:selected');
+                    var flag = $(select).val();
+                    var prefix = $(select).data('prefix')
+    
+                    validateTransfert(montant, tel, prefix, flag)
+                }
+    
+    
+                /* $.ajax({
+                    url: url,
+                    method: 'POST',
+                    data: {
+                        tel : tel,
+                        countries : countries,
+                        montant: montant
+                    },
+                    success: function (response) {
+                        if(response.status){
+                            $('.btn-valid-transfert')
+                                .html(`<i class="ti ti-check fs-5"></i> Valider`)
+                                .prop("disabled", false);
+    
+                            $(".iconLogo")
+                                .removeClass('transfert')
+                                .html(`<i class="ti ti-replace text-success fs-12"></i>
+                                       <i class="ti ti-currency-euro text-warning fs-12"></i>
+                                       <i class="ti ti-checks text-success fs-12"></i>`);
+    
+                            $(".operateurName").text(response.message);
+                        }else{
+                            $('.btn-valid-transfert')
+                                .html(`<i class="ti ti-check fs-5"></i> Valider`)
+                                .prop("disabled", false);
+    
+                            $(".iconLogo")
+                                .removeClass('transfert')
+                                .html(`<i class="ti ti-refresh-alert text-danger fs-12"></i>
+                                       <i class="ti ti-currency-euro text-warning fs-12"></i>
+                                       <i class="ti ti-x text-danger fs-12"></i>`);
+    
+                            $(".operateurName").text(response.message);
+                        }
+                    },
+                    error: function (error) {
+                        $('.btn-valid-transfert')
+                                .html(`<i class="ti ti-check fs-5"></i> Valider`)
+                                .prop("disabled", false);
+    
+                        $(".iconLogo")
+                            .removeClass('transfert')
+                            .html(`<i class="ti ti-refresh-alert text-dander fs-12"></i>
+                                   <i class="ti ti-currency-euro text-warning fs-12"></i>
+                                   <i class="ti ti-x text-danger fs-12"></i>`);
+    
+                        $(".operateurName").text(error);
+                    }
+                }) */
+            });
+    
+            function validateTransfert(amount, phone, prefix, flag){
+                $(".operateurName").text('En cours de traitement...');
+                $('.btn-valid-transfert')
+                    .html(`<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Chargement...`)
+                    .prop("disabled", true);
+                $(".iconLogo")
+                    .addClass('transfert')
+                    .html(`<i class="ti ti-arrow-big-right-lines text-success fs-12"></i>
+                            <i class="ti ti-currency-euro text-warning fs-12"></i>
+                            <i class="ti ti-arrow-big-left-lines text-primary fs-12"></i>`);
+                $.ajax({
+                    url: "/transfert-credit-api",
+                    method: 'POST',
+                    data: {
+                    phone : phone,
+                    amount : amount,
+                    prefix: prefix,
+                    flag: flag
+                    },
+                    success: function (response) {
+                        if(response.status){
+                            notification("success", "Transfert éfféctué avec succès")
+                            $('.btn-valid-transfert')
+                                .html(`<i class="ti ti-check fs-5"></i> Valider`)
+                                .prop("disabled", false);
+    
+                            $(".iconLogo")
+                                .removeClass('transfert')
+                                .html(`<i class="ti ti-replace text-success fs-12"></i>
+                                       <i class="ti ti-currency-euro text-warning fs-12"></i>
+                                       <i class="ti ti-checks text-success fs-12"></i>`);
+    
+                            $(".operateurName").text('Transfert éfféctué avec succès');
+                        } else {
+                            console.log(response);
+                            $('.btn-valid-transfert')
+                                .html(`<i class="ti ti-check fs-5"></i> Valider`)
+                                .prop("disabled", false);
+    
+                            $(".iconLogo")
+                                .removeClass('transfert')
+                                .html(`<i class="ti ti-refresh-alert text-danger fs-12"></i>
+                                       <i class="ti ti-currency-euro text-warning fs-12"></i>
+                                       <i class="ti ti-x text-danger fs-12"></i>`);
+    
+                            $(".operateurName").text("Une erreur s'est produite, veuillez réessayer plus tard.");
+                            notification("danger", "Une erreur s'est produite, veuillez réessayer plus tard.")
+                        }
+                    },
+                    error: function (error) {
+                        console.log(error);
+                        $('.btn-valid-transfert')
+                            .html(`<i class="ti ti-check fs-5"></i> Valider`)
+                            .prop("disabled", false);
+    
+                        $(".iconLogo")
+                            .removeClass('transfert')
+                            .html(`<i class="ti ti-refresh-alert text-danger fs-12"></i>
+                                    <i class="ti ti-currency-euro text-warning fs-12"></i>
+                                    <i class="ti ti-x text-danger fs-12"></i>`);
+    
+                        $(".operateurName").text("Une erreur s'est produite, veuillez réessayer plus tard.");
+                        notification("danger", "Une erreur s'est produite, veuillez réessayer plus tard.")
+                    }
+                })
+            }
+        });
+    </script>
+    {% endblock %}
+    
