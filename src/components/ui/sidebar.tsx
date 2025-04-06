@@ -166,7 +166,7 @@ const Sidebar = ({
 }: SidebarProps) => {
   const [collapsed, setCollapsed] = useState(defaultCollapsed);
 
-  // Function to handle cloning with proper type safety
+  // Fixed function to handle cloning with proper type safety
   const renderCollapsedItems = () => {
     return React.Children.map(children, (child) => {
       if (!React.isValidElement(child)) return null;
@@ -178,11 +178,15 @@ const Sidebar = ({
           
           // Handle SidebarItem within a group
           if (groupChild.type === SidebarItem) {
-            // Create a new props object without spreading
             const newProps = {
-              ...groupChild.props,
-              title: "",
-              children: null
+              icon: groupChild.props.icon,
+              variant: groupChild.props.variant,
+              active: groupChild.props.active,
+              disabled: groupChild.props.disabled,
+              href: groupChild.props.href,
+              external: groupChild.props.external,
+              onClick: groupChild.props.onClick,
+              title: "", // Override title to be empty
             };
             return React.cloneElement(groupChild, newProps);
           }
@@ -191,11 +195,15 @@ const Sidebar = ({
       } 
       // Handle direct SidebarItem
       else if (child.type === SidebarItem) {
-        // Create a new props object without spreading
         const newProps = {
-          ...child.props,
-          title: "",
-          children: null
+          icon: child.props.icon,
+          variant: child.props.variant,
+          active: child.props.active,
+          disabled: child.props.disabled,
+          href: child.props.href,
+          external: child.props.external,
+          onClick: child.props.onClick,
+          title: "", // Override title to be empty
         };
         return React.cloneElement(child, newProps);
       }
