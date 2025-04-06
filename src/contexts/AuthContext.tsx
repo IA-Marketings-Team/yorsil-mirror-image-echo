@@ -1,8 +1,7 @@
 
-import { createContext, useContext, useState, ReactNode } from "react";
-import { AuthContextType, AuthState, User } from "../types";
-import { api } from "../services/api";
-import { toast } from "react-toastify";
+import { createContext, useState, ReactNode, useEffect } from "react";
+import { AuthContextType, AuthState } from "../types/auth.types";
+import { authService } from "../services/auth.service";
 
 const initialState: AuthState = {
   user: null,
@@ -11,26 +10,26 @@ const initialState: AuthState = {
   error: null,
 };
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [authState, setAuthState] = useState<AuthState>(initialState);
 
   // Check if user is already logged in
-  useState(() => {
+  useEffect(() => {
     const checkAuth = async () => {
       if (authState.token) {
         try {
           setAuthState((prev) => ({ ...prev, loading: true }));
-          const response = await api.get("/user/profile");
+          const user = await authService.getProfile();
           setAuthState({
-            user: response.data.user,
+            user,
             token: authState.token,
             loading: false,
             error: null,
           });
         } catch (error) {
-          localStorage.removeItem("token");
+          authService.logout();
           setAuthState({
             user: null,
             token: null,
@@ -41,15 +40,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     };
     checkAuth();
-  });
+  }, [authState.token]);
 
   const login = async (email: string, password: string) => {
     try {
       setAuthState((prev) => ({ ...prev, loading: true }));
-      const response = await api.post("/login", { email, password });
-      const { token, user } = response.data;
-      
-      localStorage.setItem("token", token);
+      const { token, user } = await authService.login({ email, password });
       
       setAuthState({
         user,
@@ -62,14 +58,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         user: null,
         token: null,
         loading: false,
-        error: error.response?.data?.message || "Login failed",
+        error: error.message || "Login failed",
       });
-      toast.error(error.response?.data?.message || "Login failed");
     }
   };
 
   const logout = () => {
-    localStorage.removeItem("token");
+    authService.logout();
     setAuthState({
       user: null,
       token: null,
@@ -81,48 +76,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const register = async (userData: any) => {
     try {
       setAuthState((prev) => ({ ...prev, loading: true }));
-      await api.post("/register", userData);
+      await authService.register(userData);
       setAuthState((prev) => ({ ...prev, loading: false }));
-      toast.success("Registration successful! You can now login.");
     } catch (error: any) {
       setAuthState((prev) => ({
         ...prev,
         loading: false,
-        error: error.response?.data?.message || "Registration failed",
+        error: error.message || "Registration failed",
       }));
-      toast.error(error.response?.data?.message || "Registration failed");
     }
   };
 
   const forgotPassword = async (email: string) => {
     try {
       setAuthState((prev) => ({ ...prev, loading: true }));
-      await api.post("/forgot-password", { email });
+      await authService.forgotPassword(email);
       setAuthState((prev) => ({ ...prev, loading: false }));
-      toast.success("Password recovery email sent!");
     } catch (error: any) {
       setAuthState((prev) => ({
         ...prev,
         loading: false,
-        error: error.response?.data?.message || "Failed to send recovery email",
+        error: error.message || "Failed to send recovery email",
       }));
-      toast.error(error.response?.data?.message || "Failed to send recovery email");
     }
   };
 
   const resetPassword = async (token: string, password: string) => {
     try {
       setAuthState((prev) => ({ ...prev, loading: true }));
-      await api.post(`/reset-password/${token}`, { password });
+      await authService.resetPassword(token, password);
       setAuthState((prev) => ({ ...prev, loading: false }));
-      toast.success("Password reset successful! You can now login.");
     } catch (error: any) {
       setAuthState((prev) => ({
         ...prev,
         loading: false,
-        error: error.response?.data?.message || "Password reset failed",
+        error: error.message || "Password reset failed",
       }));
-      toast.error(error.response?.data?.message || "Password reset failed");
     }
   };
 
@@ -140,12 +129,4 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       {children}
     </AuthContext.Provider>
   );
-}
-
-export function useAuth() {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
 }

@@ -1,11 +1,12 @@
 
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Store, PencilLine, Trash2, Ban, Check, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { api } from "@/services/api";
-import { Button } from "@/components/ui/button";
-import TableDisplay from "@/components/common/TableDisplay";
-import { formatCurrency } from "@/lib/utils";
+import PageHeader from "@/components/common/PageHeader";
+import LoadingState from "@/components/common/LoadingState";
+import ErrorState from "@/components/common/ErrorState";
+import BoutiquesTable from "@/components/admin/boutiques/BoutiquesTable";
 
 const AdminBoutiques = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -28,105 +29,31 @@ const AdminBoutiques = () => {
     ]
   });
 
-  const columns = [
-    {
-      key: "id",
-      header: "ID",
-      width: "8%",
-    },
-    {
-      key: "nom",
-      header: "Nom",
-      width: "18%",
-    },
-    {
-      key: "adresse",
-      header: "Adresse",
-      width: "18%",
-    },
-    {
-      key: "telephone",
-      header: "Téléphone",
-      width: "12%",
-    },
-    {
-      key: "email",
-      header: "Email",
-      width: "15%",
-    },
-    {
-      key: "solde",
-      header: "Solde",
-      width: "12%",
-      render: (value: number) => (
-        <span className="font-semibold">{formatCurrency(value)}</span>
-      ),
-    },
-    {
-      key: "active",
-      header: "Statut",
-      width: "10%",
-      render: (value: boolean) => (
-        <span 
-          className={`px-2 py-1 rounded-full text-xs font-medium ${
-            value ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
-          }`}
-        >
-          {value ? "Active" : "Inactive"}
-        </span>
-      ),
-    },
-    {
-      key: "actions",
-      header: "Actions",
-      width: "12%",
-      render: (_: any, row: any) => (
-        <div className="flex space-x-2">
-          <Button variant="ghost" size="sm" className="h-8 w-8">
-            <PencilLine className="h-4 w-4" />
-          </Button>
-          {row.active ? (
-            <Button variant="ghost" size="sm" className="h-8 w-8">
-              <Ban className="h-4 w-4 text-red-500" />
-            </Button>
-          ) : (
-            <Button variant="ghost" size="sm" className="h-8 w-8">
-              <Check className="h-4 w-4 text-green-500" />
-            </Button>
-          )}
-        </div>
-      ),
-    },
-  ];
-
-  const filteredBoutiques = boutiques?.filter((boutique: any) => 
-    boutique.nom.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    boutique.adresse.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    boutique.email.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const handleAddBoutique = () => {
+    // Add boutique logic here
+    console.log("Add boutique clicked");
+  };
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Gestion des Boutiques</h1>
-        <Button className="flex items-center gap-2">
-          <Plus size={18} />
-          Ajouter une boutique
-        </Button>
-      </div>
+    <div className="space-y-6 p-6">
+      <PageHeader 
+        title="Gestion des Boutiques"
+        action={{
+          label: "Ajouter une boutique",
+          icon: <Plus size={18} />,
+          onClick: handleAddBoutique,
+        }}
+      />
 
       {isLoading ? (
-        <div className="text-center py-8">Chargement des boutiques...</div>
+        <LoadingState message="Chargement des boutiques..." />
       ) : error ? (
-        <div className="text-center py-8 text-red-500">{error.toString()}</div>
+        <ErrorState error={error as Error} message="Erreur de chargement des boutiques" />
       ) : (
-        <TableDisplay
-          data={filteredBoutiques}
-          columns={columns}
-          emptyMessage="Aucune boutique trouvée"
+        <BoutiquesTable 
+          boutiques={boutiques} 
           searchTerm={searchTerm}
           onSearchChange={setSearchTerm}
-          searchPlaceholder="Rechercher une boutique..."
         />
       )}
     </div>

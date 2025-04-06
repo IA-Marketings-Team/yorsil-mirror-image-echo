@@ -1,9 +1,10 @@
 
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import FormField from "@/components/auth/FormField";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -59,23 +60,18 @@ const ForgotPassword = () => {
             </p>
           </div>
 
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-              Adresse email
-            </label>
-            <div className="mt-1">
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="votre@email.com"
-              />
-            </div>
-          </div>
+          <FormField id="email" label="Adresse email" required>
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              autoComplete="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="votre@email.com"
+            />
+          </FormField>
 
           <div>
             <Button

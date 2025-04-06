@@ -1,10 +1,11 @@
 
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Eye, EyeOff } from "lucide-react";
+import FormField from "@/components/auth/FormField";
+import PasswordInput from "@/components/auth/PasswordInput";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -15,8 +16,8 @@ const Register = () => {
     confirmPassword: "",
     telephone: ""
   });
-  const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [agreeTerms, setAgreeTerms] = useState(false);
   
   const { register, authState } = useAuth();
   const { loading } = authState;
@@ -53,6 +54,10 @@ const Register = () => {
       newErrors.confirmPassword = "Les mots de passe ne correspondent pas";
     }
     
+    if (!agreeTerms) {
+      newErrors.agreeTerms = "Vous devez accepter les conditions d'utilisation";
+    }
+    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -76,10 +81,7 @@ const Register = () => {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <div>
-          <label htmlFor="nom" className="block text-sm font-medium text-gray-700">
-            Nom <span className="text-red-500">*</span>
-          </label>
+        <FormField id="nom" label="Nom" required error={errors.nom}>
           <Input
             id="nom"
             name="nom"
@@ -87,15 +89,10 @@ const Register = () => {
             required
             value={formData.nom}
             onChange={handleChange}
-            className={errors.nom ? "border-red-500" : ""}
           />
-          {errors.nom && <p className="mt-1 text-xs text-red-500">{errors.nom}</p>}
-        </div>
+        </FormField>
 
-        <div>
-          <label htmlFor="prenom" className="block text-sm font-medium text-gray-700">
-            Prénom
-          </label>
+        <FormField id="prenom" label="Prénom">
           <Input
             id="prenom"
             name="prenom"
@@ -103,13 +100,10 @@ const Register = () => {
             value={formData.prenom}
             onChange={handleChange}
           />
-        </div>
+        </FormField>
       </div>
 
-      <div>
-        <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-          Email <span className="text-red-500">*</span>
-        </label>
+      <FormField id="email" label="Email" required error={errors.email}>
         <Input
           id="email"
           name="email"
@@ -118,15 +112,10 @@ const Register = () => {
           required
           value={formData.email}
           onChange={handleChange}
-          className={errors.email ? "border-red-500" : ""}
         />
-        {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email}</p>}
-      </div>
+      </FormField>
 
-      <div>
-        <label htmlFor="telephone" className="block text-sm font-medium text-gray-700">
-          Téléphone
-        </label>
+      <FormField id="telephone" label="Téléphone">
         <Input
           id="telephone"
           name="telephone"
@@ -134,74 +123,44 @@ const Register = () => {
           value={formData.telephone}
           onChange={handleChange}
         />
-      </div>
+      </FormField>
 
-      <div>
-        <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-          Mot de passe <span className="text-red-500">*</span>
-        </label>
-        <div className="relative">
-          <Input
-            id="password"
-            name="password"
-            type={showPassword ? "text" : "password"}
-            autoComplete="new-password"
-            required
-            value={formData.password}
-            onChange={handleChange}
-            className={errors.password ? "border-red-500" : ""}
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 transform -translate-y-1/2"
-          >
-            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-          </button>
-        </div>
-        {errors.password && <p className="mt-1 text-xs text-red-500">{errors.password}</p>}
-      </div>
+      <FormField id="password" label="Mot de passe" required error={errors.password}>
+        <PasswordInput
+          id="password"
+          name="password"
+          autoComplete="new-password"
+          required
+          value={formData.password}
+          onChange={handleChange}
+        />
+      </FormField>
 
-      <div>
-        <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-          Confirmer le mot de passe <span className="text-red-500">*</span>
-        </label>
-        <div className="relative">
-          <Input
-            id="confirmPassword"
-            name="confirmPassword"
-            type={showPassword ? "text" : "password"}
-            autoComplete="new-password"
-            required
-            value={formData.confirmPassword}
-            onChange={handleChange}
-            className={errors.confirmPassword ? "border-red-500" : ""}
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 transform -translate-y-1/2"
-          >
-            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-          </button>
-        </div>
-        {errors.confirmPassword && (
-          <p className="mt-1 text-xs text-red-500">{errors.confirmPassword}</p>
-        )}
-      </div>
+      <FormField id="confirmPassword" label="Confirmer le mot de passe" required error={errors.confirmPassword}>
+        <PasswordInput
+          id="confirmPassword"
+          name="confirmPassword"
+          autoComplete="new-password"
+          required
+          value={formData.confirmPassword}
+          onChange={handleChange}
+        />
+      </FormField>
 
       <div className="flex items-center">
         <input
           id="agree-terms"
           name="agree-terms"
           type="checkbox"
-          required
+          checked={agreeTerms}
+          onChange={(e) => setAgreeTerms(e.target.checked)}
           className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
         />
         <label htmlFor="agree-terms" className="ml-2 block text-sm text-gray-900">
           J'accepte les <a href="#" className="text-blue-600 hover:underline">conditions générales d'utilisation</a>
         </label>
       </div>
+      {errors.agreeTerms && <p className="text-xs text-red-500">{errors.agreeTerms}</p>}
 
       <div>
         <Button

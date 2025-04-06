@@ -1,15 +1,17 @@
 
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
+import FormField from "@/components/auth/FormField";
+import PasswordInput from "@/components/auth/PasswordInput";
 import { Input } from "@/components/ui/input";
-import { Eye, EyeOff } from "lucide-react";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+  
   const navigate = useNavigate();
   const { login, authState } = useAuth();
   const { loading, error, user } = authState;
@@ -30,49 +32,30 @@ const Login = () => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <div>
-        <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-          Adresse e-mail
-        </label>
-        <div className="mt-1">
-          <Input
-            id="email"
-            name="email"
-            type="email"
-            autoComplete="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="votre@email.com"
-          />
-        </div>
-      </div>
+      <FormField id="email" label="Adresse e-mail" required>
+        <Input
+          id="email"
+          name="email"
+          type="email"
+          autoComplete="email"
+          required
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="votre@email.com"
+        />
+      </FormField>
 
-      <div>
-        <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-          Mot de passe
-        </label>
-        <div className="mt-1 relative">
-          <Input
-            id="password"
-            name="password"
-            type={showPassword ? "text" : "password"}
-            autoComplete="current-password"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="pr-10"
-            placeholder="Votre mot de passe"
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 transform -translate-y-1/2"
-          >
-            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-          </button>
-        </div>
-      </div>
+      <FormField id="password" label="Mot de passe" required>
+        <PasswordInput
+          id="password"
+          name="password"
+          autoComplete="current-password"
+          required
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Votre mot de passe"
+        />
+      </FormField>
 
       <div className="flex items-center justify-between">
         <div className="flex items-center">
@@ -81,6 +64,8 @@ const Login = () => {
             name="remember-me"
             type="checkbox"
             className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+            checked={rememberMe}
+            onChange={(e) => setRememberMe(e.target.checked)}
           />
           <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
             Se souvenir de moi
