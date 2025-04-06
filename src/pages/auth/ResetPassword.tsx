@@ -1,9 +1,11 @@
+
 import { useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import FormField from "@/components/auth/FormField";
 import PasswordInput from "@/components/auth/PasswordInput";
+import { appConfig } from "@/services/mockData";
 
 const ResetPassword = () => {
   const [password, setPassword] = useState("");
@@ -18,8 +20,8 @@ const ResetPassword = () => {
   const { loading } = authState;
 
   const validateForm = () => {
-    if (password.length < 6) {
-      setError("Le mot de passe doit contenir au moins 6 caractères");
+    if (password.length < appConfig.auth.passwordMinLength) {
+      setError(`Le mot de passe doit contenir au moins ${appConfig.auth.passwordMinLength} caractères`);
       return false;
     }
     
@@ -44,12 +46,12 @@ const ResetPassword = () => {
         // Redirect to login after a short delay
         setTimeout(() => {
           navigate("/login");
-        }, 3000);
+        }, appConfig.auth.resetPasswordRedirectTime);
       } catch (err) {
-        setError("Échec de la réinitialisation du mot de passe. Le token peut être invalide ou expiré.");
+        setError(appConfig.auth.passwordResetInvalidMessage);
       }
     } else {
-      setError("Token manquant. Veuillez réessayer le processus de récupération de mot de passe.");
+      setError(appConfig.auth.passwordResetMissingToken);
     }
   };
 
@@ -73,7 +75,7 @@ const ResetPassword = () => {
               ></path>
             </svg>
           </div>
-          <h3 className="mt-2 text-sm font-medium text-gray-900">Mot de passe réinitialisé avec succès!</h3>
+          <h3 className="mt-2 text-sm font-medium text-gray-900">{appConfig.auth.resetPasswordSuccessMessage}</h3>
           <p className="mt-1 text-sm text-gray-500">
             Vous allez être redirigé vers la page de connexion dans quelques instants.
           </p>
@@ -110,7 +112,7 @@ const ResetPassword = () => {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Minimum 6 caractères"
+              placeholder={`Minimum ${appConfig.auth.passwordMinLength} caractères`}
             />
           </FormField>
 

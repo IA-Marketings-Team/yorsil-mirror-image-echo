@@ -1,8 +1,9 @@
 
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { User, UserPlus } from "lucide-react";
+import { UserPlus } from "lucide-react";
 import { api } from "@/services/api";
+import { mockUsers, appConfig } from "@/services/mockData";
 import PageHeader from "@/components/common/PageHeader";
 import LoadingState from "@/components/common/LoadingState";
 import ErrorState from "@/components/common/ErrorState";
@@ -19,13 +20,7 @@ const AdminUsers = () => {
       const response = await api.get('/admin/users');
       return response.data;
     },
-    initialData: [
-      { id: 1, nom: "Dupont", prenom: "Jean", email: "jean.dupont@example.com", telephone: "+33612345678", roles: ["ROLE_ADMIN"], isActive: true },
-      { id: 2, nom: "Martin", prenom: "Lucie", email: "lucie.martin@example.com", telephone: "+33612345679", roles: ["ROLE_ADMIN"], isActive: true },
-      { id: 3, nom: "Bernard", prenom: "Pierre", email: "pierre.bernard@example.com", telephone: "+33612345680", roles: ["ROLE_BOUT"], isActive: true },
-      { id: 4, nom: "Thomas", prenom: "Marie", email: "marie.thomas@example.com", telephone: "+33612345681", roles: ["ROLE_BOUT"], isActive: false },
-      { id: 5, nom: "Petit", prenom: "Sophie", email: "sophie.petit@example.com", telephone: "+33612345682", roles: ["ROLE_USER"], isActive: true }
-    ]
+    initialData: mockUsers
   });
 
   const handleAddUser = () => {
@@ -45,9 +40,9 @@ const AdminUsers = () => {
       />
 
       {isLoading ? (
-        <LoadingState message="Chargement des utilisateurs..." />
+        <LoadingState message={appConfig.loadingMessages.users} />
       ) : error ? (
-        <ErrorState error={error as Error} message="Erreur de chargement des utilisateurs" />
+        <ErrorState error={error as Error} message={appConfig.errorMessages.users} />
       ) : (
         <UsersTable 
           users={users} 

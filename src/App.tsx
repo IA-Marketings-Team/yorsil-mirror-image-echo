@@ -4,6 +4,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+// Routes constantes
+import { ROUTES } from "./constants/routes";
+
 // Auth
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
@@ -37,7 +40,18 @@ import OfficeLayout from "./components/layout/OfficeLayout";
 // Auth provider
 import { AuthProvider } from "./contexts/AuthContext";
 
-const queryClient = new QueryClient();
+// Configuration QueryClient
+const queryClientConfig = {
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: 1,
+      staleTime: 5 * 60 * 1000, // 5 minutes
+    },
+  },
+};
+
+const queryClient = new QueryClient(queryClientConfig);
 
 function App() {
   return (
@@ -47,14 +61,14 @@ function App() {
           <Routes>
             {/* Auth Routes */}
             <Route element={<AuthLayout />}>
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/forgot-password" element={<ForgotPassword />} />
-              <Route path="/reset-password/:token" element={<ResetPassword />} />
+              <Route path={ROUTES.AUTH.LOGIN} element={<Login />} />
+              <Route path={ROUTES.AUTH.REGISTER} element={<Register />} />
+              <Route path={ROUTES.AUTH.FORGOT_PASSWORD} element={<ForgotPassword />} />
+              <Route path={ROUTES.AUTH.RESET_PASSWORD} element={<ResetPassword />} />
             </Route>
             
             {/* Admin Routes */}
-            <Route path="/admin" element={
+            <Route path={ROUTES.ADMIN.ROOT} element={
               <PrivateRoute requiredRole="ROLE_ADMIN">
                 <AdminLayout />
               </PrivateRoute>
@@ -70,7 +84,7 @@ function App() {
             </Route>
             
             {/* Office (Boutique) Routes */}
-            <Route path="/office" element={
+            <Route path={ROUTES.OFFICE.ROOT} element={
               <PrivateRoute requiredRole="ROLE_BOUT">
                 <OfficeLayout />
               </PrivateRoute>
@@ -84,7 +98,7 @@ function App() {
             </Route>
             
             {/* Default Route */}
-            <Route path="/" element={<Navigate to="/login" replace />} />
+            <Route path={ROUTES.ROOT} element={<Navigate to={ROUTES.AUTH.LOGIN} replace />} />
           </Routes>
         </Router>
         <ToastContainer position="top-right" autoClose={5000} />
