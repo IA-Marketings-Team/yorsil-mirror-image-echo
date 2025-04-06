@@ -1,266 +1,249 @@
 
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { Calendar, MapPin, Users, Phone as PhoneIcon, Clock, CreditCard } from "lucide-react";
 import { api } from "@/services/api";
-import { Search, Calendar, MapPin, User, Ticket } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { formatCurrency, formatDate } from "@/lib/utils";
-import { toast } from "react-toastify";
+import { formatCurrency } from "@/lib/utils";
 
 const OfficeBilleteries = () => {
-  const [destination, setDestination] = useState("");
-  const [dateDepart, setDateDepart] = useState("");
-  const [isSearching, setIsSearching] = useState(false);
-  const [searchResults, setSearchResults] = useState<any[]>([]);
-  const [selectedTrip, setSelectedTrip] = useState<any>(null);
-  const [passengerName, setPassengerName] = useState("");
-  const [passengerPhone, setPassengerPhone] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [searchParams, setSearchParams] = useState({
+    departure: "",
+    destination: "",
+    date: "",
+    passengers: 1
+  });
 
-  // Mock search results for demonstration
-  const mockSearchResults = [
+  // Mock data for trips
+  const journeys = [
     {
       id: 1,
-      depart: "Paris",
-      arrivee: "Lyon",
-      date: "2024-04-15T10:00:00",
-      prix: 45.50,
-      places: 12,
-      compagnie: "FastTravel",
+      company: "FlixBus",
+      departure: "Paris",
+      destination: "Marseille",
+      departureTime: "08:00",
+      arrivalTime: "14:30",
+      date: "2024-04-15",
+      duration: "6h30",
+      price: 35.99,
+      seats: 12,
+      logo: "/lovable-uploads/ae8aec2f-ef82-4168-932c-49424a936919.png"
     },
     {
       id: 2,
-      depart: "Paris",
-      arrivee: "Lyon",
-      date: "2024-04-15T14:30:00",
-      prix: 39.99,
-      places: 5,
-      compagnie: "EasyBus",
+      company: "BlaBlaCar Bus",
+      departure: "Paris",
+      destination: "Marseille",
+      departureTime: "09:15",
+      arrivalTime: "15:00",
+      date: "2024-04-15",
+      duration: "5h45",
+      price: 39.99,
+      seats: 8,
+      logo: "/lovable-uploads/ae8aec2f-ef82-4168-932c-49424a936919.png"
     },
     {
       id: 3,
-      depart: "Paris",
-      arrivee: "Lyon",
-      date: "2024-04-15T18:00:00",
-      prix: 52.00,
-      places: 20,
-      compagnie: "Premiere Classe",
+      company: "FlixBus",
+      departure: "Paris",
+      destination: "Marseille",
+      departureTime: "12:30",
+      arrivalTime: "18:45",
+      date: "2024-04-15",
+      duration: "6h15",
+      price: 32.50,
+      seats: 20,
+      logo: "/lovable-uploads/ae8aec2f-ef82-4168-932c-49424a936919.png"
+    },
+    {
+      id: 4,
+      company: "BlaBlaCar Bus",
+      departure: "Paris",
+      destination: "Marseille",
+      departureTime: "16:00",
+      arrivalTime: "22:15",
+      date: "2024-04-15",
+      duration: "6h15",
+      price: 29.99,
+      seats: 15,
+      logo: "/lovable-uploads/ae8aec2f-ef82-4168-932c-49424a936919.png"
     }
   ];
 
-  const handleSearch = () => {
-    if (!destination) {
-      toast.error("Veuillez saisir une destination");
-      return;
-    }
+  // Common French cities
+  const popularCities = [
+    "Paris", "Marseille", "Lyon", "Toulouse", "Nice", 
+    "Nantes", "Strasbourg", "Montpellier", "Bordeaux", "Lille"
+  ];
 
-    setIsSearching(true);
-
-    // In a real app, this would call the API
-    // api.get(`/billeteries/search?destination=${destination}&date=${dateDepart}`)
-    //   .then(response => {
-    //     setSearchResults(response.data);
-    //     setIsSearching(false);
-    //   })
-    //   .catch(error => {
-    //     toast.error("Erreur lors de la recherche");
-    //     setIsSearching(false);
-    //   });
-
-    // Simulate API call
-    setTimeout(() => {
-      setSearchResults(mockSearchResults);
-      setIsSearching(false);
-    }, 1000);
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log("Searching for journeys with params:", searchParams);
+    // Would trigger API call in a real app
   };
 
-  const handleSelectTrip = (trip: any) => {
-    setSelectedTrip(trip);
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setSearchParams(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleBookTicket = () => {
-    if (!passengerName || !passengerPhone) {
-      toast.error("Veuillez remplir tous les champs passager");
-      return;
-    }
-
-    setIsLoading(true);
-
-    // In a real app, this would call the API
-    // api.post('/billeteries/book', {
-    //   tripId: selectedTrip.id,
-    //   passengerName,
-    //   passengerPhone
-    // })
-    //   .then(response => {
-    //     toast.success("Billet réservé avec succès");
-    //     setSelectedTrip(null);
-    //     setPassengerName("");
-    //     setPassengerPhone("");
-    //     setIsLoading(false);
-    //   })
-    //   .catch(error => {
-    //     toast.error("Erreur lors de la réservation");
-    //     setIsLoading(false);
-    //   });
-
-    // Simulate API call
-    setTimeout(() => {
-      toast.success("Billet réservé avec succès");
-      setSelectedTrip(null);
-      setPassengerName("");
-      setPassengerPhone("");
-      setIsLoading(false);
-    }, 1500);
+  const handleBooking = (journey: any) => {
+    console.log("Booking journey:", journey);
+    // Would navigate to booking page in a real app
   };
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div>
         <h1 className="text-2xl font-bold">Billeteries</h1>
+        <p className="text-gray-500 mt-1">Recherchez et réservez des billets de bus pour vos clients</p>
       </div>
 
-      <div className="bg-white rounded-lg shadow p-6">
-        <div className="space-y-4">
-          <h2 className="text-lg font-semibold">Rechercher un trajet</h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <MapPin size={18} className="text-gray-400" />
-              </div>
+      <div className="bg-white rounded-lg shadow-sm p-6">
+        <form onSubmit={handleSearch} className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div>
+              <label htmlFor="departure" className="block text-sm font-medium text-gray-700 mb-1">
+                Départ
+              </label>
               <Input
-                type="text"
-                value={destination}
-                onChange={(e) => setDestination(e.target.value)}
-                className="pl-10"
-                placeholder="Destination (ex: Lyon)"
+                id="departure"
+                name="departure"
+                value={searchParams.departure}
+                onChange={handleInputChange}
+                placeholder="Ville de départ"
+                list="departureCities"
+                required
               />
+              <datalist id="departureCities">
+                {popularCities.map(city => (
+                  <option key={`departure-${city}`} value={city} />
+                ))}
+              </datalist>
             </div>
             
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Calendar size={18} className="text-gray-400" />
-              </div>
+            <div>
+              <label htmlFor="destination" className="block text-sm font-medium text-gray-700 mb-1">
+                Destination
+              </label>
               <Input
+                id="destination"
+                name="destination"
+                value={searchParams.destination}
+                onChange={handleInputChange}
+                placeholder="Ville d'arrivée"
+                list="destinationCities"
+                required
+              />
+              <datalist id="destinationCities">
+                {popularCities.map(city => (
+                  <option key={`destination-${city}`} value={city} />
+                ))}
+              </datalist>
+            </div>
+            
+            <div>
+              <label htmlFor="date" className="block text-sm font-medium text-gray-700 mb-1">
+                Date
+              </label>
+              <Input
+                id="date"
+                name="date"
                 type="date"
-                value={dateDepart}
-                onChange={(e) => setDateDepart(e.target.value)}
-                className="pl-10"
+                value={searchParams.date}
+                onChange={handleInputChange}
+                min={new Date().toISOString().split('T')[0]}
+                required
               />
             </div>
             
-            <Button 
-              onClick={handleSearch}
-              disabled={isSearching}
-              className="flex items-center gap-2"
-            >
-              <Search size={18} />
-              {isSearching ? "Recherche..." : "Rechercher"}
+            <div>
+              <label htmlFor="passengers" className="block text-sm font-medium text-gray-700 mb-1">
+                Passagers
+              </label>
+              <select
+                id="passengers"
+                name="passengers"
+                value={searchParams.passengers}
+                onChange={handleInputChange}
+                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              >
+                {[1, 2, 3, 4, 5, 6, 7, 8].map(num => (
+                  <option key={num} value={num}>{num} {num === 1 ? 'passager' : 'passagers'}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+          
+          <div className="flex justify-end">
+            <Button type="submit" className="px-6">
+              Rechercher
             </Button>
           </div>
-        </div>
+        </form>
       </div>
 
-      {searchResults.length > 0 && (
-        <div className="bg-white rounded-lg shadow overflow-hidden">
-          <div className="p-4 border-b">
-            <h2 className="text-lg font-semibold">Résultats de la recherche</h2>
-            <p className="text-sm text-gray-500">{searchResults.length} trajets trouvés</p>
-          </div>
-          
-          <div className="divide-y">
-            {searchResults.map((trip) => (
-              <div
-                key={trip.id}
-                className={`p-4 hover:bg-gray-50 cursor-pointer ${
-                  selectedTrip?.id === trip.id ? "bg-blue-50" : ""
-                }`}
-                onClick={() => handleSelectTrip(trip)}
-              >
-                <div className="flex flex-col md:flex-row md:items-center justify-between">
-                  <div>
-                    <h3 className="font-medium">{trip.depart} → {trip.arrivee}</h3>
-                    <p className="text-sm text-gray-500">{formatDate(trip.date)}</p>
-                    <p className="text-sm text-gray-500">{trip.compagnie}</p>
+      {/* For demo purposes, we'll show results regardless of search */}
+      <div className="space-y-4">
+        <h2 className="text-lg font-semibold">Résultats de recherche</h2>
+        
+        {journeys.length > 0 ? (
+          <div className="space-y-4">
+            {journeys.map(journey => (
+              <div key={journey.id} className="bg-white rounded-lg shadow-sm p-4 border border-gray-100">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="flex items-center space-x-4">
+                    <div className="flex-shrink-0">
+                      <img src={journey.logo} alt={journey.company} className="h-12 w-12 object-contain" />
+                    </div>
+                    <div>
+                      <h3 className="font-medium">{journey.company}</h3>
+                      <div className="text-sm text-gray-500">
+                        <Clock className="inline-block h-4 w-4 mr-1" />
+                        {journey.duration}
+                      </div>
+                    </div>
                   </div>
                   
-                  <div className="mt-2 md:mt-0 md:text-right">
-                    <p className="text-xl font-semibold">{formatCurrency(trip.prix)}</p>
-                    <p className="text-sm text-gray-500">{trip.places} places disponibles</p>
+                  <div className="flex flex-col">
+                    <div className="flex items-center mb-2">
+                      <MapPin className="h-4 w-4 text-gray-500 mr-1" />
+                      <span className="text-sm">{journey.departure}</span>
+                      <span className="mx-2 text-gray-500">•</span>
+                      <span className="font-medium">{journey.departureTime}</span>
+                    </div>
+                    <div className="flex items-center">
+                      <MapPin className="h-4 w-4 text-gray-500 mr-1" />
+                      <span className="text-sm">{journey.destination}</span>
+                      <span className="mx-2 text-gray-500">•</span>
+                      <span className="font-medium">{journey.arrivalTime}</span>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center justify-between md:justify-end">
+                    <div className="flex flex-col mr-4">
+                      <span className="text-lg font-bold">{formatCurrency(journey.price)}</span>
+                      <span className="text-xs text-gray-500">
+                        <Users className="inline-block h-3 w-3 mr-1" />
+                        {journey.seats} places disponibles
+                      </span>
+                    </div>
+                    <Button onClick={() => handleBooking(journey)}>
+                      Réserver
+                    </Button>
                   </div>
                 </div>
               </div>
             ))}
           </div>
-        </div>
-      )}
-
-      {selectedTrip && (
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-lg font-semibold mb-4">Réserver un billet</h2>
-          
-          <div className="mb-6 p-4 bg-blue-50 rounded-md border border-blue-200">
-            <div className="flex justify-between">
-              <div>
-                <h3 className="font-medium">{selectedTrip.depart} → {selectedTrip.arrivee}</h3>
-                <p className="text-sm text-gray-500">{formatDate(selectedTrip.date)}</p>
-              </div>
-              
-              <div className="text-right">
-                <p className="text-xl font-semibold">{formatCurrency(selectedTrip.prix)}</p>
-              </div>
-            </div>
+        ) : (
+          <div className="text-center py-8 bg-white rounded-lg shadow-sm">
+            <p>Aucun trajet trouvé. Veuillez modifier vos critères de recherche.</p>
           </div>
-          
-          <div className="space-y-4">
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <User size={18} className="text-gray-400" />
-              </div>
-              <Input
-                type="text"
-                value={passengerName}
-                onChange={(e) => setPassengerName(e.target.value)}
-                className="pl-10"
-                placeholder="Nom du passager"
-              />
-            </div>
-            
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Phone size={18} className="text-gray-400" />
-              </div>
-              <Input
-                type="tel"
-                value={passengerPhone}
-                onChange={(e) => setPassengerPhone(e.target.value)}
-                className="pl-10"
-                placeholder="Téléphone du passager"
-              />
-            </div>
-            
-            <div className="pt-4 flex justify-between">
-              <Button
-                variant="outline"
-                onClick={() => setSelectedTrip(null)}
-              >
-                Annuler
-              </Button>
-              
-              <Button
-                onClick={handleBookTicket}
-                disabled={isLoading}
-                className="flex items-center gap-2"
-              >
-                <Ticket size={18} />
-                {isLoading ? "Réservation en cours..." : "Réserver le billet"}
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };
