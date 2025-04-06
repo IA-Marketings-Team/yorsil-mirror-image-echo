@@ -1,6 +1,6 @@
 
 export interface User {
-  id: string; // Changed from number to string to match Supabase UUID
+  id: number;
   email: string;
   nom: string;
   prenom?: string;
@@ -10,18 +10,16 @@ export interface User {
 }
 
 export interface Boutique {
-  id: string; // Changed from number to string to match Supabase UUID
+  id: number;
   nom: string;
   adresse?: string;
   telephone?: string;
   user: User;
   isActive: boolean;
-  solde?: number; // Added as optional since it might not be in Supabase
-  active?: boolean; // Added as optional to match existing code
 }
 
 export interface Pays {
-  id: string; // Changed from number to string to match Supabase UUID
+  id: number;
   nom: string;
   code: string;
   isApi: boolean;
@@ -29,7 +27,7 @@ export interface Pays {
 }
 
 export interface Operateur {
-  id: string; // Changed from number to string to match Supabase UUID
+  id: number;
   nom: string;
   type: string;
   logo?: string;
@@ -40,7 +38,7 @@ export interface Operateur {
 }
 
 export interface Produit {
-  id: string; // Changed from number to string to match Supabase UUID
+  id: number;
   nom: string;
   prixAchat: number;
   prixVente: number;
@@ -55,7 +53,7 @@ export interface Produit {
 }
 
 export interface Recharge {
-  id: string; // Changed from number to string to match Supabase UUID
+  id: number;
   articles: any[];
   saleRef: string;
   internalRef: string;
@@ -72,7 +70,7 @@ export interface Recharge {
 }
 
 export interface RechargeFlexi {
-  id: string; // Changed from number to string to match Supabase UUID
+  id: number;
   numero: string;
   nomoffre: string;
   montant: number;
@@ -85,7 +83,7 @@ export interface RechargeFlexi {
 }
 
 export interface Notification {
-  id: string; // Changed from number to string to match Supabase UUID
+  id: number;
   message: string;
   status: string;
   createdAt: string;

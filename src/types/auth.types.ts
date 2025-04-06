@@ -1,6 +1,6 @@
 
 export interface User {
-  id: string; // Changed from number to string to match Supabase UUID
+  id: number;
   email: string;
   nom: string;
   prenom?: string;
@@ -10,11 +10,6 @@ export interface User {
 }
 
 export type Role = "ROLE_ADMIN" | "ROLE_BOUT" | "ROLE_USER" | "ROLE_PERC";
-
-export interface AuthResponse {
-  token: string;
-  user: User;
-}
 
 export interface AuthState {
   user: User | null;
