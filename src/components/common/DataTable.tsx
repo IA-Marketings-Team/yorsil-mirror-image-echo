@@ -40,17 +40,20 @@ const DataTable: React.FC<DataTableProps> = ({
   ]
 }) => {
   return (
-    <div className="w-full overflow-auto">
+    <div className="w-full overflow-auto border rounded-md">
       <Table>
         <TableHeader>
-          <TableRow>
+          <TableRow className="bg-gray-50">
             {columns.map((column, index) => (
-              <TableHead key={index} className={column.sortable ? "cursor-pointer" : ""}>
+              <TableHead 
+                key={index} 
+                className={`${column.sortable ? "cursor-pointer" : ""} text-gray-700 font-semibold py-3 px-4`}
+              >
                 {column.header}
-                {column.sortable && <span className="ml-2">▼</span>}
+                {column.sortable && <span className="ml-2 text-xs">▼</span>}
               </TableHead>
             ))}
-            {showActions && <TableHead>Action</TableHead>}
+            {showActions && <TableHead className="text-gray-700 font-semibold py-3 px-4">Action</TableHead>}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -62,14 +65,18 @@ const DataTable: React.FC<DataTableProps> = ({
             </TableRow>
           ) : (
             data.map((row, rowIndex) => (
-              <TableRow key={rowIndex} onClick={() => onRowClick && onRowClick(row)} className={onRowClick ? "cursor-pointer" : ""}>
+              <TableRow 
+                key={rowIndex} 
+                onClick={() => onRowClick && onRowClick(row)} 
+                className={`${onRowClick ? "cursor-pointer" : ""} ${rowIndex % 2 === 0 ? "bg-white" : "bg-gray-50"} hover:bg-gray-100`}
+              >
                 {columns.map((column, colIndex) => (
-                  <TableCell key={colIndex}>
+                  <TableCell key={colIndex} className="py-3 px-4">
                     {column.render ? column.render(row[column.accessor], row) : row[column.accessor]}
                   </TableCell>
                 ))}
                 {showActions && (
-                  <TableCell className="flex gap-1">
+                  <TableCell className="flex gap-1 py-2 px-4">
                     {actionItems.map((item, i) => (
                       <button 
                         key={i} 
@@ -77,9 +84,9 @@ const DataTable: React.FC<DataTableProps> = ({
                           e.stopPropagation();
                           item.onClick(row);
                         }}
-                        className={i === 0 ? "p-2 bg-green-500 rounded-md" : 
-                                  i === 1 ? "p-2 rounded-md" : 
-                                  "p-2 bg-yellow-500 rounded-md"}
+                        className={i === 0 ? "p-2 bg-green-500 rounded-md hover:bg-green-600" : 
+                                  i === 1 ? "p-2 rounded-md border border-gray-300 hover:bg-gray-100" : 
+                                  "p-2 bg-red-500 rounded-md hover:bg-red-600"}
                       >
                         {typeof item.icon === "function" ? item.icon(row) : item.icon}
                       </button>
