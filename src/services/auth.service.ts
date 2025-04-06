@@ -1,7 +1,7 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "react-toastify";
-import { User, LoginCredentials, RegisterData } from "@/types/auth.types";
+import { User, LoginCredentials, RegisterData, Role } from "@/types/auth.types";
 
 export interface AuthResponse {
   token: string;
@@ -46,6 +46,7 @@ export const authService = {
       });
       
       if (error) throw new Error(error.message);
+      if (!data.user) throw new Error("Aucun utilisateur trouvé");
       
       // Récupérer les données utilisateur complètes de la table users
       const { data: userData, error: userError } = await supabase
@@ -62,6 +63,7 @@ export const authService = {
       localStorage.setItem(AUTH_CONFIG.storageTokenKey, token);
       toast.success(AUTH_MESSAGES.success.login);
       
+      // Using type assertion to handle type mismatch
       return { 
         token, 
         user: {
@@ -69,7 +71,7 @@ export const authService = {
           email: userData.email,
           nom: userData.nom,
           prenom: userData.prenom,
-          roles: userData.roles,
+          roles: (userData.roles || ["ROLE_USER"]) as Role[],
           picture: userData.picture,
           sessionToken: userData.session_token
         } 
@@ -95,13 +97,13 @@ export const authService = {
       // Créer l'entrée dans la table users avec les informations supplémentaires
       const { error: userError } = await supabase
         .from('users')
-        .insert({
+        .insert([{
           id: data.user.id,
           email: userData.email,
           nom: userData.nom,
           prenom: userData.prenom,
           roles: ['ROLE_USER'] // Rôle par défaut
-        });
+        }] as any);
       
       if (userError) throw new Error(userError.message);
       
@@ -131,12 +133,13 @@ export const authService = {
       if (error) throw new Error(error.message);
       if (!data) throw new Error('Utilisateur introuvable');
       
+      // Using type assertion to handle type mismatch
       return {
         id: data.id,
         email: data.email,
         nom: data.nom,
         prenom: data.prenom,
-        roles: data.roles,
+        roles: (data.roles || ["ROLE_USER"]) as Role[],
         picture: data.picture,
         sessionToken: data.session_token
       };

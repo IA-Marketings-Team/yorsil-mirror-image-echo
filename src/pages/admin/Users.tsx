@@ -9,17 +9,29 @@ import UsersTable from "@/components/admin/users/UsersTable";
 import { Button } from "@/components/ui/button";
 import { supabaseService } from "@/services/supabase.service";
 import { appConfig } from "@/services/mockData";
+import { User } from "@/types";
 
 const AdminUsers = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [showAddModal, setShowAddModal] = useState(false);
 
-  const { data: users, isLoading, error } = useQuery({
+  const { data: usersData, isLoading, error } = useQuery({
     queryKey: ['adminUsers'],
     queryFn: async () => {
       return await supabaseService.users.getAll();
     }
   });
+
+  // Convert Supabase data to match our User type
+  const users: User[] = usersData ? usersData.map(user => ({
+    id: user.id,
+    email: user.email,
+    nom: user.nom,
+    prenom: user.prenom || undefined,
+    roles: user.roles as any,
+    picture: user.picture || undefined,
+    sessionToken: user.session_token || undefined
+  })) : [];
 
   const handleAddUser = () => {
     console.log("Add user clicked");
@@ -44,7 +56,7 @@ const AdminUsers = () => {
         <ErrorState error={error as Error} message={appConfig.errorMessages.users} />
       ) : (
         <UsersTable 
-          users={users || []} 
+          users={users} 
           searchTerm={searchTerm}
           onSearchChange={setSearchTerm}
         />
