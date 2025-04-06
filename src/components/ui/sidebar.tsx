@@ -166,6 +166,43 @@ const Sidebar = ({
 }: SidebarProps) => {
   const [collapsed, setCollapsed] = useState(defaultCollapsed);
 
+  // Function to handle cloning with proper type safety
+  const renderCollapsedItems = () => {
+    return React.Children.map(children, (child) => {
+      if (!React.isValidElement(child)) return null;
+      
+      // Handle SidebarGroup
+      if (child.type === SidebarGroup) {
+        return React.Children.map(child.props.children, (groupChild) => {
+          if (!React.isValidElement(groupChild)) return null;
+          
+          // Handle SidebarItem within a group
+          if (groupChild.type === SidebarItem) {
+            // Create a new props object without spreading
+            const newProps = {
+              ...groupChild.props,
+              title: "",
+              children: null
+            };
+            return React.cloneElement(groupChild, newProps);
+          }
+          return null;
+        });
+      } 
+      // Handle direct SidebarItem
+      else if (child.type === SidebarItem) {
+        // Create a new props object without spreading
+        const newProps = {
+          ...child.props,
+          title: "",
+          children: null
+        };
+        return React.cloneElement(child, newProps);
+      }
+      return null;
+    });
+  };
+
   return (
     <div className={cn("flex flex-col h-full border-r bg-background", className)}>
       {headerContent && (
@@ -195,30 +232,7 @@ const Sidebar = ({
         <div className={cn("px-2", collapsed && "items-center")}>
           {collapsed ? (
             <div className="space-y-2 py-2">
-              {React.Children.map(children, (child) => {
-                if (React.isValidElement(child)) {
-                  // Handle SidebarGroup differently when collapsed
-                  if (child.type === SidebarGroup) {
-                    return React.Children.map(child.props.children, (groupChild) => {
-                      if (React.isValidElement(groupChild) && groupChild.type === SidebarItem) {
-                        return React.cloneElement(groupChild, {
-                          ...groupChild.props,
-                          title: "",
-                          children: null,
-                        });
-                      }
-                      return null;
-                    });
-                  } else if (child.type === SidebarItem) {
-                    return React.cloneElement(child, {
-                      ...child.props,
-                      title: "",
-                      children: null,
-                    });
-                  }
-                }
-                return null;
-              })}
+              {renderCollapsedItems()}
             </div>
           ) : (
             <div className="space-y-2 py-2">{children}</div>
