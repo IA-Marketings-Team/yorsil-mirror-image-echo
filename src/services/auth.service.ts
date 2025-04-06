@@ -55,6 +55,7 @@ export const authService = {
         .single();
       
       if (userError) throw new Error(userError.message);
+      if (!userData) throw new Error('Utilisateur non trouvé');
       
       const token = data.session?.access_token || '';
       // Store token in localStorage
@@ -89,12 +90,13 @@ export const authService = {
       });
       
       if (error) throw new Error(error.message);
+      if (!data.user) throw new Error('Erreur lors de la création de l\'utilisateur');
       
       // Créer l'entrée dans la table users avec les informations supplémentaires
       const { error: userError } = await supabase
         .from('users')
         .insert({
-          id: data.user?.id,
+          id: data.user.id,
           email: userData.email,
           nom: userData.nom,
           prenom: userData.prenom,
@@ -127,6 +129,7 @@ export const authService = {
         .single();
       
       if (error) throw new Error(error.message);
+      if (!data) throw new Error('Utilisateur introuvable');
       
       return {
         id: data.id,

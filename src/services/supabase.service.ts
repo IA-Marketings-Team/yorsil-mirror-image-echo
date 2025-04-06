@@ -28,7 +28,7 @@ export const supabaseService = {
     async create(user: Partial<User>) {
       const { data, error } = await supabase
         .from('users')
-        .insert(user)
+        .insert([user as any])
         .select();
       
       if (error) throw new Error(error.message);
@@ -38,7 +38,7 @@ export const supabaseService = {
     async update(id: string, user: Partial<User>) {
       const { data, error } = await supabase
         .from('users')
-        .update(user)
+        .update(user as any)
         .eq('id', id)
         .select();
       
@@ -92,7 +92,7 @@ export const supabaseService = {
     async create(boutique: Partial<Boutique>) {
       const { data, error } = await supabase
         .from('boutiques')
-        .insert(boutique)
+        .insert([boutique as any])
         .select();
       
       if (error) throw new Error(error.message);
@@ -102,7 +102,7 @@ export const supabaseService = {
     async update(id: string, boutique: Partial<Boutique>) {
       const { data, error } = await supabase
         .from('boutiques')
-        .update(boutique)
+        .update(boutique as any)
         .eq('id', id)
         .select();
       
@@ -146,7 +146,7 @@ export const supabaseService = {
     async create(pays: Partial<Pays>) {
       const { data, error } = await supabase
         .from('pays')
-        .insert(pays)
+        .insert([pays as any])
         .select();
       
       if (error) throw new Error(error.message);
@@ -156,7 +156,7 @@ export const supabaseService = {
     async update(id: string, pays: Partial<Pays>) {
       const { data, error } = await supabase
         .from('pays')
-        .update(pays)
+        .update(pays as any)
         .eq('id', id)
         .select();
       
@@ -200,7 +200,7 @@ export const supabaseService = {
     async create(operateur: Partial<Operateur>) {
       const { data, error } = await supabase
         .from('operateurs')
-        .insert(operateur)
+        .insert([operateur as any])
         .select();
       
       if (error) throw new Error(error.message);
@@ -210,7 +210,7 @@ export const supabaseService = {
     async update(id: string, operateur: Partial<Operateur>) {
       const { data, error } = await supabase
         .from('operateurs')
-        .update(operateur)
+        .update(operateur as any)
         .eq('id', id)
         .select();
       
@@ -254,7 +254,7 @@ export const supabaseService = {
     async create(produit: Partial<Produit>) {
       const { data, error } = await supabase
         .from('produits')
-        .insert(produit)
+        .insert([produit as any])
         .select();
       
       if (error) throw new Error(error.message);
@@ -264,7 +264,7 @@ export const supabaseService = {
     async update(id: string, produit: Partial<Produit>) {
       const { data, error } = await supabase
         .from('produits')
-        .update(produit)
+        .update(produit as any)
         .eq('id', id)
         .select();
       
@@ -318,7 +318,7 @@ export const supabaseService = {
     async create(recharge: Partial<Recharge>) {
       const { data, error } = await supabase
         .from('recharges')
-        .insert(recharge)
+        .insert([recharge as any])
         .select();
       
       if (error) throw new Error(error.message);
@@ -328,7 +328,7 @@ export const supabaseService = {
     async update(id: string, recharge: Partial<Recharge>) {
       const { data, error } = await supabase
         .from('recharges')
-        .update(recharge)
+        .update(recharge as any)
         .eq('id', id)
         .select();
       
@@ -372,7 +372,7 @@ export const supabaseService = {
     async create(rechargeFlexi: Partial<RechargeFlexi>) {
       const { data, error } = await supabase
         .from('recharges_flexi')
-        .insert(rechargeFlexi)
+        .insert([rechargeFlexi as any])
         .select();
       
       if (error) throw new Error(error.message);
@@ -382,7 +382,7 @@ export const supabaseService = {
     async update(id: string, rechargeFlexi: Partial<RechargeFlexi>) {
       const { data, error } = await supabase
         .from('recharges_flexi')
-        .update(rechargeFlexi)
+        .update(rechargeFlexi as any)
         .eq('id', id)
         .select();
       
@@ -415,7 +415,7 @@ export const supabaseService = {
     async create(notification: Partial<Notification>) {
       const { data, error } = await supabase
         .from('notifications')
-        .insert(notification)
+        .insert([notification as any])
         .select();
       
       if (error) throw new Error(error.message);
@@ -425,7 +425,7 @@ export const supabaseService = {
     async markAsRead(id: string) {
       const { data, error } = await supabase
         .from('notifications')
-        .update({ status: 'read' })
+        .update({ status: 'read' } as any)
         .eq('id', id)
         .select();
       
