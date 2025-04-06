@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import FormField from "@/components/auth/FormField";
 import PasswordInput from "@/components/auth/PasswordInput";
 import { Input } from "@/components/ui/input";
+import { ROUTES } from "@/constants/routes";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -28,11 +29,11 @@ const Login = () => {
       const from = location.state?.from?.pathname || '/';
       
       if (user.roles.includes("ROLE_ADMIN")) {
-        navigate("/admin");
+        navigate(ROUTES.ADMIN.ROOT, { replace: true });
       } else if (user.roles.includes("ROLE_BOUT")) {
-        navigate("/office");
+        navigate(ROUTES.OFFICE.ROOT, { replace: true });
       } else {
-        navigate(from);
+        navigate(from, { replace: true });
       }
     }
   }, [user, navigate, location]);

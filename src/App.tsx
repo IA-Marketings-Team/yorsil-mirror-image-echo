@@ -35,6 +35,7 @@ import PrivateRoute from "./components/auth/PrivateRoute";
 import AuthLayout from "./components/layout/AuthLayout";
 import AdminLayout from "./components/layout/AdminLayout";
 import OfficeLayout from "./components/layout/OfficeLayout";
+import { useAuth } from "./hooks/useAuth";
 
 // Auth provider
 import { AuthProvider } from "./contexts/AuthContext";
@@ -96,8 +97,11 @@ function App() {
               <Route path="history" element={<OfficeHistory />} />
             </Route>
             
-            {/* Default Route - Rediriger en fonction du rôle de l'utilisateur */}
-            <Route path={ROUTES.ROOT} element={<DefaultRedirect />} />
+            {/* Default Route - Redirection basée sur le rôle */}
+            <Route path="/" element={<DefaultRedirect />} />
+            
+            {/* Route pour capturer toutes les URLs non définies */}
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Router>
         <Toaster position="top-right" richColors />
@@ -130,8 +134,5 @@ const DefaultRedirect = () => {
   // Si l'utilisateur n'a pas de rôle spécifique, rediriger vers la connexion
   return <Navigate to={ROUTES.AUTH.LOGIN} replace />;
 };
-
-// N'oublions pas d'importer useAuth
-import { useAuth } from "./hooks/useAuth";
 
 export default App;
