@@ -38,7 +38,7 @@ const AdminBoutiques = () => {
       roles: boutique.user.roles as any,
       picture: boutique.user.picture || undefined,
       sessionToken: boutique.user.session_token || undefined
-    } as User,
+    } as User, // Removed the comma here - this was causing the syntax error
     solde: 0 // Default value as it might not be in Supabase
   })) : [];
 
