@@ -18,6 +18,9 @@ interface TableDisplayProps<T> {
   pagination?: boolean;
   searchable?: boolean;
   className?: string;
+  searchTerm?: string;
+  onSearchChange?: (term: string) => void;
+  searchPlaceholder?: string;
 }
 
 function TableDisplay<T>({
@@ -28,18 +31,24 @@ function TableDisplay<T>({
   pagination = true,
   searchable = true,
   className,
+  searchTerm,
+  onSearchChange,
+  searchPlaceholder = "Rechercher...",
 }: TableDisplayProps<T>) {
+  const [localSearchTerm, setLocalSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchTerm, setSearchTerm] = useState("");
   const itemsPerPage = 10;
 
+  // Use external search term if provided, otherwise use local state
+  const effectiveSearchTerm = searchTerm !== undefined ? searchTerm : localSearchTerm;
+  
   // Filter data by search term if searchable
   const filteredData = searchable
     ? data.filter((item) => {
         const itemValues = Object.values(item as object);
         return itemValues.some((value) => {
           if (typeof value === "string") {
-            return value.toLowerCase().includes(searchTerm.toLowerCase());
+            return value.toLowerCase().includes(effectiveSearchTerm.toLowerCase());
           }
           return false;
         });
@@ -54,6 +63,16 @@ function TableDisplay<T>({
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
+  };
+  
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (onSearchChange) {
+      onSearchChange(value);
+    } else {
+      setLocalSearchTerm(value);
+    }
+    setCurrentPage(1);
   };
 
   const renderPagination = () => {
@@ -131,12 +150,9 @@ function TableDisplay<T>({
             <input
               type="text"
               className="w-full p-2 pl-10 pr-3 border rounded-md focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Rechercher..."
-              value={searchTerm}
-              onChange={(e) => {
-                setSearchTerm(e.target.value);
-                setCurrentPage(1);
-              }}
+              placeholder={searchPlaceholder}
+              value={effectiveSearchTerm}
+              onChange={handleSearchChange}
             />
           </div>
         </div>

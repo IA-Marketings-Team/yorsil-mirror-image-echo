@@ -37,24 +37,6 @@ const SidebarItem = React.forwardRef<HTMLAnchorElement, SidebarItemProps>(
     const [open, setOpen] = useState(false);
     const hasChildren = React.Children.count(children) > 0;
 
-    const Component = href ? "a" : "button";
-    
-    const innerContent = (
-      <>
-        {icon && <span className="mr-2">{icon}</span>}
-        <span className="flex-grow text-left">{title}</span>
-        {hasChildren && (
-          <ChevronDown 
-            className={cn(
-              "h-4 w-4 transition-transform", 
-              open && "transform rotate-180"
-            )} 
-          />
-        )}
-        {external && <ExternalLink className="h-3 w-3 ml-1" />}
-      </>
-    );
-
     const handleClick = (e: React.MouseEvent) => {
       if (hasChildren) {
         e.preventDefault();
@@ -66,31 +48,70 @@ const SidebarItem = React.forwardRef<HTMLAnchorElement, SidebarItemProps>(
       }
     };
 
-    const itemContent = (
-      <Component
-        ref={ref}
-        href={href}
-        target={external ? "_blank" : undefined}
-        rel={external ? "noreferrer" : undefined}
-        onClick={handleClick}
-        className={cn(
-          "flex items-center py-2 px-3 text-sm rounded-md w-full",
-          active && "bg-accent text-accent-foreground font-medium",
-          disabled && "opacity-50 cursor-not-allowed pointer-events-none",
-          hasChildren && "justify-between",
-          variant === "default" && "bg-primary text-primary-foreground hover:bg-primary/90",
-          variant === "ghost" && "hover:bg-accent hover:text-accent-foreground",
-          variant === "outline" && "border border-input hover:bg-accent hover:text-accent-foreground"
-        )}
-        disabled={disabled}
-      >
-        {innerContent}
-      </Component>
-    );
+    if (href) {
+      return (
+        <div className="w-full">
+          <a
+            ref={ref}
+            href={href}
+            target={external ? "_blank" : undefined}
+            rel={external ? "noreferrer" : undefined}
+            onClick={handleClick}
+            className={cn(
+              "flex items-center py-2 px-3 text-sm rounded-md w-full",
+              active && "bg-accent text-accent-foreground font-medium",
+              disabled && "opacity-50 cursor-not-allowed pointer-events-none",
+              hasChildren && "justify-between",
+              variant === "default" && "bg-primary text-primary-foreground hover:bg-primary/90",
+              variant === "ghost" && "hover:bg-accent hover:text-accent-foreground",
+              variant === "outline" && "border border-input hover:bg-accent hover:text-accent-foreground"
+            )}
+          >
+            {icon && <span className="mr-2">{icon}</span>}
+            <span className="flex-grow text-left">{title}</span>
+            {hasChildren && (
+              <ChevronDown 
+                className={cn(
+                  "h-4 w-4 transition-transform", 
+                  open && "transform rotate-180"
+                )} 
+              />
+            )}
+            {external && <ExternalLink className="h-3 w-3 ml-1" />}
+          </a>
+          {hasChildren && open && (
+            <div className="ml-4 pl-2 border-l mt-1">{children}</div>
+          )}
+        </div>
+      );
+    }
 
     return (
       <div className="w-full">
-        {itemContent}
+        <button
+          onClick={handleClick}
+          disabled={disabled}
+          className={cn(
+            "flex items-center py-2 px-3 text-sm rounded-md w-full",
+            active && "bg-accent text-accent-foreground font-medium",
+            disabled && "opacity-50 cursor-not-allowed pointer-events-none",
+            hasChildren && "justify-between",
+            variant === "default" && "bg-primary text-primary-foreground hover:bg-primary/90",
+            variant === "ghost" && "hover:bg-accent hover:text-accent-foreground",
+            variant === "outline" && "border border-input hover:bg-accent hover:text-accent-foreground"
+          )}
+        >
+          {icon && <span className="mr-2">{icon}</span>}
+          <span className="flex-grow text-left">{title}</span>
+          {hasChildren && (
+            <ChevronDown 
+              className={cn(
+                "h-4 w-4 transition-transform", 
+                open && "transform rotate-180"
+              )} 
+            />
+          )}
+        </button>
         {hasChildren && open && (
           <div className="ml-4 pl-2 border-l mt-1">{children}</div>
         )}
@@ -181,6 +202,7 @@ const Sidebar = ({
                     return React.Children.map(child.props.children, (groupChild) => {
                       if (React.isValidElement(groupChild) && groupChild.type === SidebarItem) {
                         return React.cloneElement(groupChild, {
+                          ...groupChild.props,
                           title: "",
                           children: null,
                         });
@@ -189,6 +211,7 @@ const Sidebar = ({
                     });
                   } else if (child.type === SidebarItem) {
                     return React.cloneElement(child, {
+                      ...child.props,
                       title: "",
                       children: null,
                     });

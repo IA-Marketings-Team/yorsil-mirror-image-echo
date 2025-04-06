@@ -82,15 +82,15 @@ const AdminBoutiques = () => {
       width: "12%",
       render: (_: any, row: any) => (
         <div className="flex space-x-2">
-          <Button variant="ghost" size="icon" className="h-8 w-8">
+          <Button variant="ghost" size="sm" className="h-8 w-8">
             <PencilLine className="h-4 w-4" />
           </Button>
           {row.active ? (
-            <Button variant="ghost" size="icon" className="h-8 w-8">
+            <Button variant="ghost" size="sm" className="h-8 w-8">
               <Ban className="h-4 w-4 text-red-500" />
             </Button>
           ) : (
-            <Button variant="ghost" size="icon" className="h-8 w-8">
+            <Button variant="ghost" size="sm" className="h-8 w-8">
               <Check className="h-4 w-4 text-green-500" />
             </Button>
           )}

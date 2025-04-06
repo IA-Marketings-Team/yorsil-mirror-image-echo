@@ -196,14 +196,14 @@ CarouselItem.displayName = "CarouselItem";
 const CarouselPrevious = React.forwardRef<
   HTMLButtonElement,
   React.ComponentProps<typeof Button>
->(({ className, variant = "outline", size = "icon", ...props }, ref) => {
+>(({ className, variant = "outline", size = "default", ...props }, ref) => {
   const { scrollPrev, canScrollPrev } = useCarousel();
 
   return (
     <Button
       ref={ref}
       variant={variant as "default" | "outline" | "ghost" | "secondary" | "destructive" | "link"}
-      size={size as "default" | "sm" | "lg" | "icon"}
+      size={size as "default" | "sm" | "lg"}
       className={cn(
         "absolute h-8 w-8 rounded-full",
         "left-4 top-1/2 -translate-y-1/2",
@@ -223,14 +223,14 @@ CarouselPrevious.displayName = "CarouselPrevious";
 const CarouselNext = React.forwardRef<
   HTMLButtonElement,
   React.ComponentProps<typeof Button>
->(({ className, variant = "outline", size = "icon", ...props }, ref) => {
+>(({ className, variant = "outline", size = "default", ...props }, ref) => {
   const { scrollNext, canScrollNext } = useCarousel();
 
   return (
     <Button
       ref={ref}
       variant={variant as "default" | "outline" | "ghost" | "secondary" | "destructive" | "link"}
-      size={size as "default" | "sm" | "lg" | "icon"}
+      size={size as "default" | "sm" | "lg"}
       className={cn(
         "absolute h-8 w-8 rounded-full",
         "right-4 top-1/2 -translate-y-1/2",

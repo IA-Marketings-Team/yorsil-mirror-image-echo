@@ -130,10 +130,10 @@ const AdminJournal = () => {
       width: "10%",
       render: (_: any, row: any) => (
         <div className="flex space-x-2">
-          <Button variant="ghost" size="icon" className="h-8 w-8">
+          <Button variant="ghost" size="sm" className="h-8 w-8">
             <Eye className="h-4 w-4" />
           </Button>
-          <Button variant="ghost" size="icon" className="h-8 w-8">
+          <Button variant="ghost" size="sm" className="h-8 w-8">
             <Download className="h-4 w-4 text-blue-500" />
           </Button>
         </div>
