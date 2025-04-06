@@ -178,14 +178,16 @@ const Sidebar = ({
           
           // Handle SidebarItem within a group
           if (groupChild.type === SidebarItem) {
+            // Use type assertion to inform TypeScript that props is a SidebarItemProps
+            const props = groupChild.props as SidebarItemProps;
             const newProps = {
-              icon: groupChild.props.icon,
-              variant: groupChild.props.variant,
-              active: groupChild.props.active,
-              disabled: groupChild.props.disabled,
-              href: groupChild.props.href,
-              external: groupChild.props.external,
-              onClick: groupChild.props.onClick,
+              icon: props.icon,
+              variant: props.variant,
+              active: props.active,
+              disabled: props.disabled,
+              href: props.href,
+              external: props.external,
+              onClick: props.onClick,
               title: "", // Override title to be empty
             };
             return React.cloneElement(groupChild, newProps);
@@ -195,14 +197,16 @@ const Sidebar = ({
       } 
       // Handle direct SidebarItem
       else if (child.type === SidebarItem) {
+        // Use type assertion to inform TypeScript that props is a SidebarItemProps
+        const props = child.props as SidebarItemProps;
         const newProps = {
-          icon: child.props.icon,
-          variant: child.props.variant,
-          active: child.props.active,
-          disabled: child.props.disabled,
-          href: child.props.href,
-          external: child.props.external,
-          onClick: child.props.onClick,
+          icon: props.icon,
+          variant: props.variant,
+          active: props.active,
+          disabled: props.disabled,
+          href: props.href,
+          external: props.external,
+          onClick: props.onClick,
           title: "", // Override title to be empty
         };
         return React.cloneElement(child, newProps);
