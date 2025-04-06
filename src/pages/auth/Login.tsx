@@ -1,12 +1,11 @@
 
-import { useState, useEffect } from "react";
-import { useNavigate, Link, useLocation } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import FormField from "@/components/auth/FormField";
 import PasswordInput from "@/components/auth/PasswordInput";
 import { Input } from "@/components/ui/input";
-import { ROUTES } from "@/constants/routes";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -14,40 +13,22 @@ const Login = () => {
   const [rememberMe, setRememberMe] = useState(false);
   
   const navigate = useNavigate();
-  const location = useLocation();
   const { login, authState } = useAuth();
   const { loading, error, user } = authState;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Login submit called with:", email, password);
     await login(email, password);
   };
 
-  // Effet pour gérer la redirection après connexion
-  useEffect(() => {
-    if (user) {
-      console.log("User authenticated, redirecting based on role:", user.roles);
-      
-      // Add a small delay to ensure state is properly updated
-      setTimeout(() => {
-        if (user.roles.includes("ROLE_ADMIN")) {
-          console.log("Redirecting to admin dashboard");
-          navigate(ROUTES.ADMIN.ROOT, { replace: true });
-        } else if (user.roles.includes("ROLE_BOUT")) {
-          console.log("Redirecting to office dashboard");
-          navigate(ROUTES.OFFICE.ROOT, { replace: true });
-        } else if (user.roles.includes("ROLE_USER")) {
-          console.log("Redirecting standard user to login (temporary)");
-          // Later you can create a user dashboard and redirect there
-          const from = location.state?.from?.pathname || ROUTES.AUTH.LOGIN;
-          navigate(from, { replace: true });
-        } else {
-          console.log("No specific role found, staying on login");
-        }
-      }, 100);
+  // Redirect if user is already logged in
+  if (user) {
+    if (user.roles.includes("ROLE_ADMIN")) {
+      navigate("/admin");
+    } else if (user.roles.includes("ROLE_BOUT")) {
+      navigate("/office");
     }
-  }, [user, navigate, location]);
+  }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">

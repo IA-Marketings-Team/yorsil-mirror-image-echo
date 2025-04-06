@@ -1,8 +1,7 @@
 
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import { Role } from "@/types/auth.types";
-import { ROUTES } from "@/constants/routes";
+import { Role } from "@/types";
 
 interface PrivateRouteProps {
   children: React.ReactNode;
@@ -12,34 +11,26 @@ interface PrivateRouteProps {
 const PrivateRoute = ({ children, requiredRole }: PrivateRouteProps) => {
   const { authState } = useAuth();
   const { user, loading } = authState;
-  const location = useLocation();
 
-  console.log("PrivateRoute check:", { user, loading, requiredRole });
-
-  // Show loading state while checking authentication
   if (loading) {
-    return <div className="flex items-center justify-center min-h-screen">Chargement...</div>;
+    return <div>Loading...</div>;
   }
 
-  // Redirect to login if not authenticated
   if (!user) {
-    return <Navigate to={ROUTES.AUTH.LOGIN} state={{ from: location }} replace />;
+    return <Navigate to="/login" replace />;
   }
 
-  // Check for required role
   if (requiredRole && !user.roles.includes(requiredRole)) {
-    // Redirect based on user's role
+    // Redirect based on user role
     if (user.roles.includes("ROLE_ADMIN")) {
-      return <Navigate to={ROUTES.ADMIN.ROOT} replace />;
+      return <Navigate to="/admin" replace />;
     }
     if (user.roles.includes("ROLE_BOUT")) {
-      return <Navigate to={ROUTES.OFFICE.ROOT} replace />;
+      return <Navigate to="/office" replace />;
     }
-    // For users with only ROLE_USER, redirect to login for now
-    return <Navigate to={ROUTES.AUTH.LOGIN} replace />;
+    return <Navigate to="/login" replace />;
   }
 
-  // Show protected content if everything is okay
   return <>{children}</>;
 };
 

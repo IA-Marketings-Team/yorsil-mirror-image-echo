@@ -1,7 +1,8 @@
 
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Toaster } from "sonner";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // Routes constantes
 import { ROUTES } from "./constants/routes";
@@ -35,8 +36,6 @@ import PrivateRoute from "./components/auth/PrivateRoute";
 import AuthLayout from "./components/layout/AuthLayout";
 import AdminLayout from "./components/layout/AdminLayout";
 import OfficeLayout from "./components/layout/OfficeLayout";
-import { useAuth } from "./hooks/useAuth";
-import NotFound from "./pages/NotFound";
 
 // Auth provider
 import { AuthProvider } from "./contexts/AuthContext";
@@ -98,53 +97,14 @@ function App() {
               <Route path="history" element={<OfficeHistory />} />
             </Route>
             
-            {/* Default Route - Redirect to login or appropriate dashboard */}
-            <Route path="/" element={<DefaultRedirect />} />
-            
-            {/* Catch-all route */}
-            <Route path="*" element={<NotFound />} />
+            {/* Default Route */}
+            <Route path={ROUTES.ROOT} element={<Navigate to={ROUTES.AUTH.LOGIN} replace />} />
           </Routes>
         </Router>
-        <Toaster position="top-right" richColors />
+        <ToastContainer position="top-right" autoClose={5000} />
       </AuthProvider>
     </QueryClientProvider>
   );
 }
-
-// Fixed DefaultRedirect component to prevent infinite loops
-const DefaultRedirect = () => {
-  const { authState } = useAuth();
-  const { user, loading } = authState;
-  console.log("DefaultRedirect check:", { user, loading });
-  
-  // Show loading state while checking authentication
-  if (loading) {
-    return <div className="flex items-center justify-center min-h-screen">Chargement...</div>;
-  }
-  
-  // Redirect to login if not authenticated
-  if (!user) {
-    return <Navigate to={ROUTES.AUTH.LOGIN} replace />;
-  }
-  
-  // Role-based redirection
-  if (user.roles.includes("ROLE_ADMIN")) {
-    return <Navigate to={ROUTES.ADMIN.ROOT} replace />;
-  }
-  
-  if (user.roles.includes("ROLE_BOUT")) {
-    return <Navigate to={ROUTES.OFFICE.ROOT} replace />;
-  }
-  
-  // For ROLE_USER, redirect to a dedicated page (or login until we have a user dashboard)
-  if (user.roles.includes("ROLE_USER")) {
-    // You can create a user dashboard later and redirect there
-    // For now, just go to login to avoid infinite loops
-    return <Navigate to={ROUTES.AUTH.LOGIN} replace />;
-  }
-  
-  // Fallback - go to login page if no recognized roles
-  return <Navigate to={ROUTES.AUTH.LOGIN} replace />;
-};
 
 export default App;
