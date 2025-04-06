@@ -1,25 +1,23 @@
-
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Plus } from "lucide-react";
+import { Plus, StorePlus } from "lucide-react";
 import { api } from "@/services/api";
 import PageHeader from "@/components/common/PageHeader";
 import LoadingState from "@/components/common/LoadingState";
 import ErrorState from "@/components/common/ErrorState";
 import BoutiquesTable from "@/components/admin/boutiques/BoutiquesTable";
+import Button from "@/components/common/Button";
 
 const AdminBoutiques = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  
-  // Fetch boutiques
+  const [showAddModal, setShowAddModal] = useState(false);
+
   const { data: boutiques, isLoading, error } = useQuery({
     queryKey: ['adminBoutiques'],
     queryFn: async () => {
-      // In a real app, we would fetch from API
       const response = await api.get('/admin/boutiques');
       return response.data;
     },
-    // Mock data for development
     initialData: [
       { id: 1, nom: "Boutique Centrale", adresse: "123 Rue de Paris", telephone: "+33612345678", email: "contact@boutiquecentrale.com", solde: 1250.75, active: true },
       { id: 2, nom: "Point Service", adresse: "45 Avenue Victor Hugo", telephone: "+33612345679", email: "contact@pointservice.com", solde: 850.25, active: true },
@@ -30,19 +28,19 @@ const AdminBoutiques = () => {
   });
 
   const handleAddBoutique = () => {
-    // Add boutique logic here
     console.log("Add boutique clicked");
   };
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="space-y-6">
       <PageHeader 
-        title="Gestion des Boutiques"
-        action={{
-          label: "Ajouter une boutique",
-          icon: <Plus size={18} />,
-          onClick: handleAddBoutique,
-        }}
+        title="Boutiques"
+        actions={
+          <Button onClick={() => setShowAddModal(true)} className="flex items-center gap-2">
+            <StorePlus size={16} />
+            Ajouter une boutique
+          </Button>
+        }
       />
 
       {isLoading ? (

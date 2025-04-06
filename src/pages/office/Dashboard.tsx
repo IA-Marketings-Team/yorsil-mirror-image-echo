@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { CreditCard, ArrowLeftRight, ShoppingCart, TicketCheck } from "lucide-react";
@@ -7,7 +6,7 @@ import DataDisplay from "@/components/common/DataDisplay";
 import TableDisplay from "@/components/common/TableDisplay";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { api } from "@/services/api";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/hooks/useAuth";
 
 const OfficeDashboard = () => {
   const { authState } = useAuth();

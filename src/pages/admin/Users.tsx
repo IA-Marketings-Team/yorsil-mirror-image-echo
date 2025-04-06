@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { User, UserPlus } from "lucide-react";
@@ -7,19 +6,18 @@ import PageHeader from "@/components/common/PageHeader";
 import LoadingState from "@/components/common/LoadingState";
 import ErrorState from "@/components/common/ErrorState";
 import UsersTable from "@/components/admin/users/UsersTable";
+import Button from "@/components/common/Button";
 
 const AdminUsers = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  
-  // Fetch users
+  const [showAddModal, setShowAddModal] = useState(false);
+
   const { data: users, isLoading, error } = useQuery({
     queryKey: ['adminUsers'],
     queryFn: async () => {
-      // In a real app, we would fetch from API
       const response = await api.get('/admin/users');
       return response.data;
     },
-    // Mock data for development
     initialData: [
       { id: 1, nom: "Dupont", prenom: "Jean", email: "jean.dupont@example.com", telephone: "+33612345678", roles: ["ROLE_ADMIN"], isActive: true },
       { id: 2, nom: "Martin", prenom: "Lucie", email: "lucie.martin@example.com", telephone: "+33612345679", roles: ["ROLE_ADMIN"], isActive: true },
@@ -30,19 +28,19 @@ const AdminUsers = () => {
   });
 
   const handleAddUser = () => {
-    // Add user logic here
     console.log("Add user clicked");
   };
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="space-y-6">
       <PageHeader 
-        title="Gestion des Utilisateurs"
-        action={{
-          label: "Ajouter un utilisateur",
-          icon: <UserPlus size={18} />,
-          onClick: handleAddUser,
-        }}
+        title="Utilisateurs" 
+        actions={
+          <Button onClick={() => setShowAddModal(true)} className="flex items-center gap-2">
+            <UserPlus size={16} />
+            Ajouter un utilisateur
+          </Button>
+        }
       />
 
       {isLoading ? (
