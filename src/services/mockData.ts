@@ -1,4 +1,3 @@
-
 /**
  * Service pour fournir des données simulées en attendant l'API
  * Ces données peuvent être facilement remplacées par des appels API réels
@@ -9,11 +8,11 @@ import { User, Boutique } from "@/types";
 
 // Utilisateurs simulés
 export const mockUsers: User[] = [
-  { id: 1, nom: "Dupont", prenom: "Jean", email: "jean.dupont@example.com", roles: ["ROLE_ADMIN"], isActive: true },
-  { id: 2, nom: "Martin", prenom: "Lucie", email: "lucie.martin@example.com", roles: ["ROLE_ADMIN"], isActive: true },
-  { id: 3, nom: "Bernard", prenom: "Pierre", email: "pierre.bernard@example.com", roles: ["ROLE_BOUT"], isActive: true },
-  { id: 4, nom: "Thomas", prenom: "Marie", email: "marie.thomas@example.com", roles: ["ROLE_BOUT"], isActive: false },
-  { id: 5, nom: "Petit", prenom: "Sophie", email: "sophie.petit@example.com", roles: ["ROLE_USER"], isActive: true }
+  { id: 1, nom: "Dupont", prenom: "Jean", email: "jean.dupont@example.com", roles: ["ROLE_ADMIN"] },
+  { id: 2, nom: "Martin", prenom: "Lucie", email: "lucie.martin@example.com", roles: ["ROLE_ADMIN"] },
+  { id: 3, nom: "Bernard", prenom: "Pierre", email: "pierre.bernard@example.com", roles: ["ROLE_BOUT"] },
+  { id: 4, nom: "Thomas", prenom: "Marie", email: "marie.thomas@example.com", roles: ["ROLE_BOUT"] },
+  { id: 5, nom: "Petit", prenom: "Sophie", email: "sophie.petit@example.com", roles: ["ROLE_USER"] }
 ];
 
 // Boutiques simulées - ensuring we match the type definition
