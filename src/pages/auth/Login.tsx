@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
@@ -21,14 +21,25 @@ const Login = () => {
     await login(email, password);
   };
 
-  // Redirect if user is already logged in
-  if (user) {
-    if (user.roles.includes("ROLE_ADMIN")) {
-      navigate("/admin");
-    } else if (user.roles.includes("ROLE_BOUT")) {
-      navigate("/office");
+  // Effet pour gérer la redirection après connexion
+  useEffect(() => {
+    if (user) {
+      console.info("User authenticated in Login, redirecting based on role:", user.roles);
+      
+      // Redirection basée sur le rôle
+      if (user.roles.includes("ROLE_ADMIN")) {
+        navigate("/admin", { replace: true });
+      } else if (user.roles.includes("ROLE_BOUT")) {
+        navigate("/office", { replace: true });
+      } else if (user.roles.includes("ROLE_USER")) {
+        // Pour l'instant, redirigeons les utilisateurs standards vers une page temporaire
+        navigate("/user", { replace: true });
+      } else if (user.roles.includes("ROLE_PERC")) {
+        // Pour les percepteurs, redirection à définir
+        navigate("/percepteur", { replace: true });
+      }
     }
-  }
+  }, [user, navigate]);
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">

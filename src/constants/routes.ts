@@ -35,6 +35,14 @@ export const ROUTES = {
     HISTORY: "/office/history",
   },
   
+  // Routes pour les utilisateurs standards
+  USER: {
+    ROOT: "/user",
+    PROFILE: "/user/profile",
+    SERVICES: "/user/services",
+    HISTORY: "/user/history",
+  },
+  
   // Route par défaut
   ROOT: "/",
 };

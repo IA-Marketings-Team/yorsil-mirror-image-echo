@@ -31,11 +31,15 @@ import OfficeBilleteries from "./pages/office/Billeteries";
 import OfficeServices from "./pages/office/Services";
 import OfficeHistory from "./pages/office/History";
 
+// User routes (temporaires pour le développement)
+import UserDashboard from "./pages/user/Dashboard";
+
 // Components
 import PrivateRoute from "./components/auth/PrivateRoute";
 import AuthLayout from "./components/layout/AuthLayout";
 import AdminLayout from "./components/layout/AdminLayout";
 import OfficeLayout from "./components/layout/OfficeLayout";
+import UserLayout from "./components/layout/UserLayout";
 
 // Auth provider
 import { AuthProvider } from "./contexts/AuthContext";
@@ -52,6 +56,40 @@ const queryClientConfig = {
 };
 
 const queryClient = new QueryClient(queryClientConfig);
+
+// Composant pour la redirection par défaut
+const DefaultRedirect = () => {
+  const { authState } = useAuth();
+  const { user, loading } = authState;
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!user) {
+    console.info("No user, redirecting to login");
+    return <Navigate to={ROUTES.AUTH.LOGIN} replace />;
+  }
+
+  if (user.roles.includes("ROLE_ADMIN")) {
+    return <Navigate to={ROUTES.ADMIN.ROOT} replace />;
+  }
+
+  if (user.roles.includes("ROLE_BOUT")) {
+    return <Navigate to={ROUTES.OFFICE.ROOT} replace />;
+  }
+
+  if (user.roles.includes("ROLE_USER")) {
+    console.info("Redirecting standard user to user dashboard");
+    return <Navigate to="/user" replace />;
+  }
+
+  // Default fallback
+  console.info("No specific role found, defaulting to login");
+  return <Navigate to={ROUTES.AUTH.LOGIN} replace />;
+};
+
+import { useAuth } from "./hooks/useAuth";
 
 function App() {
   return (
@@ -97,8 +135,17 @@ function App() {
               <Route path="history" element={<OfficeHistory />} />
             </Route>
             
+            {/* User Routes (temporaires pour le développement) */}
+            <Route path="/user" element={
+              <PrivateRoute requiredRole="ROLE_USER">
+                <UserLayout />
+              </PrivateRoute>
+            }>
+              <Route index element={<UserDashboard />} />
+            </Route>
+            
             {/* Default Route */}
-            <Route path={ROUTES.ROOT} element={<Navigate to={ROUTES.AUTH.LOGIN} replace />} />
+            <Route path={ROUTES.ROOT} element={<DefaultRedirect />} />
           </Routes>
         </Router>
         <ToastContainer position="top-right" autoClose={5000} />
