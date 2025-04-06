@@ -1,7 +1,7 @@
 
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import { Role } from "@/types";
+import { Role } from "@/types/auth.types";
 
 interface PrivateRouteProps {
   children: React.ReactNode;
@@ -11,13 +11,14 @@ interface PrivateRouteProps {
 const PrivateRoute = ({ children, requiredRole }: PrivateRouteProps) => {
   const { authState } = useAuth();
   const { user, loading } = authState;
+  const location = useLocation();
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div className="flex items-center justify-center min-h-screen">Chargement...</div>;
   }
 
   if (!user) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
   if (requiredRole && !user.roles.includes(requiredRole)) {

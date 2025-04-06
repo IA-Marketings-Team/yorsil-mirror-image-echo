@@ -1,6 +1,6 @@
 
 export interface User {
-  id: number;
+  id: string; // Changé de number à string pour correspondre au format UUID de Supabase
   email: string;
   nom: string;
   prenom?: string;

@@ -1,10 +1,10 @@
 
-import React, { createContext, useState, useContext, ReactNode } from 'react';
+import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { User, AuthState, LoginCredentials, RegisterData, AuthContextType } from '@/types/auth.types';
 import { toast } from 'sonner';
 
-const AuthContext = createContext<AuthContextType>({
+export const AuthContext = createContext<AuthContextType>({
   authState: {
     user: null,
     token: null,
@@ -25,6 +25,70 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     loading: false,
     error: null
   });
+
+  useEffect(() => {
+    // Vérifier s'il y a une session active au chargement
+    const checkSession = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          const userProfile: User = {
+            id: session.user.id,
+            email: session.user.email || '',
+            nom: session.user.user_metadata?.nom || '',
+            prenom: session.user.user_metadata?.prenom || '',
+            roles: session.user.user_metadata?.roles || ['ROLE_USER'],
+            picture: session.user.user_metadata?.picture || '',
+            sessionToken: session.access_token || null
+          };
+
+          setAuthState({
+            user: userProfile,
+            token: session.access_token || null,
+            loading: false,
+            error: null
+          });
+        }
+      } catch (error) {
+        console.error('Session check error:', error);
+      }
+    };
+
+    checkSession();
+
+    // Écouter les changements d'état d'authentification
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session) {
+        const userProfile: User = {
+          id: session.user.id,
+          email: session.user.email || '',
+          nom: session.user.user_metadata?.nom || '',
+          prenom: session.user.user_metadata?.prenom || '',
+          roles: session.user.user_metadata?.roles || ['ROLE_USER'],
+          picture: session.user.user_metadata?.picture || '',
+          sessionToken: session.access_token || null
+        };
+
+        setAuthState({
+          user: userProfile,
+          token: session.access_token || null,
+          loading: false,
+          error: null
+        });
+      } else {
+        setAuthState({
+          user: null,
+          token: null,
+          loading: false,
+          error: null
+        });
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
 
   const login = async (email: string, password: string) => {
     setAuthState(prev => ({ ...prev, loading: true }));
@@ -106,7 +170,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       }
 
       if (data.user) {
-        toast.success('Inscription réussie');
+        toast.success('Inscription réussie! Veuillez vérifier votre email.');
+        setAuthState(prev => ({ ...prev, loading: false }));
       }
     } catch (error) {
       console.error('Register error:', error);
