@@ -1,6 +1,6 @@
 
-import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import FormField from "@/components/auth/FormField";
@@ -13,6 +13,7 @@ const Login = () => {
   const [rememberMe, setRememberMe] = useState(false);
   
   const navigate = useNavigate();
+  const location = useLocation();
   const { login, authState } = useAuth();
   const { loading, error, user } = authState;
 
@@ -21,14 +22,20 @@ const Login = () => {
     await login(email, password);
   };
 
-  // Redirect if user is already logged in
-  if (user) {
-    if (user.roles.includes("ROLE_ADMIN")) {
-      navigate("/admin");
-    } else if (user.roles.includes("ROLE_BOUT")) {
-      navigate("/office");
+  // Effet pour gérer la redirection après connexion
+  useEffect(() => {
+    if (user) {
+      const from = location.state?.from?.pathname || '/';
+      
+      if (user.roles.includes("ROLE_ADMIN")) {
+        navigate("/admin");
+      } else if (user.roles.includes("ROLE_BOUT")) {
+        navigate("/office");
+      } else {
+        navigate(from);
+      }
     }
-  }
+  }, [user, navigate, location]);
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">

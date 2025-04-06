@@ -96,8 +96,8 @@ function App() {
               <Route path="history" element={<OfficeHistory />} />
             </Route>
             
-            {/* Default Route */}
-            <Route path={ROUTES.ROOT} element={<Navigate to={ROUTES.AUTH.LOGIN} replace />} />
+            {/* Default Route - Rediriger en fonction du rôle de l'utilisateur */}
+            <Route path={ROUTES.ROOT} element={<DefaultRedirect />} />
           </Routes>
         </Router>
         <Toaster position="top-right" richColors />
@@ -105,5 +105,33 @@ function App() {
     </QueryClientProvider>
   );
 }
+
+// Composant pour gérer la redirection par défaut en fonction du rôle
+const DefaultRedirect = () => {
+  const { authState } = useAuth();
+  const { user, loading } = authState;
+  
+  if (loading) {
+    return <div className="flex items-center justify-center min-h-screen">Chargement...</div>;
+  }
+  
+  if (!user) {
+    return <Navigate to={ROUTES.AUTH.LOGIN} replace />;
+  }
+  
+  if (user.roles.includes("ROLE_ADMIN")) {
+    return <Navigate to={ROUTES.ADMIN.ROOT} replace />;
+  }
+  
+  if (user.roles.includes("ROLE_BOUT")) {
+    return <Navigate to={ROUTES.OFFICE.ROOT} replace />;
+  }
+  
+  // Si l'utilisateur n'a pas de rôle spécifique, rediriger vers la connexion
+  return <Navigate to={ROUTES.AUTH.LOGIN} replace />;
+};
+
+// N'oublions pas d'importer useAuth
+import { useAuth } from "./hooks/useAuth";
 
 export default App;
