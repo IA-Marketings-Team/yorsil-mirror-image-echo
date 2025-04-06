@@ -1,73 +1,84 @@
-# Welcome to your Lovable project
 
-## Project info
+# YORSIL - Plateforme de Services en Ligne
 
-**URL**: https://lovable.dev/projects/f9d253b8-f443-4cf9-9a09-9ae68c94712b
+Ce projet est une adaptation React de la plateforme YORSIL, initialement développée en PHP/Symfony.
 
-## How can I edit this code?
+## Fonctionnalités
 
-There are several ways of editing your application.
+- Interface d'administration
+- Interface utilisateur pour les boutiques
+- Gestion des recharges mobile
+- Transferts de crédit
+- Paiement de factures
+- Billeterie
+- Journal des transactions
 
-**Use Lovable**
+## Technologies utilisées
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/f9d253b8-f443-4cf9-9a09-9ae68c94712b) and start prompting.
+- React 18 avec TypeScript
+- React Router pour la navigation
+- Zustand pour la gestion d'état
+- React Query pour la gestion des requêtes
+- Tailwind CSS pour le styling
 
-Changes made via Lovable will be committed automatically to this repo.
+## Démarrage
 
-**Use your preferred IDE**
+### Prérequis
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+- Node.js 16.x ou supérieur
+- npm ou yarn
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### Installation
 
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+1. Clonez le dépôt
+```bash
+git clone https://github.com/votre-nom/yorsil-react.git
+cd yorsil-react
 ```
 
-**Edit a file directly in GitHub**
+2. Installez les dépendances
+```bash
+npm install
+# ou
+yarn install
+```
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+3. Configurez les variables d'environnement
+Créez un fichier `.env.local` à la racine du projet et ajoutez :
+```
+VITE_API_URL=http://localhost:8000/api
+```
 
-**Use GitHub Codespaces**
+4. Lancez le serveur de développement
+```bash
+npm run dev
+# ou
+yarn dev
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+Le projet sera accessible à l'adresse [http://localhost:5173](http://localhost:5173)
 
-## What technologies are used for this project?
+## Structure du projet
 
-This project is built with:
+- `/src/components` - Composants réutilisables
+- `/src/pages` - Pages de l'application
+- `/src/contexts` - Contextes React (authentification, etc.)
+- `/src/services` - Services (API, etc.)
+- `/src/stores` - Stores Zustand pour la gestion d'état
+- `/src/types` - Types TypeScript
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## Déploiement
 
-## How can I deploy this project?
+Pour construire l'application pour la production:
 
-Simply open [Lovable](https://lovable.dev/projects/f9d253b8-f443-4cf9-9a09-9ae68c94712b) and click on Share -> Publish.
+```bash
+npm run build
+# ou
+yarn build
+```
 
-## Can I connect a custom domain to my Lovable project?
+Les fichiers statiques seront générés dans le dossier `dist`.
 
-Yes it is!
+## Licence
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+Ce projet est sous licence privée. Tous droits réservés.
