@@ -97,10 +97,10 @@ function App() {
               <Route path="history" element={<OfficeHistory />} />
             </Route>
             
-            {/* Default Route - Redirection basée sur le rôle */}
+            {/* Default Route - Redirect to login or appropriate dashboard */}
             <Route path="/" element={<DefaultRedirect />} />
             
-            {/* Route pour capturer toutes les URLs non définies */}
+            {/* Catch-all route */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Router>
@@ -110,19 +110,22 @@ function App() {
   );
 }
 
-// Composant corrigé pour éviter les boucles infinies
+// Fixed DefaultRedirect component to prevent infinite loops
 const DefaultRedirect = () => {
   const { authState } = useAuth();
   const { user, loading } = authState;
   
+  // Show loading state while checking authentication
   if (loading) {
     return <div className="flex items-center justify-center min-h-screen">Chargement...</div>;
   }
   
+  // Redirect to login if not authenticated
   if (!user) {
     return <Navigate to={ROUTES.AUTH.LOGIN} replace />;
   }
   
+  // Role-based redirection
   if (user.roles.includes("ROLE_ADMIN")) {
     return <Navigate to={ROUTES.ADMIN.ROOT} replace />;
   }
@@ -131,7 +134,7 @@ const DefaultRedirect = () => {
     return <Navigate to={ROUTES.OFFICE.ROOT} replace />;
   }
   
-  // Si l'utilisateur n'a pas de rôle spécifique, rediriger vers la connexion
+  // Fallback - go to login page
   return <Navigate to={ROUTES.AUTH.LOGIN} replace />;
 };
 

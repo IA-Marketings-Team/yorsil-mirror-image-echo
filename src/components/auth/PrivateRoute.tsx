@@ -14,30 +14,32 @@ const PrivateRoute = ({ children, requiredRole }: PrivateRouteProps) => {
   const { user, loading } = authState;
   const location = useLocation();
 
-  // Afficher l'état de chargement si les données utilisateur sont en cours de chargement
+  console.log("PrivateRoute check:", { user, loading, requiredRole });
+
+  // Show loading state while checking authentication
   if (loading) {
     return <div className="flex items-center justify-center min-h-screen">Chargement...</div>;
   }
 
-  // Rediriger vers la page de connexion si l'utilisateur n'est pas connecté
+  // Redirect to login if not authenticated
   if (!user) {
     return <Navigate to={ROUTES.AUTH.LOGIN} state={{ from: location }} replace />;
   }
 
-  // Vérifier le rôle requis
+  // Check for required role
   if (requiredRole && !user.roles.includes(requiredRole)) {
-    // Rediriger en fonction du rôle de l'utilisateur
+    // Redirect based on user's role
     if (user.roles.includes("ROLE_ADMIN")) {
       return <Navigate to={ROUTES.ADMIN.ROOT} replace />;
     }
     if (user.roles.includes("ROLE_BOUT")) {
       return <Navigate to={ROUTES.OFFICE.ROOT} replace />;
     }
-    // Par défaut, retourner à la page de connexion
-    return <Navigate to={ROUTES.AUTH.LOGIN} replace />;
+    // Default fallback
+    return <Navigate to="/" replace />;
   }
 
-  // Afficher le contenu protégé si tout est en ordre
+  // Show protected content if everything is okay
   return <>{children}</>;
 };
 

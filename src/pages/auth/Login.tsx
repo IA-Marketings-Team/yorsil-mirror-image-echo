@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
@@ -29,17 +28,20 @@ const Login = () => {
     if (user) {
       console.log("User authenticated, redirecting based on role:", user.roles);
       
-      if (user.roles.includes("ROLE_ADMIN")) {
-        console.log("Redirecting to admin dashboard");
-        navigate(ROUTES.ADMIN.ROOT, { replace: true });
-      } else if (user.roles.includes("ROLE_BOUT")) {
-        console.log("Redirecting to office dashboard");
-        navigate(ROUTES.OFFICE.ROOT, { replace: true });
-      } else {
-        const from = location.state?.from?.pathname || '/';
-        console.log("Redirecting to:", from);
-        navigate(from, { replace: true });
-      }
+      // Add a small delay to ensure state is properly updated
+      setTimeout(() => {
+        if (user.roles.includes("ROLE_ADMIN")) {
+          console.log("Redirecting to admin dashboard");
+          navigate(ROUTES.ADMIN.ROOT, { replace: true });
+        } else if (user.roles.includes("ROLE_BOUT")) {
+          console.log("Redirecting to office dashboard");
+          navigate(ROUTES.OFFICE.ROOT, { replace: true });
+        } else {
+          const from = location.state?.from?.pathname || ROUTES.ROOT;
+          console.log("Redirecting to:", from);
+          navigate(from, { replace: true });
+        }
+      }, 100);
     }
   }, [user, navigate, location]);
 
