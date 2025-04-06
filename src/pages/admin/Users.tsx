@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { User, UserPlus } from "lucide-react";
@@ -6,7 +7,7 @@ import PageHeader from "@/components/common/PageHeader";
 import LoadingState from "@/components/common/LoadingState";
 import ErrorState from "@/components/common/ErrorState";
 import UsersTable from "@/components/admin/users/UsersTable";
-import Button from "@/components/common/Button";
+import { Button } from "@/components/ui/button";
 
 const AdminUsers = () => {
   const [searchTerm, setSearchTerm] = useState("");

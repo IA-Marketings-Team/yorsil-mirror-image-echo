@@ -1,12 +1,13 @@
+
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Plus, StorePlus } from "lucide-react";
+import { Store, PlusSquare } from "lucide-react";
 import { api } from "@/services/api";
 import PageHeader from "@/components/common/PageHeader";
 import LoadingState from "@/components/common/LoadingState";
 import ErrorState from "@/components/common/ErrorState";
 import BoutiquesTable from "@/components/admin/boutiques/BoutiquesTable";
-import Button from "@/components/common/Button";
+import { Button } from "@/components/ui/button";
 
 const AdminBoutiques = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -37,7 +38,8 @@ const AdminBoutiques = () => {
         title="Boutiques"
         actions={
           <Button onClick={() => setShowAddModal(true)} className="flex items-center gap-2">
-            <StorePlus size={16} />
+            <Store size={16} />
+            <PlusSquare size={16} className="ml-1 mr-1" />
             Ajouter une boutique
           </Button>
         }

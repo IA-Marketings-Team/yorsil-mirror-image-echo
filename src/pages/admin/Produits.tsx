@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -43,69 +44,63 @@ const AdminProduits = () => {
   });
 
   // Add produit mutation
-  const addProduitMutation = useMutation(
-    async (newProduit: Omit<Produit, "id">) => {
+  const addProduitMutation = useMutation({
+    mutationFn: async (newProduit: Omit<Produit, "id">) => {
       const response = await api.post<Produit>("/produits", newProduit);
       return response.data;
     },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(["produits"]);
-        setShowAddModal(false);
-        toast.success("Produit ajouté avec succès!");
-      },
-      onError: (error: any) => {
-        toast.error(
-          error?.response?.data?.message ||
-            "Erreur lors de l'ajout du produit."
-        );
-      },
-    }
-  );
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["produits"] });
+      setShowAddModal(false);
+      toast.success("Produit ajouté avec succès!");
+    },
+    onError: (error: any) => {
+      toast.error(
+        error?.response?.data?.message ||
+          "Erreur lors de l'ajout du produit."
+      );
+    },
+  });
 
   // Edit produit mutation
-  const editProduitMutation = useMutation(
-    async (updatedProduit: Produit) => {
+  const editProduitMutation = useMutation({
+    mutationFn: async (updatedProduit: Produit) => {
       const response = await api.put<Produit>(
         `/produits/${updatedProduit.id}`,
         updatedProduit
       );
       return response.data;
     },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(["produits"]);
-        setShowEditModal(false);
-        setSelectedProduit(null);
-        toast.success("Produit mis à jour avec succès!");
-      },
-      onError: (error: any) => {
-        toast.error(
-          error?.response?.data?.message ||
-            "Erreur lors de la modification du produit."
-        );
-      },
-    }
-  );
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["produits"] });
+      setShowEditModal(false);
+      setSelectedProduit(null);
+      toast.success("Produit mis à jour avec succès!");
+    },
+    onError: (error: any) => {
+      toast.error(
+        error?.response?.data?.message ||
+          "Erreur lors de la modification du produit."
+      );
+    },
+  });
 
   // Delete produit mutation
-  const deleteProduitMutation = useMutation(
-    async (id: number) => {
+  const deleteProduitMutation = useMutation({
+    mutationFn: async (id: number) => {
       await api.delete(`/produits/${id}`);
     },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(["produits"]);
-        toast.success("Produit supprimé avec succès!");
-      },
-      onError: (error: any) => {
-        toast.error(
-          error?.response?.data?.message ||
-            "Erreur lors de la suppression du produit."
-        );
-      },
-    }
-  );
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["produits"] });
+      toast.success("Produit supprimé avec succès!");
+    },
+    onError: (error: any) => {
+      toast.error(
+        error?.response?.data?.message ||
+          "Erreur lors de la suppression du produit."
+      );
+    },
+  });
 
   const handleEdit = (produit: Produit) => {
     setSelectedProduit(produit);
@@ -205,7 +200,7 @@ const AdminProduits = () => {
               await addProduitMutation.mutateAsync(values);
             }}
             onCancel={() => setShowAddModal(false)}
-            loading={addProduitMutation.isLoading}
+            loading={addProduitMutation.isPending}
           />
         </DialogContent>
       </Dialog>
@@ -224,8 +219,8 @@ const AdminProduits = () => {
             onSubmit={async (values) => {
               if (selectedProduit) {
                 await editProduitMutation.mutateAsync({
-                  ...selectedProduit,
                   ...values,
+                  id: selectedProduit.id,
                 });
               }
             }}
@@ -233,7 +228,7 @@ const AdminProduits = () => {
               setShowEditModal(false);
               setSelectedProduit(null);
             }}
-            loading={editProduitMutation.isLoading}
+            loading={editProduitMutation.isPending}
           />
         </DialogContent>
       </Dialog>
@@ -257,8 +252,8 @@ const AddEditProduitForm: React.FC<AddEditProduitFormProps> = ({
   const [nom, setNom] = useState(produit?.nom || "");
   const [description, setDescription] = useState(produit?.description || "");
   const [categorie, setCategorie] = useState(produit?.categorie || "");
-  const [prix, setPrix] = useState(produit?.prix || 0);
-  const [stock, setStock] = useState(produit?.stock || 0);
+  const [prix, setPrix] = useState<number>(produit?.prix || 0);
+  const [stock, setStock] = useState<number>(produit?.stock || 0);
   const [actif, setActif] = useState(produit?.actif || false);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -308,7 +303,7 @@ const AddEditProduitForm: React.FC<AddEditProduitFormProps> = ({
           type="number"
           id="prix"
           value={prix}
-          onChange={(e) => setPrix(e.target.value)}
+          onChange={(e) => setPrix(Number(e.target.value))}
           required
         />
       </div>
@@ -318,7 +313,7 @@ const AddEditProduitForm: React.FC<AddEditProduitFormProps> = ({
           type="number"
           id="stock"
           value={stock}
-          onChange={(e) => setStock(e.target.value)}
+          onChange={(e) => setStock(Number(e.target.value))}
           required
         />
       </div>
