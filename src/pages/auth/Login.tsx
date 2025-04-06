@@ -20,19 +20,24 @@ const Login = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("Login submit called with:", email, password);
     await login(email, password);
   };
 
   // Effet pour gérer la redirection après connexion
   useEffect(() => {
     if (user) {
-      const from = location.state?.from?.pathname || '/';
+      console.log("User authenticated, redirecting based on role:", user.roles);
       
       if (user.roles.includes("ROLE_ADMIN")) {
+        console.log("Redirecting to admin dashboard");
         navigate(ROUTES.ADMIN.ROOT, { replace: true });
       } else if (user.roles.includes("ROLE_BOUT")) {
+        console.log("Redirecting to office dashboard");
         navigate(ROUTES.OFFICE.ROOT, { replace: true });
       } else {
+        const from = location.state?.from?.pathname || '/';
+        console.log("Redirecting to:", from);
         navigate(from, { replace: true });
       }
     }

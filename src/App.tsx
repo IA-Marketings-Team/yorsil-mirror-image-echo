@@ -110,7 +110,7 @@ function App() {
   );
 }
 
-// Composant pour gérer la redirection par défaut en fonction du rôle
+// Composant corrigé pour éviter les boucles infinies
 const DefaultRedirect = () => {
   const { authState } = useAuth();
   const { user, loading } = authState;
