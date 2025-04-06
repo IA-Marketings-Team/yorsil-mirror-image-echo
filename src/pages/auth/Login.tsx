@@ -1,11 +1,12 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import FormField from "@/components/auth/FormField";
 import PasswordInput from "@/components/auth/PasswordInput";
 import { Input } from "@/components/ui/input";
+import { toast } from "react-toastify";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -16,19 +17,38 @@ const Login = () => {
   const { login, authState } = useAuth();
   const { loading, error, user } = authState;
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    await login(email, password);
+  useEffect(() => {
+    // Redirect if user is already logged in
+    if (user) {
+      redirectBasedOnRole(user.roles);
+    }
+  }, [user, navigate]);
+
+  const redirectBasedOnRole = (roles: string[]) => {
+    if (roles.includes("ROLE_ADMIN")) {
+      navigate("/admin");
+    } else if (roles.includes("ROLE_BOUT")) {
+      navigate("/office");
+    } else {
+      navigate("/");
+    }
+    toast.success("Connexion réussie!");
   };
 
-  // Redirect if user is already logged in
-  if (user) {
-    if (user.roles.includes("ROLE_ADMIN")) {
-      navigate("/admin");
-    } else if (user.roles.includes("ROLE_BOUT")) {
-      navigate("/office");
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!email || !password) {
+      toast.error("Veuillez remplir tous les champs");
+      return;
     }
-  }
+    
+    try {
+      await login(email, password);
+    } catch (err) {
+      console.error("Erreur lors de la connexion:", err);
+    }
+  };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -94,6 +114,10 @@ const Login = () => {
           {error}
         </div>
       )}
+      
+      <div className="text-center text-sm text-gray-600">
+        <p>Pas encore de compte? <Link to="/register" className="text-blue-600 hover:text-blue-500">Créer un compte</Link></p>
+      </div>
     </form>
   );
 };

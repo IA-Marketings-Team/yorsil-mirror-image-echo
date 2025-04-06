@@ -2,6 +2,7 @@
 import { createContext, useState, ReactNode, useEffect } from "react";
 import { AuthContextType, AuthState } from "../types/auth.types";
 import { authService } from "../services/auth.service";
+import { supabase } from "@/integrations/supabase/client";
 
 const initialState: AuthState = {
   user: null,
@@ -15,32 +16,68 @@ export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [authState, setAuthState] = useState<AuthState>(initialState);
 
-  // Check if user is already logged in
+  // S'abonne aux changements d'état d'authentification Supabase
   useEffect(() => {
-    const checkAuth = async () => {
-      if (authState.token) {
-        try {
-          setAuthState((prev) => ({ ...prev, loading: true }));
-          const user = await authService.getProfile();
-          setAuthState({
-            user,
-            token: authState.token,
-            loading: false,
-            error: null,
-          });
-        } catch (error) {
-          authService.logout();
+    // Définir l'écouteur d'état d'authentification en premier
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (session) {
+          try {
+            setAuthState((prev) => ({ ...prev, loading: true }));
+            // Session existante, récupérer les données utilisateur
+            const user = await authService.getProfile();
+            setAuthState({
+              user,
+              token: session.access_token,
+              loading: false,
+              error: null,
+            });
+          } catch (error: any) {
+            // Erreur lors de la récupération du profil utilisateur
+            setAuthState({
+              user: null,
+              token: null,
+              loading: false,
+              error: error.message || "Erreur de récupération du profil",
+            });
+          }
+        } else {
+          // Pas de session, utilisateur déconnecté
           setAuthState({
             user: null,
             token: null,
             loading: false,
-            error: "Session expired",
+            error: null,
           });
         }
       }
+    );
+
+    // Vérifier s'il existe une session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        authService.getProfile().then((user) => {
+          setAuthState({
+            user,
+            token: session.access_token,
+            loading: false,
+            error: null,
+          });
+        }).catch((error) => {
+          setAuthState({
+            user: null,
+            token: null,
+            loading: false,
+            error: error.message || "Erreur de récupération du profil",
+          });
+        });
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
     };
-    checkAuth();
-  }, [authState.token]);
+  }, []);
 
   const login = async (email: string, password: string) => {
     try {
@@ -58,7 +95,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         user: null,
         token: null,
         loading: false,
-        error: error.message || "Login failed",
+        error: error.message || "Échec de connexion",
       });
     }
   };
@@ -82,7 +119,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setAuthState((prev) => ({
         ...prev,
         loading: false,
-        error: error.message || "Registration failed",
+        error: error.message || "Échec d'inscription",
       }));
     }
   };
@@ -96,7 +133,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setAuthState((prev) => ({
         ...prev,
         loading: false,
-        error: error.message || "Failed to send recovery email",
+        error: error.message || "Échec d'envoi d'email de récupération",
       }));
     }
   };
@@ -110,7 +147,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setAuthState((prev) => ({
         ...prev,
         loading: false,
-        error: error.message || "Password reset failed",
+        error: error.message || "Échec de réinitialisation du mot de passe",
       }));
     }
   };

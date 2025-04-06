@@ -1,5 +1,6 @@
 
 import axios from "axios";
+import { supabase } from "@/integrations/supabase/client";
 
 // Configuration de l'API
 const API_CONFIG = {
@@ -21,8 +22,11 @@ export const api = axios.create({
 
 // Add request interceptor to inject token
 api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem(API_CONFIG.authTokenKey);
+  async (config) => {
+    // Récupérer la session Supabase
+    const { data } = await supabase.auth.getSession();
+    const token = data.session?.access_token;
+    
     if (token) {
       config.headers["Authorization"] = `Bearer ${token}`;
     }
@@ -36,10 +40,10 @@ api.interceptors.request.use(
 // Add response interceptor to handle errors
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
     if (error.response?.status === API_CONFIG.unauthorizedErrorCode) {
-      // Unauthorized - clear token and redirect to login
-      localStorage.removeItem(API_CONFIG.authTokenKey);
+      // Unauthorized - sign out and redirect to login
+      await supabase.auth.signOut();
       window.location.href = "/login";
     }
     return Promise.reject(error);

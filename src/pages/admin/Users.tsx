@@ -2,13 +2,13 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { UserPlus } from "lucide-react";
-import { api } from "@/services/api";
-import { mockUsers, appConfig } from "@/services/mockData";
 import PageHeader from "@/components/common/PageHeader";
 import LoadingState from "@/components/common/LoadingState";
 import ErrorState from "@/components/common/ErrorState";
 import UsersTable from "@/components/admin/users/UsersTable";
 import { Button } from "@/components/ui/button";
+import { supabaseService } from "@/services/supabase.service";
+import { appConfig } from "@/services/mockData";
 
 const AdminUsers = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -17,14 +17,13 @@ const AdminUsers = () => {
   const { data: users, isLoading, error } = useQuery({
     queryKey: ['adminUsers'],
     queryFn: async () => {
-      const response = await api.get('/admin/users');
-      return response.data;
-    },
-    initialData: mockUsers
+      return await supabaseService.users.getAll();
+    }
   });
 
   const handleAddUser = () => {
     console.log("Add user clicked");
+    setShowAddModal(true);
   };
 
   return (
@@ -32,7 +31,7 @@ const AdminUsers = () => {
       <PageHeader 
         title="Utilisateurs" 
         actions={
-          <Button onClick={() => setShowAddModal(true)} className="flex items-center gap-2">
+          <Button onClick={handleAddUser} className="flex items-center gap-2">
             <UserPlus size={16} />
             Ajouter un utilisateur
           </Button>
@@ -45,7 +44,7 @@ const AdminUsers = () => {
         <ErrorState error={error as Error} message={appConfig.errorMessages.users} />
       ) : (
         <UsersTable 
-          users={users} 
+          users={users || []} 
           searchTerm={searchTerm}
           onSearchChange={setSearchTerm}
         />
