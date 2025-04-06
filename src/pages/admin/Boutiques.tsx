@@ -38,7 +38,7 @@ const AdminBoutiques = () => {
       roles: boutique.user.roles as any,
       picture: boutique.user.picture || undefined,
       sessionToken: boutique.user.session_token || undefined
-    } as User, // Removed the comma after the type assertion
+    } as User,
     solde: 0 // Default value as it might not be in Supabase
   })) : [];
 

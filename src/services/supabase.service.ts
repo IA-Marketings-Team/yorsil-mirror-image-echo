@@ -8,7 +8,7 @@ export const supabaseService = {
     async getAll() {
       const { data, error } = await supabase
         .from('users')
-        .select('*');
+        .select('*') as { data: any[]; error: Error | null };
       
       if (error) throw new Error(error.message);
       return data;
@@ -19,7 +19,7 @@ export const supabaseService = {
         .from('users')
         .select('*')
         .eq('id', id)
-        .single();
+        .single() as { data: any; error: Error | null };
       
       if (error) throw new Error(error.message);
       return data;
@@ -29,7 +29,7 @@ export const supabaseService = {
       const { data, error } = await supabase
         .from('users')
         .insert([user as any])
-        .select();
+        .select() as { data: any[]; error: Error | null };
       
       if (error) throw new Error(error.message);
       return data[0];
@@ -40,7 +40,7 @@ export const supabaseService = {
         .from('users')
         .update(user as any)
         .eq('id', id)
-        .select();
+        .select() as { data: any[]; error: Error | null };
       
       if (error) throw new Error(error.message);
       return data[0];
@@ -50,7 +50,7 @@ export const supabaseService = {
       const { error } = await supabase
         .from('users')
         .delete()
-        .eq('id', id);
+        .eq('id', id) as { error: Error | null };
       
       if (error) throw new Error(error.message);
       return true;
@@ -62,7 +62,7 @@ export const supabaseService = {
     async getAll() {
       const { data, error } = await supabase
         .from('boutiques')
-        .select('*, user:user_id(*)');
+        .select('*, user:user_id(*)') as { data: any[]; error: Error | null };
       
       if (error) throw new Error(error.message);
       return data;
@@ -73,7 +73,7 @@ export const supabaseService = {
         .from('boutiques')
         .select('*, user:user_id(*)')
         .eq('id', id)
-        .single();
+        .single() as { data: any; error: Error | null };
       
       if (error) throw new Error(error.message);
       return data;
@@ -83,7 +83,7 @@ export const supabaseService = {
       const { data, error } = await supabase
         .from('boutiques')
         .select('*, user:user_id(*)')
-        .eq('user_id', userId);
+        .eq('user_id', userId) as { data: any[]; error: Error | null };
       
       if (error) throw new Error(error.message);
       return data[0];
@@ -93,7 +93,7 @@ export const supabaseService = {
       const { data, error } = await supabase
         .from('boutiques')
         .insert([boutique as any])
-        .select();
+        .select() as { data: any[]; error: Error | null };
       
       if (error) throw new Error(error.message);
       return data[0];
@@ -104,7 +104,7 @@ export const supabaseService = {
         .from('boutiques')
         .update(boutique as any)
         .eq('id', id)
-        .select();
+        .select() as { data: any[]; error: Error | null };
       
       if (error) throw new Error(error.message);
       return data[0];
@@ -114,7 +114,7 @@ export const supabaseService = {
       const { error } = await supabase
         .from('boutiques')
         .delete()
-        .eq('id', id);
+        .eq('id', id) as { error: Error | null };
       
       if (error) throw new Error(error.message);
       return true;
@@ -126,7 +126,7 @@ export const supabaseService = {
     async getAll() {
       const { data, error } = await supabase
         .from('pays')
-        .select('*');
+        .select('*') as { data: any[]; error: Error | null };
       
       if (error) throw new Error(error.message);
       return data;
@@ -137,7 +137,7 @@ export const supabaseService = {
         .from('pays')
         .select('*')
         .eq('id', id)
-        .single();
+        .single() as { data: any; error: Error | null };
       
       if (error) throw new Error(error.message);
       return data;
@@ -147,7 +147,7 @@ export const supabaseService = {
       const { data, error } = await supabase
         .from('pays')
         .insert([pays as any])
-        .select();
+        .select() as { data: any[]; error: Error | null };
       
       if (error) throw new Error(error.message);
       return data[0];
@@ -158,7 +158,7 @@ export const supabaseService = {
         .from('pays')
         .update(pays as any)
         .eq('id', id)
-        .select();
+        .select() as { data: any[]; error: Error | null };
       
       if (error) throw new Error(error.message);
       return data[0];
@@ -168,7 +168,7 @@ export const supabaseService = {
       const { error } = await supabase
         .from('pays')
         .delete()
-        .eq('id', id);
+        .eq('id', id) as { error: Error | null };
       
       if (error) throw new Error(error.message);
       return true;
@@ -180,7 +180,7 @@ export const supabaseService = {
     async getAll() {
       const { data, error } = await supabase
         .from('operateurs')
-        .select('*, pays:pays_id(*)');
+        .select('*, pays:pays_id(*)') as { data: any[]; error: Error | null };
       
       if (error) throw new Error(error.message);
       return data;
@@ -191,7 +191,7 @@ export const supabaseService = {
         .from('operateurs')
         .select('*, pays:pays_id(*)')
         .eq('id', id)
-        .single();
+        .single() as { data: any; error: Error | null };
       
       if (error) throw new Error(error.message);
       return data;
@@ -201,7 +201,7 @@ export const supabaseService = {
       const { data, error } = await supabase
         .from('operateurs')
         .insert([operateur as any])
-        .select();
+        .select() as { data: any[]; error: Error | null };
       
       if (error) throw new Error(error.message);
       return data[0];
@@ -212,7 +212,7 @@ export const supabaseService = {
         .from('operateurs')
         .update(operateur as any)
         .eq('id', id)
-        .select();
+        .select() as { data: any[]; error: Error | null };
       
       if (error) throw new Error(error.message);
       return data[0];
@@ -222,7 +222,7 @@ export const supabaseService = {
       const { error } = await supabase
         .from('operateurs')
         .delete()
-        .eq('id', id);
+        .eq('id', id) as { error: Error | null };
       
       if (error) throw new Error(error.message);
       return true;
@@ -234,7 +234,7 @@ export const supabaseService = {
     async getAll() {
       const { data, error } = await supabase
         .from('produits')
-        .select('*, operateur:operateur_id(*)');
+        .select('*, operateur:operateur_id(*)') as { data: any[]; error: Error | null };
       
       if (error) throw new Error(error.message);
       return data;
@@ -245,7 +245,7 @@ export const supabaseService = {
         .from('produits')
         .select('*, operateur:operateur_id(*)')
         .eq('id', id)
-        .single();
+        .single() as { data: any; error: Error | null };
       
       if (error) throw new Error(error.message);
       return data;
@@ -255,7 +255,7 @@ export const supabaseService = {
       const { data, error } = await supabase
         .from('produits')
         .insert([produit as any])
-        .select();
+        .select() as { data: any[]; error: Error | null };
       
       if (error) throw new Error(error.message);
       return data[0];
@@ -266,7 +266,7 @@ export const supabaseService = {
         .from('produits')
         .update(produit as any)
         .eq('id', id)
-        .select();
+        .select() as { data: any[]; error: Error | null };
       
       if (error) throw new Error(error.message);
       return data[0];
@@ -276,7 +276,7 @@ export const supabaseService = {
       const { error } = await supabase
         .from('produits')
         .delete()
-        .eq('id', id);
+        .eq('id', id) as { error: Error | null };
       
       if (error) throw new Error(error.message);
       return true;
@@ -288,7 +288,7 @@ export const supabaseService = {
     async getAll() {
       const { data, error } = await supabase
         .from('recharges')
-        .select('*, boutique:boutique_id(*)');
+        .select('*, boutique:boutique_id(*)') as { data: any[]; error: Error | null };
       
       if (error) throw new Error(error.message);
       return data;
@@ -299,7 +299,7 @@ export const supabaseService = {
         .from('recharges')
         .select('*, boutique:boutique_id(*)')
         .eq('id', id)
-        .single();
+        .single() as { data: any; error: Error | null };
       
       if (error) throw new Error(error.message);
       return data;
@@ -309,7 +309,7 @@ export const supabaseService = {
       const { data, error } = await supabase
         .from('recharges')
         .select('*, boutique:boutique_id(*)')
-        .eq('boutique_id', boutiqueId);
+        .eq('boutique_id', boutiqueId) as { data: any[]; error: Error | null };
       
       if (error) throw new Error(error.message);
       return data;
@@ -319,7 +319,7 @@ export const supabaseService = {
       const { data, error } = await supabase
         .from('recharges')
         .insert([recharge as any])
-        .select();
+        .select() as { data: any[]; error: Error | null };
       
       if (error) throw new Error(error.message);
       return data[0];
@@ -330,7 +330,7 @@ export const supabaseService = {
         .from('recharges')
         .update(recharge as any)
         .eq('id', id)
-        .select();
+        .select() as { data: any[]; error: Error | null };
       
       if (error) throw new Error(error.message);
       return data[0];
@@ -342,7 +342,7 @@ export const supabaseService = {
     async getAll() {
       const { data, error } = await supabase
         .from('recharges_flexi')
-        .select('*, operateur:operateur_id(*), user:user_id(*)');
+        .select('*, operateur:operateur_id(*), user:user_id(*)') as { data: any[]; error: Error | null };
       
       if (error) throw new Error(error.message);
       return data;
@@ -353,7 +353,7 @@ export const supabaseService = {
         .from('recharges_flexi')
         .select('*, operateur:operateur_id(*), user:user_id(*)')
         .eq('id', id)
-        .single();
+        .single() as { data: any; error: Error | null };
       
       if (error) throw new Error(error.message);
       return data;
@@ -363,7 +363,7 @@ export const supabaseService = {
       const { data, error } = await supabase
         .from('recharges_flexi')
         .select('*, operateur:operateur_id(*), user:user_id(*)')
-        .eq('user_id', userId);
+        .eq('user_id', userId) as { data: any[]; error: Error | null };
       
       if (error) throw new Error(error.message);
       return data;
@@ -373,7 +373,7 @@ export const supabaseService = {
       const { data, error } = await supabase
         .from('recharges_flexi')
         .insert([rechargeFlexi as any])
-        .select();
+        .select() as { data: any[]; error: Error | null };
       
       if (error) throw new Error(error.message);
       return data[0];
@@ -384,7 +384,7 @@ export const supabaseService = {
         .from('recharges_flexi')
         .update(rechargeFlexi as any)
         .eq('id', id)
-        .select();
+        .select() as { data: any[]; error: Error | null };
       
       if (error) throw new Error(error.message);
       return data[0];
@@ -396,7 +396,7 @@ export const supabaseService = {
     async getAll() {
       const { data, error } = await supabase
         .from('notifications')
-        .select('*, user:user_id(*)');
+        .select('*, user:user_id(*)') as { data: any[]; error: Error | null };
       
       if (error) throw new Error(error.message);
       return data;
@@ -406,7 +406,7 @@ export const supabaseService = {
       const { data, error } = await supabase
         .from('notifications')
         .select('*, user:user_id(*)')
-        .eq('user_id', userId);
+        .eq('user_id', userId) as { data: any[]; error: Error | null };
       
       if (error) throw new Error(error.message);
       return data;
@@ -416,7 +416,7 @@ export const supabaseService = {
       const { data, error } = await supabase
         .from('notifications')
         .insert([notification as any])
-        .select();
+        .select() as { data: any[]; error: Error | null };
       
       if (error) throw new Error(error.message);
       return data[0];
@@ -427,7 +427,7 @@ export const supabaseService = {
         .from('notifications')
         .update({ status: 'read' } as any)
         .eq('id', id)
-        .select();
+        .select() as { data: any[]; error: Error | null };
       
       if (error) throw new Error(error.message);
       return data[0];

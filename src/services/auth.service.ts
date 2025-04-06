@@ -70,10 +70,10 @@ export const authService = {
           id: userData.id,
           email: userData.email,
           nom: userData.nom,
-          prenom: userData.prenom,
+          prenom: userData.prenom || undefined,
           roles: (userData.roles || ["ROLE_USER"]) as Role[],
-          picture: userData.picture,
-          sessionToken: userData.session_token
+          picture: userData.picture || undefined,
+          sessionToken: userData.session_token || undefined
         } 
       };
     } catch (error: any) {
@@ -97,13 +97,13 @@ export const authService = {
       // Créer l'entrée dans la table users avec les informations supplémentaires
       const { error: userError } = await supabase
         .from('users')
-        .insert([{
+        .insert({
           id: data.user.id,
           email: userData.email,
           nom: userData.nom,
           prenom: userData.prenom,
           roles: ['ROLE_USER'] // Rôle par défaut
-        }] as any);
+        } as any);
       
       if (userError) throw new Error(userError.message);
       
@@ -138,10 +138,10 @@ export const authService = {
         id: data.id,
         email: data.email,
         nom: data.nom,
-        prenom: data.prenom,
+        prenom: data.prenom || undefined,
         roles: (data.roles || ["ROLE_USER"]) as Role[],
-        picture: data.picture,
-        sessionToken: data.session_token
+        picture: data.picture || undefined,
+        sessionToken: data.session_token || undefined
       };
     } catch (error: any) {
       const errorMessage = error.message || AUTH_MESSAGES.error.getProfile;
